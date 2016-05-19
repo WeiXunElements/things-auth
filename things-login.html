@@ -40,10 +40,10 @@ Example:
       background-repeat:no-repeat;
       background-color:#f1f1f1;
     }
-    paper-material{
+    paper-material {
       @apply(--things-login)
     }
-    .header{
+    .header {
       display:block;
       padding-top:30px;
       font-size:35px;
@@ -52,7 +52,7 @@ Example:
       text-align:center;
       line-height:40px;
     }
-    .header:before{
+    .header:before {
       content:"";
       display:block;
       position:absolute;
@@ -61,48 +61,33 @@ Example:
       width:80px;height:85px;
       background:url(/images/icon-nametag.png) no-repeat;
     }
-    paper-input::shadow input:-webkit-autofill{
+    paper-input::shadow input:-webkit-autofill {
       background:#fff;
       -webkit-box-shadow: inset 0 0 0px 9999px white;
     }
-    form{
+    form {
       @apply(--things-loose-padding);
       padding-top:10px;
     }
-    paper-button{
+    paper-button {
       @apply(--things-button);
       color:#fff;
     }
-    #submitButton{
+    #submitButton {
       @apply(--things-button-important);
       float:right;
       width:30%;
       color:#fff;
     }
-    div{margin-top:50px;}
-    
-    /*#resetbutton {
-      margin-top: 10px;
-      width: 90%;
-      background: #4285f4;
-      color: white;
+    div {
+      margin-top:50px;
     }
-
-    #submitButton {
-      margin-top: 10px;
-      width: 90%;
-      background: #ff8c00;
-      color: white;
-    }*/
     </style>
 
     <paper-material elevation="1" on-keypress="keypressHandler">
       <span class="header">
-        <things-i18n-msg msgid="title.[[title]]">[[title]] </things-i18n-msg>
         <strong>LOGIN</strong>
       </span>
-
-      <!-- <content select="[avatar]"></content> -->
 
       <form is="iron-form" 
             id="loginForm" 
@@ -153,21 +138,11 @@ Example:
   </template>
 
   <script>
-
     Polymer({
 
       is: 'things-login',
       
       properties: {
-        /**
-         * [elevation(음영높이) for login form]
-         * @type {Number}
-         */
-        elevation: {
-          type: Number,
-          value: 4
-        },
-
         /**
          * Label for the title
          * @type {string}
@@ -175,7 +150,16 @@ Example:
          */
         title: {
           type: String,
-          value: 'login'
+          value: 'Login'
+        },
+
+        /**
+         * [elevation(음영높이) for login form]
+         * @type {Number}
+         */
+        elevation: {
+          type: Number,
+          value: 4
         },
 
         /**
@@ -200,7 +184,9 @@ Example:
          * Pattern used to validate username,  ex: '^[a-zA-Z0-9]+$'
          * @type {string}
          */
-        usernameValidationPattern: String,
+        usernameValidationPattern: {
+          type: String
+        },
 
         /**
          * Error message displayed if `usernameValidationPattern` is not matched.
@@ -224,7 +210,9 @@ Example:
          * Pattern used to validate password, ex: '^[a-zA-Z0-9]+$'
          * @type {string}
          */
-        passwordValidationPattern: String,
+        passwordValidationPattern: {
+          type: String
+        },
 
         /**
          * Error message displayed if `passwordValidationPattern` is not matched.
@@ -315,9 +303,9 @@ Example:
 
       _onSignupTap: function (event) {
         var signup = document.createElement("things-signup");
-        
-        signup.actionUrl ='users/register';
-        signup.method='POST';
+        signup.title = 'Sign Up';
+        signup.actionUrl = 'users/register';
+        signup.method = 'POST';
 
         signup.addEventListener("things-signup-success", function(event) {
           var eventDetail = this;
@@ -337,6 +325,7 @@ Example:
 
       _onRequestpInitPass: function (event) {
         var pwInit = document.createElement("things-password-init");
+        pwInit.title = "Reset Password";
         pwInit.actionUrl = "users/request_init_pass";
         pwInit.method = "POST";
 

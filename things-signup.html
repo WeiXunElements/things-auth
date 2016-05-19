@@ -47,55 +47,67 @@ Example:
       method="[[method]]"
       last-response="{{lastResponse}}">
       
-      <paper-input required name ="name" label="username"></paper-input>
-      <gold-email-input auto-validate required name="email" label="your email address"></gold-email-input>
+      <paper-input required name ="name" label="User Name"></paper-input>
+      <gold-email-input auto-validate required name="email" label="Email Address"></gold-email-input>
 
-      <!--things-code-combo 
-        id="code-selector" 
-        label="Language" 
-        value="en-US" 
-        code-name="LOCALE" 
-        label-path="description" 
-        value-path="name">
-      </things-code-combo-->
+      <!--paper-input required name ="locale" label="Locale"></paper-input>
+      <paper-input required name ="timezone" label="Timezone"></paper-input-->
 
-      <paper-input required name ="locale" label="Locale"></paper-input>
-      <paper-input required name ="timezone" label="Timezone"></paper-input>
+      <paper-input id="pw" required name="encrypted_password" type="password" label="Password">
+      </paper-input>
 
-      <paper-input id="pw" required name="encrypted_password" type="password" label="password"></paper-input>
-      <paper-input id="confirmed-pw" auto-validate required name="confirmed-password" type="password" label="confirm password" validator ="_passwordValidate" errorMessage ="Password mismatch password and confirmed password"></paper-input>
+      <paper-input 
+        id="confirmed-pw" 
+        auto-validate 
+        required 
+        name="confirmed-password" 
+        type="password" 
+        label="Password Confirmation" 
+        validator="_passwordValidate" 
+        errorMessage ="Password mismatch password and confirmed password">
+      </paper-input>
 
-      <paper-button class="btn-submit" raised on-click ="_submitMyForm">submit</paper-button>
-      <paper-button raised on-click ="_resetMyForm">reset</paper-button>
+      <paper-button class="btn-submit" raised on-click="_submitMyForm">submit</paper-button>
+      <paper-button raised on-click="_resetMyForm">reset</paper-button>
     </form>
   </template>
 
   <script>
     Polymer({
       is: 'things-signup',
-      properties:{
+
+      properties: {
       },
+      
       behaviors: [
         Things.FormBehavior,
         Things.SpinnerBehavior
       ],
-      _successResponseHandler:function (event) {
+      
+      _successResponseHandler: function(event) {
         this.stopSpinner()
         this.fire("things-signup-success",this.serializeMyForm());
       },
-      _errorResponseHandler:function (event) {
+      
+      _errorResponseHandler: function(event) {
         this.stopSpinner()
         this.fire("things-signup-failure",event.detail);
       },
-      _submitMyForm:function(event) {
-        if(this._passwordValidate()) { this.submitMyForm() }
-        else { this.openInfoMsg('Password mismatch password and confirmed password'); }
+      
+      _submitMyForm: function(event) {
+        if(this._passwordValidate()) { 
+          this.submitMyForm() 
+        } else { 
+          this.openInfoMsg('Password mismatch password and confirmed password'); 
+        }
       },
-      _resetMyForm:function (event) {
+      
+      _resetMyForm: function(event) {
         this.resetMyForm();
       },
-      _passwordValidate:function () {
-        return this.$.pw.value ===this.$['confirmed-pw'].value;
+      
+      _passwordValidate: function() {
+        return this.$.pw.value === this.$['confirmed-pw'].value;
       }
     });
   </script>
