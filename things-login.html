@@ -35,32 +35,53 @@ Example:
     <style>
     :host {
       display: block;
-      box-sizing: border-box;
-      text-align: center;
-      margin: 0 auto;
-      height: 100%;
-      width: 98%;
+      background-image:url(/images/bg-rail.png),url(/images/bg-blue.png),url(/images/bg-green.png);
+      background-position:50% 100%, 0 0, 100% 50%;
+      background-repeat:no-repeat;
+      background-color:#f1f1f1;
     }
-    
-    :host > h3 {
-      margin-top: 5px;
+    paper-material{
+      @apply(--things-login)
     }
-    
-    :host::content img {
-      border-radius: 50%;
+    .header{
+      display:block;
+      padding-top:30px;
+      font-size:35px;
+      color:var(--things-primary-text-color);
+      font-weight:300;
+      text-align:center;
+      line-height:40px;
     }
-    
-    :host paper-input {
-      margin-left: auto;
-      margin-right: auto;
-      width: 90%;
+    .header:before{
+      content:"";
+      display:block;
+      position:absolute;
+      margin-top:-90px;
+      margin-left:40%;
+      width:80px;height:85px;
+      background:url(/images/icon-nametag.png) no-repeat;
     }
-    
-    :host paper-material {
-      padding: 15px;
+    paper-input::shadow input:-webkit-autofill{
+      background:#fff;
+      -webkit-box-shadow: inset 0 0 0px 9999px white;
     }
+    form{
+      @apply(--things-loose-padding);
+      padding-top:10px;
+    }
+    paper-button{
+      @apply(--things-button);
+      color:#fff;
+    }
+    #submitButton{
+      @apply(--things-button-important);
+      float:right;
+      width:30%;
+      color:#fff;
+    }
+    div{margin-top:50px;}
     
-    #resetbutton {
+    /*#resetbutton {
       margin-top: 10px;
       width: 90%;
       background: #4285f4;
@@ -72,15 +93,16 @@ Example:
       width: 90%;
       background: #ff8c00;
       color: white;
-    }
+    }*/
     </style>
 
-    <paper-material elevation="[[elevation]]" on-keypress="keypressHandler">
-      <h3>
-        <things-i18n-msg msgid="title.[[title]]">[[title]]</things-i18n-msg>
-      </h3>
+    <paper-material elevation="1" on-keypress="keypressHandler">
+      <span class="header">
+        <things-i18n-msg msgid="title.[[title]]">[[title]] </things-i18n-msg>
+        <strong>LOGIN</strong>
+      </span>
 
-      <content select="[avatar]"></content>
+      <!-- <content select="[avatar]"></content> -->
 
       <form is="iron-form" 
             id="loginForm" 
@@ -113,18 +135,18 @@ Example:
                       auto-validate>
         </paper-input>
 
-        <paper-button id="submitButton" raised disabled on-click="submitHandler">
-          <paper-spinner id="spinner" hidden></paper-spinner>
-          <things-i18n-msg msgid="button.sign_in">Sign In</things-i18n-msg>
-        </paper-button>
-
         <div>
-          <a href="#" on-click="_onSignupTap">
+          <paper-button on-click="_onSignupTap">
             <things-i18n-msg msgid="label.sign_up">Sign Up</things-i18n-msg>
-          </a>
-          <a href="#" on-click="_onRequestpInitPass">
+          </paper-button>
+          <paper-button on-click="_onRequestpInitPass">
             <things-i18n-msg msgid="label.reset_password">Reset Password</things-i18n-msg>
-          </a>
+          </paper-button>
+
+          <paper-button id="submitButton" raised disabled on-click="submitHandler">
+            <paper-spinner id="spinner" hidden></paper-spinner>
+            <things-i18n-msg msgid="button.sign_in">Sign In</things-i18n-msg>
+          </paper-button>
         </div>
       </form>
     </paper-material>
