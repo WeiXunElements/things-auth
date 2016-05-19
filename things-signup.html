@@ -26,6 +26,19 @@ Example:
 
 <dom-module id="things-signup">
   <template>
+    <style>
+      :host{
+        @apply(--things-loose-padding)
+      }
+      paper-button{
+        @apply(--things-button);
+        float:right;
+        margin-top:15px;
+      }
+      .btn-submit{
+        @apply(--things-button-important)
+      }
+    </style>
     <form is="iron-form" 
       id="form" 
       action=[[action]]
@@ -52,7 +65,7 @@ Example:
       <paper-input id="pw" required name="encrypted_password" type="password" label="password"></paper-input>
       <paper-input id="confirmed-pw" auto-validate required name="confirmed-password" type="password" label="confirm password" validator ="_passwordValidate" errorMessage ="Password mismatch password and confirmed password"></paper-input>
 
-      <paper-button raised on-click ="_submitMyForm">submit</paper-button>
+      <paper-button class="btn-submit" raised on-click ="_submitMyForm">submit</paper-button>
       <paper-button raised on-click ="_resetMyForm">reset</paper-button>
     </form>
   </template>
