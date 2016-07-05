@@ -298,7 +298,7 @@ Example:
 
       onFormChange: function(event) {
         // Validate the entire form to see if we should enable the `Submit` button.
-        submitButton.disabled = !loginForm.validate();
+        this.$.submitButton.disabled = !this.$.loginForm.validate();
       },
 
       _onSignupTap: function (event) {
@@ -348,12 +348,12 @@ Example:
       submitHandler: function (event) {
         spinner.active = true;
         spinner.hidden = false;
-        submitButton.disabled = true;
-        loginForm.submit();
+        this.$.submitButton.disabled = true;
+        this.$.loginForm.submit();
       },
       
       resetHandler: function (event) {
-        loginForm.reset();
+        this.$.loginForm.reset();
       },
 
       keypressHandler: function(event, detail, sender) {
@@ -386,7 +386,7 @@ Example:
         // 1. save user information
         this.set('globals.user', user);
         // 2. reset login form
-        loginForm.reset();
+        this.$.loginForm.reset();
         // 3. fire event 
         this.fire('things-login-succeed');
         // 4. move to page
