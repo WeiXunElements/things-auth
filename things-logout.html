@@ -15,20 +15,20 @@
     Polymer({
       is: 'things-logout',
 
-      behaviors: [ 
+      behaviors: [
         Things.GlobalBehavior,
         Things.MsgBoxBehavior
       ],
 
       properties: {
-        action: {
+        logoutPath: {
           type: String,
           value: ''
         },
 
         logoutUrl: {
           type: String,
-          computed: '_computeLogoutUrl(globals.baseUrl, action)'
+          computed: '_computeLogoutUrl(globals.baseUrl, logoutPath)'
         },
 
         _signoutAjax: {
@@ -43,7 +43,7 @@
       },
 
       listeners: {
-        'logout.tap' : 'logout'
+        'logout.tap': 'logout'
       },
 
       _computeLogoutUrl: function(baseUrl, url) {
@@ -51,17 +51,18 @@
       },
 
       logout: function(e) {
-        if(this.isSignedIn()) {
+        console.log(this.isSignedIn());
+        if (this.isSignedIn()) {
           this.signout(this.logoutUrl);
         }
       },
 
-      isSignedIn:function () {
-        return this.get('globals.user') ? true : false; 
+      isSignedIn: function() {
+        return this.get('globals.user') ? true : false;
       },
 
       signout: function(logoutUrl) {
-        this.set('_signoutAjax',document.createElement('iron-ajax'));
+        this.set('_signoutAjax', document.createElement('iron-ajax'));
         this.listen(this._signoutAjax, 'response', '_signoutSuccess');
         this.listen(this._signoutAjax, 'error', '_signoutFailure');
 
@@ -80,7 +81,7 @@
       },
 
       _signoutFailure: function(event) {
-        if(event && event.detail && event.detail.error && event.detail.error.target && event.detail.error.target.statusText) {
+        if (event && event.detail && event.detail.error && event.detail.error.target && event.detail.error.target.statusText) {
           this.openInfoMsg(event.detail.error.target.statusText);
         } else {
           this.openInfoMsg('Failed to Logout');
