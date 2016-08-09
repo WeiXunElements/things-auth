@@ -8,6 +8,7 @@
 
 <link rel="import" href="../things-form/things-form-behavior.html">
 <link rel="import" href="../things-spinner/things-spinner-behavior.html">
+<link rel="import" href="../things-msg-box-behavior/things-msg-box-behavior.html">
 
 <!--
 A comment describing this element
@@ -49,6 +50,7 @@ Example:
       last-response="{{lastResponse}}">
       
       <paper-input required name ="name" label="User Name"></paper-input>
+
       <gold-email-input auto-validate required name="email" label="Email Address"></gold-email-input>
 
       <!--paper-input required name ="locale" label="Locale"></paper-input>
@@ -82,22 +84,42 @@ Example:
       
       behaviors: [
         Things.FormBehavior,
-        Things.SpinnerBehavior
+        Things.SpinnerBehavior,
+        Things.MsgBoxBehavior
       ],
+
+      listeners: {
+        'iron-form-response': '_successResponseHandler',
+        'iron-form-error': '_errorResponseHandler'
+      },
       
       _successResponseHandler: function(event) {
-        this.stopSpinner()
-        this.fire("things-signup-success",this.serializeMyForm());
+        this.stopSpinner();
+        var me = this;
+        
+        this.openInfoMsg({
+          title: 'User registering is on processing.',
+          text: 'You can check result of acceptance through your email.'
+        }, function() {
+          me.fire("things-signup-success", me.serializeMyForm());
+        });
       },
       
       _errorResponseHandler: function(event) {
-        this.stopSpinner()
-        this.fire("things-signup-failure",event.detail);
+        this.stopSpinner();
+        var me = this;
+
+        this.openConfirmMsg({
+          type: 'warning',
+          title: 'Invalid Input',
+          text: 'Typed information is not valid.'
+        });
       },
       
       _submitMyForm: function(event) {
-        if(this._passwordValidate()) { 
+        if(this._passwordValidate()) {
           this.$['form'].submit();
+          this.fire('things-signup-submited');
         } else { 
           this.openInfoMsg('Password mismatch password and confirmed password'); 
         }
