@@ -7,18 +7,18 @@
 <link rel="import" href="../gold-email-input/gold-email-input.html">
 <link rel="import" href="../things-global-behavior/things-global-behavior.html">
 <link rel="import" href="../things-msg-box-behavior/things-msg-box-behavior.html">
+<link rel="import" href="../things-i18n-msg/things-i18n-msg.html">
 
 <link rel="import" href="./things-signup.html">
 <link rel="import" href="./things-password-init.html">
-
 <!--
 A things login form asking for login and password.
 
 Example:
 
-<things-login data-route="login" 
+<things-login data-route="login"
               route ="{{route}}"
-              title="Things Label Management" 
+              title="Things Label Management"
               login-path="login"
               content-type="application/x-www-form-urlencoded"
               success-route="list"
@@ -32,375 +32,392 @@ Example:
 @demo demo/index.html
 -->
 <dom-module id="things-login">
-  <template>
-    <style>
-    :host {
-      display: block;
-      background-image:url(/images/bg-rail.png),url(/images/bg-blue.png),url(/images/bg-green.png);
-      background-position:50% 100%, 0 0, 100% 50%;
-      background-repeat:no-repeat;
-      background-color:#f1f1f1;
-    }
-    paper-material {
-      @apply(--things-login)
-    }
-    .header {
-      display:block;
-      padding-top:30px;
-      font-size:35px;
-      color:var(--things-primary-text-color);
-      font-weight:300;
-      text-align:center;
-      line-height:40px;
-    }
-    .header:before {
-      content:"";
-      display:block;
-      margin:auto;
-      margin-top:-90px;
-      width:80px;height:85px;
-      background:url(/images/icon-nametag.png) no-repeat;
-    }
-    paper-input::shadow input:-webkit-autofill {
-      background:#fff;
-      -webkit-box-shadow: inset 0 0 0px 9999px white;
-    }
-    form {
-      @apply(--things-loose-padding);
-      padding-top:10px;
-    }
-    paper-button {
-      @apply(--things-button);
-      color:#fff;
-    }
-    #submitButton {
-      @apply(--things-button-important);
-      float:right;
-      width:30%;
-      color:#fff;
-    }
-    div {
-      margin-top:50px;
-    }
-    @media only all and (max-width:600px) {paper-button {padding:9px 7px 7px 7px !important;margin:0;width:initial !important}}
-    @media only all and (max-width:600px) {form {padding-left:12px;padding-right:12px}}
-    </style>
+    <template>
+        <style>
+            :host {
+                display: block;
+                background-image: url(/images/bg-rail.png), url(/images/bg-blue.png), url(/images/bg-green.png);
+                background-position: 50% 100%, 0 0, 100% 50%;
+                background-repeat: no-repeat;
+                background-color: #f1f1f1;
+            }
 
-    <paper-material elevation="1" on-keypress="keypressHandler">
-      <span class="header">
+            paper-material {
+                @apply(--things-login)
+            }
+
+            .header {
+                display: block;
+                padding-top: 30px;
+                font-size: 35px;
+                color: var(--things-primary-text-color);
+                font-weight: 300;
+                text-align: center;
+                line-height: 40px;
+            }
+
+            .header:before {
+                content: "";
+                display: block;
+                margin: auto;
+                margin-top: -90px;
+                width: 80px;
+                height: 85px;
+                background: url(/images/icon-nametag.png) no-repeat;
+            }
+
+            paper-input::shadow input:-webkit-autofill {
+                background: #fff;
+                -webkit-box-shadow: inset 0 0 0px 9999px white;
+            }
+
+            form {
+                @apply(--things-loose-padding);
+                padding-top: 10px;
+            }
+
+            paper-button {
+                @apply(--things-button);
+                color: #fff;
+            }
+
+            #submitButton {
+                @apply(--things-button-important);
+                float: right;
+                width: 30%;
+                color: #fff;
+            }
+
+            div {
+                margin-top: 50px;
+            }
+
+            @media only all and (max-width:600px) {
+                paper-button {
+                    padding: 9px 7px 7px 7px !important;
+                    margin: 0;
+                    width: initial !important
+                }
+            }
+
+            @media only all and (max-width:600px) {
+                form {
+                    padding-left: 12px;
+                    padding-right: 12px
+                }
+            }
+
+        </style>
+
+        <paper-material elevation="1" on-keypress="keypressHandler">
+            <span class="header">
         <strong>LOGIN</strong>
       </span>
 
-      <form is="iron-form" 
-            id="loginForm" 
-            headers="[[headers]]"
-            login-path="[[loginPath]]"
-            action="{{action}}" 
-            content-type="[[contentType]]" 
-            method="[[method]]"
-            with-credentials=true>
+            <form is="iron-form" id="loginForm" headers="[[headers]]" login-path="[[loginPath]]" action="{{action}}" content-type="[[contentType]]" method="[[method]]" with-credentials=true>
 
-        <paper-input  id="username"
-                      name="email" 
-                      type="text" 
-                      label="[[usernameInputLabel]]" 
-                      value="{{username}}" 
-                      pattern="[[usernameValidationPattern]]" 
-                      error-message="[[usernameErrorMessage]]"
-                      required
-                      auto-validate>
-        </paper-input>
+                <paper-input id="username" name="email" type="text" label="[[usernameInputLabel]]" value="{{username}}" pattern="[[usernameValidationPattern]]" error-message="[[usernameErrorMessage]]" required auto-validate>
+                </paper-input>
 
-        <paper-input  id="password"
-                      name="password"
-                      type="password" 
-                      label="[[passwordInputLabel]]"
-                      value="{{password}}" 
-                      pattern="[[passwordValidationPattern]]" 
-                      error-message="[[passwordErrorMessage]]"
-                      required
-                      auto-validate>
-        </paper-input>
+                <paper-input id="password" name="password" type="password" label="[[passwordInputLabel]]" value="{{password}}" pattern="[[passwordValidationPattern]]" error-message="[[passwordErrorMessage]]" required auto-validate>
+                </paper-input>
 
-        <div>
-          <paper-button on-click="_onSignupTap">
-            <things-i18n-msg msgid="label.sign_up">Sign Up</things-i18n-msg>
-          </paper-button>
-          <paper-button on-click="_onRequestpInitPass">
-            <things-i18n-msg msgid="label.reset_password">Reset Password</things-i18n-msg>
-          </paper-button>
+                <div>
+                    <paper-button on-click="_onSignupTap">
+                        <things-i18n-msg auto msgid="label.sign_up">Sign Up</things-i18n-msg>
+                    </paper-button>
+                    <paper-button on-click="_onRequestpInitPass">
+                        <things-i18n-msg auto msgid="label.reset_password">Reset Password</things-i18n-msg>
+                    </paper-button>
 
-          <paper-button id="submitButton" raised disabled on-click="submitHandler">
-            <paper-spinner id="spinner" hidden></paper-spinner>
-            <things-i18n-msg msgid="button.sign_in">Sign In</things-i18n-msg>
-          </paper-button>
-        </div>
-      </form>
-    </paper-material>
-  </template>
+                    <paper-button id="submitButton" raised disabled on-click="submitHandler">
+                        <paper-spinner id="spinner" hidden></paper-spinner>
+                        <things-i18n-msg auto msgid="button.sign_in">Sign In</things-i18n-msg>
+                    </paper-button>
+                </div>
+            </form>
+        </paper-material>
+    </template>
 
-  <script>
-    Polymer({
+    <script>
+        Polymer({
 
-      is: 'things-login',
-      
-      properties: {
-        /**
-         * Label for the title
-         * @type {string}
-         * @default Login
-         */
-        title: {
-          type: String,
-          value: 'Login'
-        },
+            is: 'things-login',
 
-        /**
-         * [elevation(음영높이) for login form]
-         * @type {Number}
-         */
-        elevation: {
-          type: Number,
-          value: 4
-        },
+            properties: {
+                /**
+                 * Label for the title
+                 * @type {string}
+                 * @default Login
+                 */
+                title: {
+                    type: String,
+                    value: 'Login'
+                },
 
-        /**
-         * successRoute when login success will routing to the page
-         * @type {String}
-         */
-        successRoute: {
-          type: String,
-          value: '/'
-        },
+                /**
+                 * [elevation(음영높이) for login form]
+                 * @type {Number}
+                 */
+                elevation: {
+                    type: Number,
+                    value: 4
+                },
 
-        /**
-         * Label for the username input.
-         * @type {string}
-         */
-        usernameInputLabel: {
-          type: String,
-          value: 'Username'
-        },
+                /**
+                 * successRoute when login success will routing to the page
+                 * @type {String}
+                 */
+                successRoute: {
+                    type: String,
+                    value: '/'
+                },
 
-        /**
-         * Pattern used to validate username,  ex: '^[a-zA-Z0-9]+$'
-         * @type {string}
-         */
-        usernameValidationPattern: {
-          type: String
-        },
+                /**
+                 * Label for the username input.
+                 * @type {string}
+                 */
+                usernameInputLabel: {
+                    type: String,
+                    value: 'Username'
+                },
 
-        /**
-         * Error message displayed if `usernameValidationPattern` is not matched.
-         * @type {string}
-         */
-        usernameErrorMessage: {
-          type: String,
-          value: 'letters and numbers only'
-        },
+                /**
+                 * Pattern used to validate username,  ex: '^[a-zA-Z0-9]+$'
+                 * @type {string}
+                 */
+                usernameValidationPattern: {
+                    type: String
+                },
 
-        /**
-         * Label for the password input.
-         * @type {string}
-         */
-        passwordInputLabel: {
-          type: String,
-          value: 'Password'
-        },
+                /**
+                 * Error message displayed if `usernameValidationPattern` is not matched.
+                 * @type {string}
+                 */
+                usernameErrorMessage: {
+                    type: String,
+                    value: 'letters and numbers only'
+                },
 
-        /**
-         * Pattern used to validate password, ex: '^[a-zA-Z0-9]+$'
-         * @type {string}
-         */
-        passwordValidationPattern: {
-          type: String
-        },
+                /**
+                 * Label for the password input.
+                 * @type {string}
+                 */
+                passwordInputLabel: {
+                    type: String,
+                    value: 'Password'
+                },
 
-        /**
-         * Error message displayed if `passwordValidationPattern` is not matched.
-         * @type {string}
-         */
-        passwordErrorMessage: {
-          type: Object,
-          value :'letters and numbers only'
-        },
+                /**
+                 * Pattern used to validate password, ex: '^[a-zA-Z0-9]+$'
+                 * @type {string}
+                 */
+                passwordValidationPattern: {
+                    type: String
+                },
 
-        /**
-         * [headers description]
-         * @type {Object}
-         */
-        headers: {
-          type: Object,
-          value: ""
-        },
+                /**
+                 * Error message displayed if `passwordValidationPattern` is not matched.
+                 * @type {string}
+                 */
+                passwordErrorMessage: {
+                    type: Object,
+                    value: 'letters and numbers only'
+                },
 
-        /**
-         * [action description]
-         * @type {Object}
-         */
-        loginPath: {
-          type: String,
-          notify: true
-        },
+                /**
+                 * [headers description]
+                 * @type {Object}
+                 */
+                headers: {
+                    type: Object,
+                    value: ""
+                },
 
-        /**
-         * [action description]
-         * @type {Object}
-         */
-        action: {
-          type: String,
-          computed: '_computeActionUrl(globals.baseUrl, loginPath)'
-        },
+                /**
+                 * [action description]
+                 * @type {Object}
+                 */
+                loginPath: {
+                    type: String,
+                    notify: true
+                },
 
-        /**
-         * [contentType description]
-         * @type {Object}
-         */
-        contentType: {
-          type: String,
-          value: 'application/x-www-form-urlencoded'
-        },
-        
-        /**
-         * 
-         */
-        method: {
-          type: String,
-          value: 'POST'
-        },
+                /**
+                 * [action description]
+                 * @type {Object}
+                 */
+                action: {
+                    type: String,
+                    computed: '_computeActionUrl(globals.baseUrl, loginPath)'
+                },
 
-        /**
-         * Label for the submit button
-         * @type {string}
-         * @default Submit
-         */
-        submitLabel: {
-          type: String,
-          value: 'Submit'
-        }
+                /**
+                 * [contentType description]
+                 * @type {Object}
+                 */
+                contentType: {
+                    type: String,
+                    value: 'application/x-www-form-urlencoded'
+                },
 
-        /**
-         * 로그인 성공시 fire
-         * 
-         * @event things-login-succeed
-         */
-      },
+                /**
+                 *
+                 */
+                method: {
+                    type: String,
+                    value: 'POST'
+                },
 
-      behaviors: [
-        Things.GlobalBehavior,
-        Things.MsgBoxBehavior
-      ],
+                /**
+                 * Label for the submit button
+                 * @type {string}
+                 * @default Submit
+                 */
+                submitLabel: {
+                    type: String,
+                    value: 'Submit'
+                }
 
-      listeners : {
-        'change' : 'onFormChange',
-        'iron-form-submit': '_afterFormSubmit',
-        'iron-form-response' :'_successResponse',
-        'iron-form-error' : '_failureResponse'
-      },
+                /**
+                 * 로그인 성공시 fire
+                 *
+                 * @event things-login-succeed
+                 */
+            },
 
-      onFormChange: function(event) {
-        // Validate the entire form to see if we should enable the `Submit` button.
-        this.$.submitButton.disabled = !this.$.loginForm.validate();
-      },
+            behaviors: [
+                Things.GlobalBehavior,
+                Things.MsgBoxBehavior
+            ],
 
-      _onSignupTap: function (event) {
-        var signup = document.createElement("things-signup");
-        signup.title = 'Sign Up';
-        signup.actionUrl = 'users/register';
-        signup.method = 'POST';
+            listeners: {
+                'change': 'onFormChange',
+                'iron-form-submit': '_afterFormSubmit',
+                'iron-form-response': '_successResponse',
+                'iron-form-error': '_failureResponse'
+            },
 
-        signup.addEventListener("things-signup-success", function(event) {
-          var eventDetail = this;
-          var event = new CustomEvent('things-close-popup-view', { 'detail': eventDetail });
-          document.dispatchEvent(event);
+            onFormChange: function(event) {
+                // Validate the entire form to see if we should enable the `Submit` button.
+                this.$.submitButton.disabled = !this.$.loginForm.validate();
+            },
+
+            _onSignupTap: function(event) {
+                var signup = document.createElement("things-signup");
+                signup.title = 'Sign Up';
+                signup.actionUrl = 'users/register';
+                signup.method = 'POST';
+
+                signup.addEventListener("things-signup-success", function(event) {
+                    var eventDetail = this;
+                    var event = new CustomEvent('things-close-popup-view', {
+                        'detail': eventDetail
+                    });
+                    document.dispatchEvent(event);
+                });
+
+                signup.addEventListener("things-signup-failure", function(event) {
+                    var response = event.detail.request.xhr.response;
+                    this.openResponseError(response);
+                })
+
+                var eventDetail = {
+                    'view': signup,
+                    'modal': true,
+                    'openCallback': null
+                };
+                var event = new CustomEvent('things-open-popup-view', {
+                    'detail': eventDetail
+                });
+                document.dispatchEvent(event);
+            },
+
+            _onRequestpInitPass: function(event) {
+                var pwInit = document.createElement("things-password-init");
+                pwInit.title = "Reset Password";
+                pwInit.actionUrl = "users/request_init_pass";
+                pwInit.method = "POST";
+
+                pwInit.addEventListener("things-password-init-success", function(event) {
+                    var eventDetail = this;
+                    var event = new CustomEvent('things-close-popup-view', {
+                        'detail': eventDetail
+                    });
+                    document.dispatchEvent(event);
+                });
+
+                pwInit.addEventListener("things-password-init-failure", function(event) {
+                    var response = event.detail.request.xhr.response;
+                    this.openResponseError(response);
+                });
+
+                var eventDetail = {
+                    'view': pwInit,
+                    'modal': true,
+                    'openCallback': null
+                };
+                var event = new CustomEvent('things-open-popup-view', {
+                    'detail': eventDetail
+                });
+                document.dispatchEvent(event);
+            },
+
+            submitHandler: function(event) {
+                spinner.active = true;
+                spinner.hidden = false;
+                this.$.submitButton.disabled = true;
+                this.$.loginForm.submit();
+            },
+
+            resetHandler: function(event) {
+                this.$.loginForm.reset();
+            },
+
+            keypressHandler: function(event, detail, sender) {
+                var code = event.keyCode;
+                if (code == 13) {
+                    this.submitHandler(event);
+                }
+            },
+
+            _computeActionUrl: function(baseUrl, url) {
+                return baseUrl + '/' + url;
+            },
+
+            _afterFormSubmit: function(event) {
+                spinner.active = false;
+                spinner.hidden = true;
+                submitButton.disabled = false;
+            },
+
+            _successResponse: function(event) {
+                var user = event.detail.__data__.response;
+                delete user['encryptedPassword'];
+                delete user['creator'];
+                delete user['updater'];
+                delete user['creatorId'];
+                delete user['createdAt'];
+                delete user['updaterId'];
+                delete user['updatedAt'];
+
+                // 1. save user information
+                this.set('globals.user', user);
+                // 2. reset login form
+                this.$.loginForm.reset();
+                // 3. fire event
+                this.fire('things-login-succeed');
+                // 4. move to page
+                page(this.successRoute);
+
+                location.reload(true);
+            },
+
+            _failureResponse: function(event) {
+                this.openInfoMsg('Login failure.');
+            }
+
         });
 
-        signup.addEventListener("things-signup-failure", function(event) {
-          var response = event.detail.request.xhr.response;
-          this.openResponseError(response);
-        })
-
-        var eventDetail = { 'view': signup, 'modal': true, 'openCallback': null };
-        var event = new CustomEvent('things-open-popup-view', { 'detail': eventDetail });
-        document.dispatchEvent(event);
-      },
-
-      _onRequestpInitPass: function (event) {
-        var pwInit = document.createElement("things-password-init");
-        pwInit.title = "Reset Password";
-        pwInit.actionUrl = "users/request_init_pass";
-        pwInit.method = "POST";
-
-        pwInit.addEventListener("things-password-init-success", function(event) {
-          var eventDetail = this;
-          var event = new CustomEvent('things-close-popup-view', { 'detail': eventDetail });
-          document.dispatchEvent(event);
-        });
-
-        pwInit.addEventListener("things-password-init-failure", function(event) {
-          var response = event.detail.request.xhr.response;
-          this.openResponseError(response);
-        });
-        
-        var eventDetail = { 'view': pwInit, 'modal': true, 'openCallback': null };
-        var event = new CustomEvent('things-open-popup-view', { 'detail': eventDetail });
-        document.dispatchEvent(event);
-      },
-
-      submitHandler: function (event) {
-        spinner.active = true;
-        spinner.hidden = false;
-        this.$.submitButton.disabled = true;
-        this.$.loginForm.submit();
-      },
-      
-      resetHandler: function (event) {
-        this.$.loginForm.reset();
-      },
-
-      keypressHandler: function(event, detail, sender) {
-        var code = event.keyCode;
-        if(code == 13) {
-          this.submitHandler(event);
-        }
-      },
-
-      _computeActionUrl: function(baseUrl, url) {
-        return baseUrl + '/' + url;
-      },
-
-      _afterFormSubmit: function(event) {
-        spinner.active = false;
-        spinner.hidden = true;
-        submitButton.disabled = false;
-      },
-
-      _successResponse: function(event) {
-        var user = event.detail.__data__.response;
-        delete user['encryptedPassword'];
-        delete user['creator'];
-        delete user['updater'];
-        delete user['creatorId'];
-        delete user['createdAt'];
-        delete user['updaterId'];
-        delete user['updatedAt'];
-
-        // 1. save user information
-        this.set('globals.user', user);
-        // 2. reset login form
-        this.$.loginForm.reset();
-        // 3. fire event 
-        this.fire('things-login-succeed');
-        // 4. move to page
-        page(this.successRoute);
-
-        location.reload(true);
-      },
-
-      _failureResponse: function(event) {
-        this.openInfoMsg('Login failure.');
-      }
-
-    });
-  </script>
+    </script>
 </dom-module>
