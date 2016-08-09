@@ -110,24 +110,29 @@ Example:
         </style>
 
         <paper-material elevation="1" on-keypress="keypressHandler">
+            <things-i18n-msg auto msgid="text.login-failure" msg="{{tLoginFailure}}" hidden>Login failure.</things-i18n-msg>
             <span class="header">
-        <strong>LOGIN</strong>
-      </span>
+              <strong><things-i18n-msg auto msgid="label.login">LOGIN</things-i18n-msg></strong>
+            </span>
 
             <form is="iron-form" id="loginForm" headers="[[headers]]" login-path="[[loginPath]]" action="{{action}}" content-type="[[contentType]]" method="[[method]]" with-credentials=true>
+                <things-i18n-msg auto msgid="label.id" msg="{{lUserId}}" hidden>ID</things-i18n-msg>
+                <things-i18n-msg auto msgid="label.password" msg="{{lPassword}}" hidden>Password</things-i18n-msg>
+                <things-i18n-msg auto msgid="label.sign-up" msg="{{lSignUp}}" hidden>Sign Up</things-i18n-msg>
+                <things-i18n-msg auto msgid="label.reset-password" msg="{{lResetPass}}" hidden>Reset Password</things-i18n-msg>
 
-                <paper-input id="username" name="email" type="text" label="[[usernameInputLabel]]" value="{{username}}" pattern="[[usernameValidationPattern]]" error-message="[[usernameErrorMessage]]" required auto-validate>
+                <paper-input id="username" name="email" type="text" label="[[lUserId]]" value="{{username}}" pattern="[[usernameValidationPattern]]" error-message="[[usernameErrorMessage]]" required auto-validate>
                 </paper-input>
 
-                <paper-input id="password" name="password" type="password" label="[[passwordInputLabel]]" value="{{password}}" pattern="[[passwordValidationPattern]]" error-message="[[passwordErrorMessage]]" required auto-validate>
+                <paper-input id="password" name="password" type="password" label="[[lPassword]]" value="{{password}}" pattern="[[passwordValidationPattern]]" error-message="[[passwordErrorMessage]]" required auto-validate>
                 </paper-input>
 
                 <div>
                     <paper-button on-click="_onSignupTap">
-                        <things-i18n-msg auto msgid="label.sign_up">Sign Up</things-i18n-msg>
+                        <things-i18n-msg auto msgid="button.sign_up">Sign Up</things-i18n-msg>
                     </paper-button>
                     <paper-button on-click="_onRequestpInitPass">
-                        <things-i18n-msg auto msgid="label.reset_password">Reset Password</things-i18n-msg>
+                        <things-i18n-msg auto msgid="button.reset_password">Reset Password</things-i18n-msg>
                     </paper-button>
 
                     <paper-button id="submitButton" raised disabled on-click="submitHandler">
@@ -174,15 +179,6 @@ Example:
                 },
 
                 /**
-                 * Label for the username input.
-                 * @type {string}
-                 */
-                usernameInputLabel: {
-                    type: String,
-                    value: 'Username'
-                },
-
-                /**
                  * Pattern used to validate username,  ex: '^[a-zA-Z0-9]+$'
                  * @type {string}
                  */
@@ -199,14 +195,6 @@ Example:
                     value: 'letters and numbers only'
                 },
 
-                /**
-                 * Label for the password input.
-                 * @type {string}
-                 */
-                passwordInputLabel: {
-                    type: String,
-                    value: 'Password'
-                },
 
                 /**
                  * Pattern used to validate password, ex: '^[a-zA-Z0-9]+$'
@@ -305,7 +293,7 @@ Example:
 
             _onSignupTap: function(event) {
                 var signup = document.createElement("things-signup");
-                signup.title = 'Sign Up';
+                signup.title = this.lSignUp;
                 signup.actionUrl = 'users/register';
                 signup.method = 'POST';
 
@@ -335,7 +323,7 @@ Example:
 
             _onRequestpInitPass: function(event) {
                 var pwInit = document.createElement("things-password-init");
-                pwInit.title = "Reset Password";
+                pwInit.title = this.lResetPass;
                 pwInit.actionUrl = "users/request_init_pass";
                 pwInit.method = "POST";
 
@@ -414,7 +402,7 @@ Example:
             },
 
             _failureResponse: function(event) {
-                this.openInfoMsg('Login failure.');
+                this.openInfoMsg(this.tLoginFailure);
             }
 
         });

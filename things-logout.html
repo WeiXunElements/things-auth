@@ -12,6 +12,7 @@
 
 <dom-module id="things-logout">
     <template>
+        <things-i18n-msg auto msgid="text.failed-logout" msg="{{tFailedLogout}}" hidden>Failed to Logout.</things-i18n-msg>
         <paper-icon-button id="logout" icon="{{icon}}"></paper-icon-button>
         <paper-tooltip for="logout" offset="0">
             <things-i18n-msg msgid="button.logout" auto>logout</things-i18n-msg>
@@ -91,7 +92,7 @@
                 if (event && event.detail && event.detail.error && event.detail.error.target && event.detail.error.target.statusText) {
                     this.openInfoMsg(event.detail.error.target.statusText);
                 } else {
-                    this.openInfoMsg('Failed to Logout');
+                    this.openInfoMsg(this.tFailedLogout);
                 }
             }
         });
