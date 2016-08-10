@@ -50,13 +50,12 @@ Example:
         <things-i18n-msg auto msgid="text.info-invalid" msg="{{tInfoInvalid}}" hidden>Typed information is not valid.</things-i18n-msg>
         <things-i18n-msg auto msgid="text.register-in-process" msg="{{tRegInProcess}}" hidden>User registering is on processing.</things-i18n-msg>
         <things-i18n-msg auto msgid="text.check-register-in-mail" msg="{{tCheckRegInMail}}" hidden>You can check result of acceptance through your email.</things-i18n-msg>
+        <things-i18n-msg msgid="label.user-name" msg="{{lUserName}}" auto hidden>User Name</things-i18n-msg>
+        <things-i18n-msg msgid="label.email-address" msg="{{lEmailAddress}}" auto hidden>Email Address</things-i18n-msg>
+        <things-i18n-msg msgid="label.password" msg="{{lPassword}}" auto hidden>Current Password</things-i18n-msg>
+        <things-i18n-msg msgid="label.confirmed-password" msg="{{lConfirmedPassword}}" auto hidden>Confirm Password</things-i18n-msg>
+
         <form is="iron-form" id="form" action=[[action]] headers="[[headers]]" content-type="application/json" method="[[method]]" last-response="{{lastResponse}}">
-
-            <things-i18n-msg msgid="label.user-name" msg="{{lUserName}}" auto hidden>User Name</things-i18n-msg>
-            <things-i18n-msg msgid="label.email-address" msg="{{lEmailAddress}}" auto hidden>Email Address</things-i18n-msg>
-            <things-i18n-msg msgid="label.password" msg="{{lPassword}}" auto hidden>Current Password</things-i18n-msg>
-            <things-i18n-msg msgid="label.confirmed-password" msg="{{lConfirmedPassword}}" auto hidden>Confirm Password</things-i18n-msg>
-
             <paper-input required name="name" label="[[lUserName]]"></paper-input>
 
             <gold-email-input auto-validate required name="email" label="[[lEmailAddress]]"></gold-email-input>

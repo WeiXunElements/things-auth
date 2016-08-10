@@ -27,7 +27,7 @@ Example:
 @demo demo/index.html
 -->
 
-<dom-module id="things-change-password">
+<dom-module id="things-request-active">
     <template>
         <style>
             :host {
@@ -45,28 +45,21 @@ Example:
             }
 
         </style>
-        <things-i18n-msg auto msgid="text.password-missmatch" msg="{{tPasswordMissmatch}}" hidden>Password mismatch password and confirmed password.</things-i18n-msg>
+
         <things-i18n-msg auto msgid="text.invalid-input" msg="{{tInvalidInput}}" hidden>Invalid Input.</things-i18n-msg>
         <things-i18n-msg auto msgid="text.info-invalid" msg="{{tInfoInvalid}}" hidden>Typed information is not valid.</things-i18n-msg>
-        <things-i18n-msg auto msgid="text.pw-changed" msg="{{tPasswordChanged}}" hidden>Password changed.</things-i18n-msg>
-        <things-i18n-msg auto msgid="text.pw-changed-msg" msg="{{tPasswordChangedMsg}}" hidden>Password changed succesfully.</things-i18n-msg>
 
         <form is="iron-form" id="form" action=[[action]] headers="[[headers]]" content-type="application/json" method="[[method]]" with-credentials=true last-response="{{lastResponse}}">
             <things-i18n-msg msgid="label.user-name" msg="{{lUserName}}" auto hidden>User Name</things-i18n-msg>
             <things-i18n-msg msgid="label.email-address" msg="{{lEmailAddress}}" auto hidden>Email Address</things-i18n-msg>
-            <things-i18n-msg msgid="label.current-password" msg="{{lCurrentPassword}}" auto hidden>Current Password</things-i18n-msg>
-            <things-i18n-msg msgid="label.new-password" msg="{{lNewPassword}}" auto hidden>New Password</things-i18n-msg>
-            <things-i18n-msg msgid="label.confirmed-password" msg="{{lConfirmedPassword}}" auto hidden>Confirm Password</things-i18n-msg>
+            <things-i18n-msg msgid="label.password" msg="{{lPassword}}" auto hidden>Password</things-i18n-msg>
 
             <paper-input required name="name" label="[[lUserName]]" value="{{userName}}" required auto-validate>
             </paper-input>
             <gold-email-input auto-validate required name="email" label="[[lEmailAddress]]" value="[[userEmail]]" readonly>
             </gold-email-input>
-            <paper-input id="current-pw" auto-validate required name="current_pass" type="password" label="[[lCurrentPassword]]">
+            <paper-input id="current-pw" auto-validate required name="current_pass" type="password" label="[[lPassword]]">
             </paper-input>
-            <paper-input id="new-pw" required name="new_pass" type="password" label="[[lNewPassword]]">
-            </paper-input>
-            <paper-input id="confirm-pw" auto-validate required name="confirm_pass" type="password" label="[[lConfirmedPassword]]" validator="_passwordValidate" errorMessage="[[tPasswordMissmatch]]">
             </paper-input>
 
             <paper-button class="btn-submit" raised on-click="_submitMyForm">
@@ -79,7 +72,7 @@ Example:
     </template>
     <script>
         Polymer({
-            is: 'things-change-password',
+            is: 'things-request-active',
 
             properties: {
                 currentUserInfo: {
@@ -111,10 +104,10 @@ Example:
                 this.stopSpinner();
                 var me = this;
                 this.openConfirmMsg({
-                    title: this.tPasswordChanged,
-                    text: this.tPasswordChangedMsg
+                    title: 'Request active success',
+                    text: 'Active requested succesfully.'
                 }, function() {
-                    me.fire("things-change-password-success", me.serializeMyForm());
+                    me.fire("things-reqeust-active-success", me.serializeMyForm());
                 });
             },
 
@@ -127,18 +120,13 @@ Example:
                     title: this.tInvalidInput,
                     text: this.tInfoInvalid
                 }, function() {
-                    me.fire("things-change-password-failure", event.detail);
+                    me.fire("things-request-active-failure", event.detail);
                 });
             },
 
             _submitMyForm: function(event) {
-                // this.$['form'].submit();
-                if (this._passwordValidate()) {
-                    this.$['form'].submit();
-                    this.fire('things-change-password-submited');
-                } else {
-                    this.openInfoMsg(this.tPasswordMissmatch);
-                }
+                this.$['form'].submit();
+                this.fire('things-request-active-submited');
             },
 
             _resetMyForm: function(event) {
@@ -148,9 +136,6 @@ Example:
             _currentUserInfoChanged: function(userInfo) {
                 this.userName = userInfo.name;
                 this.userEmail = userInfo.email;
-            },
-            _passwordValidate: function() {
-                return this.$.pw.value === this.$['confirmed-pw'].value;
             }
         });
 
