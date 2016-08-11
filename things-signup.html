@@ -8,133 +8,144 @@
 
 <link rel="import" href="../things-i18n-msg/things-i18n-msg.html">
 <link rel="import" href="../things-form/things-form-behavior.html">
+<link rel="import" href="../things-resource-combo/things-code-combo.html">
+<link rel="import" href="../things-resource-combo/things-resource-combo.html">
 <link rel="import" href="../things-spinner/things-spinner-behavior.html">
 <link rel="import" href="../things-msg-box-behavior/things-msg-box-behavior.html">
 
 <!--
-A comment describing this element
-
-Example:
-
-    <my-elem></my-elem>
-
-Example:
-
-    <my-elem>
-      <h2>Hello my-elem</h2>
-    </my-elem>
-
-@demo demo/index.html
+    회원가입 화면 
 -->
 
 <dom-module id="things-signup">
-    <template>
-        <style>
-            :host {
-                @apply(--things-loose-padding)
-            }
+  <template>
+    <style>
+      :host {
+        @apply(--things-loose-padding)
+      }
 
-            paper-button {
-                @apply(--things-button);
-                float: right;
-                margin-top: 15px;
-            }
+      paper-button {
+        @apply(--things-button);
+        float: right;
+        margin-top: 15px;
+      }
 
-            .btn-submit {
-                @apply(--things-button-important)
-            }
+      .btn-submit {
+        @apply(--things-button-important)
+      }
+    </style>
 
-        </style>
-        <things-i18n-msg auto msgid="text.password-missmatch" msg="{{tPasswordMissmatch}}" hidden>Password mismatch password and confirmed password.</things-i18n-msg>
-        <things-i18n-msg auto msgid="text.invalid-input" msg="{{tInvalidInput}}" hidden>Invalid Input.</things-i18n-msg>
-        <things-i18n-msg auto msgid="text.info-invalid" msg="{{tInfoInvalid}}" hidden>Typed information is not valid.</things-i18n-msg>
-        <things-i18n-msg auto msgid="text.register-in-process" msg="{{tRegInProcess}}" hidden>User registering is on processing.</things-i18n-msg>
-        <things-i18n-msg auto msgid="text.check-register-in-mail" msg="{{tCheckRegInMail}}" hidden>You can check result of acceptance through your email.</things-i18n-msg>
-        <things-i18n-msg msgid="label.user-name" msg="{{lUserName}}" auto hidden>User Name</things-i18n-msg>
-        <things-i18n-msg msgid="label.email-address" msg="{{lEmailAddress}}" auto hidden>Email Address</things-i18n-msg>
-        <things-i18n-msg msgid="label.password" msg="{{lPassword}}" auto hidden>Current Password</things-i18n-msg>
-        <things-i18n-msg msgid="label.confirmed-password" msg="{{lConfirmedPassword}}" auto hidden>Confirm Password</things-i18n-msg>
+    <things-i18n-msg auto msgid="text.password-missmatch" msg="{{tPasswordMissmatch}}" hidden>Password mismatch password and confirmed password.</things-i18n-msg>
+    <things-i18n-msg auto msgid="text.invalid-input" msg="{{tInvalidInput}}" hidden>Invalid Input.</things-i18n-msg>
+    <things-i18n-msg auto msgid="text.info-invalid" msg="{{tInfoInvalid}}" hidden>Typed information is not valid.</things-i18n-msg>
+    <things-i18n-msg auto msgid="text.register-in-process" msg="{{tRegInProcess}}" hidden>User registering is on processing.</things-i18n-msg>
+    <things-i18n-msg auto msgid="text.check-register-in-mail" msg="{{tCheckRegInMail}}" hidden>You can check result of acceptance through your email.</things-i18n-msg>
 
-        <form is="iron-form" id="form" action=[[action]] headers="[[headers]]" content-type="application/json" method="[[method]]" last-response="{{lastResponse}}">
-            <paper-input required name="name" label="[[lUserName]]"></paper-input>
+    <things-i18n-msg auto msgid="label.domain" msg="{{lDomain}}" hidden>Domain</things-i18n-msg>
+    <things-i18n-msg auto msgid="label.user-name" msg="{{lUserName}}" hidden>User Name</things-i18n-msg>
+    <things-i18n-msg auto msgid="label.email-address" msg="{{lEmailAddress}}" hidden>Email Address</things-i18n-msg>
+    <things-i18n-msg auto msgid="label.language" msg="{{lLocale}}" hidden>Locale</things-i18n-msg>
+    <things-i18n-msg auto msgid="label.password" msg="{{lPassword}}" hidden>Current Password</things-i18n-msg>
+    <things-i18n-msg auto msgid="label.confirmed-password" msg="{{lConfirmedPassword}}" hidden>Confirm Password</things-i18n-msg>
 
-            <gold-email-input auto-validate required name="email" label="[[lEmailAddress]]"></gold-email-input>
+    <form 
+      is="iron-form" 
+      id="form" 
+      action=[[action]] 
+      headers="[[headers]]" 
+      content-type="application/json" 
+      method="[[method]]" 
+      last-response="{{lastResponse}}">
+      <things-resource-combo required name="domain_id" label="[[lDomain]]" resource-url="domains/list" items-prop="" label-path="description" value-path="id"></things-resource-combo>
 
-            <!--paper-input required name ="locale" label="Locale"></paper-input>
-      <paper-input required name ="timezone" label="Timezone"></paper-input-->
+      <things-code-combo name="locale" label="[[lLocale]]" code-name="LOCALE"></things-code-combo>
 
-            <paper-input id="pw" required name="encrypted_password" type="password" label="[[lPassword]]">
-            </paper-input>
+      <paper-input required name="name" label="[[lUserName]]"></paper-input>
 
-            <paper-input id="confirmed-pw" auto-validate required name="confirmed-password" type="password" label="[[lConfirmedPassword]]" validator="_passwordValidate" errorMessage="Password mismatch password and confirmed password">
-            </paper-input>
+      <gold-email-input auto-validate required name="email" label="[[lEmailAddress]]"></gold-email-input>
 
-            <paper-button class="btn-submit" raised on-click="_submitMyForm">
-                <things-i18n-msg msgid="button.submit" auto>Submit</things-i18n-msg>
-            </paper-button>
-            <paper-button raised on-click="_resetMyForm">
-                <things-i18n-msg msgid="button.reset" auto>Reset</things-i18n-msg>
-            </paper-button>
-        </form>
-    </template>
+      <!--paper-input required name ="timezone" label="Timezone"></paper-input-->
 
-    <script>
-        Polymer({
-            is: 'things-signup',
+      <paper-input id="pw" required name="encrypted_password" type="password" label="[[lPassword]]"></paper-input>
 
-            properties: {},
+      <paper-input 
+        id="confirmed-pw" 
+        auto-validate 
+        required 
+        name="confirmed-password" 
+        type="password" 
+        label="[[lConfirmedPassword]]" 
+        validator="_passwordValidate" 
+        errorMessage="Password mismatch password and confirmed password">
+      </paper-input>
 
-            behaviors: [
-                Things.FormBehavior,
-                Things.SpinnerBehavior,
-                Things.MsgBoxBehavior
-            ],
+      <paper-button class="btn-submit" raised on-click="_submitMyForm">
+        <things-i18n-msg msgid="button.submit" auto>Submit</things-i18n-msg>
+      </paper-button>
+  
+      <paper-button raised on-click="_resetMyForm">
+        <things-i18n-msg msgid="button.reset" auto>Reset</things-i18n-msg>
+      </paper-button>
+    </form>
+  </template>
 
-            listeners: {
-                'iron-form-response': '_successResponseHandler',
-                'iron-form-error': '_errorResponseHandler'
-            },
+  <script>
+    Polymer({
+      is: 'things-signup',
 
-            _successResponseHandler: function(event) {
-                this.stopSpinner();
-                var me = this;
+      properties: {
+      },
 
-                this.openConfirmMsg({
-                    title: this.tRegInProcess,
-                    text: this.tCheckRegInMail
-                }, function() {
-                    me.fire("things-signup-success", me.serializeMyForm());
-                });
-            },
+      behaviors: [
+        Things.FormBehavior,
+        Things.SpinnerBehavior,
+        Things.MsgBoxBehavior
+      ],
 
-            _errorResponseHandler: function(event) {
-                this.stopSpinner();
-                var me = this;
+      listeners: {
+        'iron-form-response': '_successResponseHandler',
+        'iron-form-error': '_errorResponseHandler'
+      },
 
-                this.openConfirmMsg({
-                    type: 'warning',
-                    title: this.tInvalidInput,
-                    text: this.tInfoInvalid
-                });
-            },
+      _successResponseHandler: function(event) {
+        this.stopSpinner();
+        var me = this;
 
-            _submitMyForm: function(event) {
-                if (this._passwordValidate()) {
-                    this.$['form'].submit();
-                    this.fire('things-signup-submited');
-                } else {
-                    this.openInfoMsg(this.tPasswordMissmatch);
-                }
-            },
-
-            _resetMyForm: function(event) {
-                this.resetMyForm();
-            },
-
-            _passwordValidate: function() {
-                return this.$.pw.value === this.$['confirmed-pw'].value;
-            }
+        this.openConfirmMsg({
+          title: this.tRegInProcess,
+          text: this.tCheckRegInMail
+        }, function() {
+          me.fire("things-signup-success", me.serializeMyForm());
         });
+      },
 
-    </script>
+      _errorResponseHandler: function(event) {
+        this.stopSpinner();
+        var me = this;
+
+        this.openConfirmMsg({
+          type: 'warning',
+          title: this.tInvalidInput,
+          text: this.tInfoInvalid
+        });
+      },
+
+      _submitMyForm: function(event) {
+        if (this._passwordValidate()) {
+          this.$['form'].submit();
+          this.fire('things-signup-submited');
+        } else {
+          this.openInfoMsg(this.tPasswordMissmatch);
+        }
+      },
+
+      _resetMyForm: function(event) {
+        this.resetMyForm();
+      },
+
+      _passwordValidate: function() {
+        return this.$.pw.value === this.$['confirmed-pw'].value;
+      }
+    });
+  </script>
 </dom-module>
