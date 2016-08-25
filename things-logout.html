@@ -85,7 +85,7 @@
                 this.fire('things-logout-succeed');
                 this.unlisten(this._signoutAjax, 'response', '_signoutSuccess');
                 this.unlisten(this._signoutAjax, 'error', '_signoutFailure');
-                location.reload(true);
+                page('/login');
             },
 
             _signoutFailure: function(event) {
