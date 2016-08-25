@@ -130,19 +130,19 @@ Example:
                 </paper-input>
 
                 <div>
-                    <paper-button on-click="_onSignupTap">
+                    <paper-button on-tap="_onSignupTap">
                         <things-i18n-msg auto msgid="button.sign-up">Sign Up</things-i18n-msg>
                     </paper-button>
 
-                    <paper-button on-click="_onRequestActive">
+                    <paper-button on-tap="_onRequestActive">
                         <things-i18n-msg auto msgid="button.request-active">Request Active</things-i18n-msg>
                     </paper-button>
 
-                    <paper-button on-click="_onRequestpInitPass">
+                    <paper-button on-tap="_onRequestpInitPass">
                         <things-i18n-msg auto msgid="button.reset-password">Reset Password</things-i18n-msg>
                     </paper-button>
 
-                    <paper-button id="submitButton" raised disabled on-click="submitHandler">
+                    <paper-button id="submitButton" raised disabled on-tap="submitHandler">
                         <paper-spinner id="spinner" hidden></paper-spinner>
                         <things-i18n-msg auto msgid="button.sign-in">Sign In</things-i18n-msg>
                     </paper-button>
@@ -433,7 +433,8 @@ Example:
                 // 3. fire event
                 this.fire('things-login-succeed');
                 // 4. move to page
-                page(this.successRoute);
+                // console.log(app.loginSuccessRoute)
+                page('/'+this.successRoute);
 
                 location.reload(true);
             },
