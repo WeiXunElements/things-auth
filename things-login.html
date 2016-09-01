@@ -181,8 +181,7 @@ Example:
                  * @type {String}
                  */
                 successRoute: {
-                    type: String,
-                    value: '/'
+                    type: String
                 },
 
                 /**
@@ -434,7 +433,9 @@ Example:
                 this.fire('things-login-succeed');
                 // 4. move to page
                 // console.log(app.loginSuccessRoute)
-                page('/'+this.successRoute);
+                
+                this.successRoute = (this.globals.defaultRoute) ? this.globals.defaultRoute : this.successRoute;
+                page(this.successRoute);
 
                 location.reload(true);
             },
