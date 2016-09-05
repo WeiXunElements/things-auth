@@ -176,13 +176,13 @@ Example:
                     value: 4
                 },
 
-                /**
-                 * successRoute when login success will routing to the page
-                 * @type {String}
-                 */
-                successRoute: {
-                    type: String
-                },
+                // /**
+                // * successRoute when login success will routing to the page
+                // * @type {String}
+                // */
+                // successRoute: {
+                //     type: String
+                // },
 
                 /**
                  * Pattern used to validate username,  ex: '^[a-zA-Z0-9]+$'
@@ -431,12 +431,8 @@ Example:
                 this.$.loginForm.reset();
                 // 3. fire event
                 this.fire('things-login-succeed');
-                // 4. move to page
-                // console.log(app.loginSuccessRoute)
-                
-                this.successRoute = (this.globals.defaultScreen) ? this.globals.defaultScreen : this.successRoute;
-                page(this.successRoute);
-
+                // 4. init url
+                page(/);
                 location.reload(true);
             },
 
