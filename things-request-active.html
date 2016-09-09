@@ -12,132 +12,145 @@
 <link rel="import" href="../things-spinner/things-spinner-behavior.html">
 
 <!--
-A comment describing this element
-
-Example:
-
-    <my-elem></my-elem>
-
-Example:
-
-    <my-elem>
-      <h2>Hello my-elem</h2>
-    </my-elem>
+  사용자 계정 활성화 요청 화면 
 
 @demo demo/index.html
 -->
 
 <dom-module id="things-request-active">
-    <template>
-        <style>
-            :host {
-                @apply(--things-loose-padding)
-            }
+  <template>
+    <style>
+      :host {
+        @apply(--things-loose-padding)
+      }
 
-            paper-button {
-                @apply(--things-button);
-                float: right;
-                margin-top: 15px;
-            }
+      paper-button {
+        @apply(--things-button);
+        float: right;
+        margin-top: 15px;
+      }
 
-            .btn-submit {
-                @apply(--things-button-important)
-            }
+      .btn-submit {
+        @apply(--things-button-important)
+      }
+    </style>
 
-        </style>
+    <things-i18n-msg auto msgid="text.invalid_input" msg="{{tInvalidInput}}" hidden>Invalid Input.</things-i18n-msg>
+    <things-i18n-msg auto msgid="text.info_invalid" msg="{{tInfoInvalid}}" hidden>Typed information is not valid.</things-i18n-msg>
 
-        <things-i18n-msg auto msgid="text.invalid_input" msg="{{tInvalidInput}}" hidden>Invalid Input.</things-i18n-msg>
-        <things-i18n-msg auto msgid="text.info_invalid" msg="{{tInfoInvalid}}" hidden>Typed information is not valid.</things-i18n-msg>
+    <form is="iron-form" 
+          id="form" 
+          action=[[action]] 
+          headers="[[headers]]" 
+          content-type="application/json" 
+          method="[[method]]" 
+          with-credentials=true 
+          last-response="{{lastResponse}}">
+      <things-i18n-msg msgid="label.user_name" msg="{{lUserName}}" auto hidden>User Name</things-i18n-msg>
+      <things-i18n-msg msgid="label.email_address" msg="{{lEmailAddress}}" auto hidden>Email Address</things-i18n-msg>
+      <things-i18n-msg msgid="label.password" msg="{{lPassword}}" auto hidden>Password</things-i18n-msg>
 
-        <form is="iron-form" id="form" action=[[action]] headers="[[headers]]" content-type="application/json" method="[[method]]" with-credentials=true last-response="{{lastResponse}}">
-            <things-i18n-msg msgid="label.user_name" msg="{{lUserName}}" auto hidden>User Name</things-i18n-msg>
-            <things-i18n-msg msgid="label.email_address" msg="{{lEmailAddress}}" auto hidden>Email Address</things-i18n-msg>
-            <things-i18n-msg msgid="label.password" msg="{{lPassword}}" auto hidden>Password</things-i18n-msg>
+      <paper-input required 
+                   name="name" 
+                   label="[[lUserName]]" 
+                   value="{{userName}}" 
+                   required 
+                   auto-validate>
+      </paper-input>
 
-            <paper-input required name="name" label="[[lUserName]]" value="{{userName}}" required auto-validate>
-            </paper-input>
-            <gold-email-input auto-validate required name="email" label="[[lEmailAddress]]" value="[[userEmail]]" readonly>
-            </gold-email-input>
-            <paper-input id="current-pw" auto-validate required name="current_pass" type="password" label="[[lPassword]]">
-            </paper-input>
-            </paper-input>
+      <gold-email-input auto-validate 
+                        required 
+                        name="email" 
+                        label="[[lEmailAddress]]" 
+                        value="[[userEmail]]">
+      </gold-email-input>
 
-            <paper-button class="btn-submit" raised on-click="_submitMyForm">
-                <things-i18n-msg msgid="button.submit" auto>Submit</things-i18n-msg>
-            </paper-button>
-            <paper-button raised on-click="_resetMyForm">
-                <things-i18n-msg msgid="button.reset" auto>Reset</things-i18n-msg>
-            </paper-button>
-        </form>
-    </template>
-    <script>
-        Polymer({
-            is: 'things-request-active',
+      <paper-input id="current-pw" 
+                   auto-validate 
+                   required 
+                   name="current_pass" 
+                   type="password" 
+                   label="[[lPassword]]">
+      </paper-input>
 
-            properties: {
-                currentUserInfo: {
-                    type: Object,
-                    observer: '_currentUserInfoChanged'
-                },
+      <paper-button class="btn-submit" raised on-click="_submitMyForm">
+        <things-i18n-msg msgid="button.submit" auto>Submit</things-i18n-msg>
+      </paper-button>
 
-                userName: {
-                    type: String
-                },
+      <paper-button raised on-click="_resetMyForm">
+        <things-i18n-msg msgid="button.reset" auto>Reset</things-i18n-msg>
+      </paper-button>
+    </form>
+  </template>
 
-                userEmail: {
-                    type: String
-                }
-            },
+  <script>
+    Polymer({
+      is: 'things-request-active',
 
-            behaviors: [
-                Things.FormBehavior,
-                Things.SpinnerBehavior,
-                Things.MsgBoxBehavior
-            ],
+      properties: {
+        currentUserInfo: {
+          type: Object,
+          observer: '_currentUserInfoChanged'
+        },
 
-            listeners: {
-                'iron-form-response': '_successResponseHandler',
-                'iron-form-error': '_errorResponseHandler'
-            },
+        userName: {
+          type: String
+        },
 
-            _successResponseHandler: function(event) {
-                this.stopSpinner();
-                var me = this;
-                this.openConfirmMsg({
-                    title: 'Request active success',
-                    text: 'Active requested succesfully.'
-                }, function() {
-                    me.fire("things-reqeust-active-success", me.serializeMyForm());
-                });
-            },
+        userEmail: {
+          type: String
+        }
+      },
 
-            _errorResponseHandler: function(event) {
-                this.stopSpinner();
-                var me = this;
+      behaviors: [
+        Things.FormBehavior,
+        Things.SpinnerBehavior,
+        Things.MsgBoxBehavior
+      ],
 
-                this.openConfirmMsg({
-                    type: 'warning',
-                    title: this.tInvalidInput,
-                    text: this.tInfoInvalid
-                }, function() {
-                    me.fire("things-request-active-failure", event.detail);
-                });
-            },
+      listeners: {
+        'iron-form-response': '_successResponseHandler',
+        'iron-form-error': '_errorResponseHandler'
+      },
 
-            _submitMyForm: function(event) {
-                this.$['form'].submit();
-                this.fire('things-request-active-submited');
-            },
-
-            _resetMyForm: function(event) {
-                this.resetMyForm();
-            },
-
-            _currentUserInfoChanged: function(userInfo) {
-                this.userName = userInfo.name;
-                this.userEmail = userInfo.email;
-            }
+      _successResponseHandler: function(event) {
+        this.stopSpinner();
+        var me = this;
+        
+        this.openConfirmMsg({
+            title: 'Request active success',
+            text: 'Active requested succesfully.'
+        }, function() {
+            me.fire("things-reqeust-active-success", me.serializeMyForm());
         });
+      },
 
-    </script>
+      _errorResponseHandler: function(event) {
+        this.stopSpinner();
+        var me = this;
+
+        this.openConfirmMsg({
+          type: 'warning',
+          title: this.tInvalidInput,
+          text: this.tInfoInvalid
+        }, function() {
+          me.fire("things-request-active-failure", event.detail);
+        });
+      },
+
+      _submitMyForm: function(event) {
+        this.$['form'].submit();
+        this.fire('things-request-active-submited');
+      },
+
+      _resetMyForm: function(event) {
+        this.resetMyForm();
+      },
+
+      _currentUserInfoChanged: function(userInfo) {
+        this.userName = userInfo.name;
+        this.userEmail = userInfo.email;
+      }
+    });
+  </script>
 </dom-module>

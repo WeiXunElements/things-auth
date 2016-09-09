@@ -12,6 +12,7 @@
 <link rel="import" href="./things-signup.html">
 <link rel="import" href="./things-password-init.html">
 <link rel="import" href="./things-request-active.html">
+
 <!--
 A things login form asking for login and password.
 
@@ -32,415 +33,444 @@ Example:
 
 @demo demo/index.html
 -->
+
 <dom-module id="things-login">
-    <template>
-        <style>
-            :host {
-                display: block;
-                background-image: url(/images/bg-rail.png), url(/images/bg-blue.png), url(/images/bg-green.png);
-                background-position: 50% 100%, 0 0, 100% 50%;
-                background-repeat: no-repeat;
-                background-color: #f1f1f1;
-            }
+  <template>
+    <style>
+      :host {
+        display: block;
+        background-image: url(/images/bg-rail.png), url(/images/bg-blue.png), url(/images/bg-green.png);
+        background-position: 50% 100%, 0 0, 100% 50%;
+        background-repeat: no-repeat;
+        background-color: #f1f1f1;
+      }
 
-            paper-material {
-                @apply(--things-login)
-            }
+      paper-material {
+        @apply(--things-login)
+      }
 
-            .header {
-                display: block;
-                padding-top: 30px;
-                font-size: 35px;
-                color: var(--things-primary-text-color);
-                font-weight: 300;
-                text-align: center;
-                line-height: 40px;
-            }
+      .header {
+        display: block;
+        padding-top: 30px;
+        font-size: 35px;
+        color: var(--things-primary-text-color);
+        font-weight: 300;
+        text-align: center;
+        line-height: 40px;
+      }
 
-            .header:before {
-                content: "";
-                display: block;
-                margin: auto;
-                margin-top: -90px;
-                width: 80px;
-                height: 85px;
-                background: url(/images/icon-nametag.png) no-repeat;
-            }
+      .header:before {
+        content: "";
+        display: block;
+        margin: auto;
+        margin-top: -90px;
+        width: 80px;
+        height: 85px;
+        background: url(/images/icon-nametag.png) no-repeat;
+      }
 
-            paper-input::shadow input:-webkit-autofill {
-                background: #fff;
-                -webkit-box-shadow: inset 0 0 0px 9999px white;
-            }
+      paper-input::shadow input:-webkit-autofill {
+        background: #fff;
+        -webkit-box-shadow: inset 0 0 0px 9999px white;
+      }
 
-            form {
-                @apply(--things-loose-padding);
-                padding-top: 10px;
-            }
+      form {
+        @apply(--things-loose-padding);
+        padding-top: 10px;
+      }
 
-            paper-button {
-                @apply(--things-button);
-                color: #fff;
-            }
+      paper-button {
+        @apply(--things-button);
+        color: #fff;
+      }
 
-            #submitButton {
-                @apply(--things-button-important);
-                float: right;
-                width: 30%;
-                color: #fff;
-            }
+      #submitButton {
+        @apply(--things-button-important);
+        float: right;
+        width: 30%;
+        color: #fff;
+      }
 
-            div {
-                margin-top: 50px;
-            }
+      div {
+        margin-top: 50px;
+      }
 
-            @media only all and (max-width:600px) {
-                paper-button {
-                    padding: 9px 7px 7px 7px !important;
-                    margin: 0;
-                    width: initial !important
-                }
-            }
+      @media only all and (max-width:600px) {
+        paper-button {
+          padding: 9px 7px 7px 7px !important;
+          margin: 0;
+          width: initial !important
+        }
+      }
 
-            @media only all and (max-width:600px) {
-                form {
-                    padding-left: 12px;
-                    padding-right: 12px
-                }
-            }
+      @media only all and (max-width:600px) {
+        form {
+          padding-left: 12px;
+          padding-right: 12px
+        }
+      }
+    </style>
 
-        </style>
+    <paper-material elevation="1" on-keypress="keypressHandler">
+      <things-i18n-msg auto msgid="text.login_failure" msg="{{tLoginFailure}}" hidden>Login failure.</things-i18n-msg>
+      <things-i18n-msg auto msgid="label.id" msg="{{lUserId}}" hidden>ID</things-i18n-msg>
+      <things-i18n-msg auto msgid="label.password" msg="{{lPassword}}" hidden>Password</things-i18n-msg>
+      <things-i18n-msg auto msgid="label.sign_up" msg="{{lSignUp}}" hidden>Sign Up</things-i18n-msg>
+      <things-i18n-msg auto msgid="label.reset_password" msg="{{lResetPass}}" hidden>Reset Password</things-i18n-msg>
+      <things-i18n-msg auto msgid="label.active_request" msg="{{lRequestActive}}" hidden>Active Request</things-i18n-msg>
 
-        <paper-material elevation="1" on-keypress="keypressHandler">
-            <things-i18n-msg auto msgid="text.login_failure" msg="{{tLoginFailure}}" hidden>Login failure.</things-i18n-msg>
-            <things-i18n-msg auto msgid="label.id" msg="{{lUserId}}" hidden>ID</things-i18n-msg>
-            <things-i18n-msg auto msgid="label.password" msg="{{lPassword}}" hidden>Password</things-i18n-msg>
-            <things-i18n-msg auto msgid="label.sign_up" msg="{{lSignUp}}" hidden>Sign Up</things-i18n-msg>
-            <things-i18n-msg auto msgid="label.reset_password" msg="{{lResetPass}}" hidden>Reset Password</things-i18n-msg>
-            <things-i18n-msg auto msgid="label.active_request" msg="{{lRequestActive}}" hidden>Active Request</things-i18n-msg>
-            <span class="header">
-              <strong><things-i18n-msg auto msgid="label.login">LOGIN</things-i18n-msg></strong>
-            </span>
+      <span class="header">
+        <strong><things-i18n-msg auto msgid="label.login">LOGIN</things-i18n-msg></strong>
+      </span>
 
-            <form is="iron-form" id="loginForm" headers="[[headers]]" login-path="[[loginPath]]" action="{{action}}" content-type="[[contentType]]" method="[[method]]" with-credentials=true>
+        <form is="iron-form" 
+              id="loginForm" 
+              headers="[[headers]]" 
+              login-path="[[loginPath]]" 
+              action="{{action}}" 
+              content-type="[[contentType]]" 
+              method="[[method]]" 
+              with-credentials>
 
-                <paper-input id="username" name="email" type="text" label="[[lUserId]]" value="{{username}}" pattern="[[usernameValidationPattern]]" error-message="[[usernameErrorMessage]]" required auto-validate>
-                </paper-input>
+          <paper-input id="username" 
+                       name="email" 
+                       type="text" 
+                       label="[[lUserId]]" 
+                       value="{{username}}" 
+                       pattern="[[usernameValidationPattern]]" 
+                       error-message="[[usernameErrorMessage]]" 
+                       required 
+                       auto-validate>
+          </paper-input>
 
-                <paper-input id="password" name="password" type="password" label="[[lPassword]]" value="{{password}}" pattern="[[passwordValidationPattern]]" error-message="[[passwordErrorMessage]]" required auto-validate>
-                </paper-input>
+          <paper-input id="password" 
+                       name="password" 
+                       type="password" 
+                       label="[[lPassword]]" 
+                       value="{{password}}" 
+                       pattern="[[passwordValidationPattern]]" 
+                       error-message="[[passwordErrorMessage]]" 
+                       required 
+                       auto-validate>
+          </paper-input>
 
-                <div>
-                    <paper-button on-tap="_onSignupTap">
-                        <things-i18n-msg auto msgid="button.sign_up">Sign Up</things-i18n-msg>
-                    </paper-button>
+          <div>
+            <paper-button on-tap="_onSignupTap">
+              <things-i18n-msg auto msgid="button.sign_up">Sign Up</things-i18n-msg>
+            </paper-button>
 
-                    <paper-button on-tap="_onRequestActive">
-                        <things-i18n-msg auto msgid="button.request_active">Request Active</things-i18n-msg>
-                    </paper-button>
+            <paper-button on-tap="_onRequestAccountActivateTap">
+              <things-i18n-msg auto msgid="button.request_active">Request Active</things-i18n-msg>
+            </paper-button>
 
-                    <paper-button on-tap="_onRequestpInitPass">
-                        <things-i18n-msg auto msgid="button.reset_password">Reset Password</things-i18n-msg>
-                    </paper-button>
+            <paper-button on-tap="_onRequestPasswordResetTap">
+              <things-i18n-msg auto msgid="button.reset_password">Reset Password</things-i18n-msg>
+            </paper-button>
 
-                    <paper-button id="submitButton" raised disabled on-tap="submitHandler">
-                        <paper-spinner id="spinner" hidden></paper-spinner>
-                        <things-i18n-msg auto msgid="button.sign_in">Sign In</things-i18n-msg>
-                    </paper-button>
-                </div>
-            </form>
-        </paper-material>
+            <paper-button id="submitButton" raised disabled on-tap="submitHandler">
+              <paper-spinner id="spinner" hidden></paper-spinner>
+              <things-i18n-msg auto msgid="button.sign_in">Sign In</things-i18n-msg>
+            </paper-button>
+          </div>
+        </form>
+      </paper-material>
     </template>
 
     <script>
-        Polymer({
+      Polymer({
 
-            is: 'things-login',
+        is: 'things-login',
 
-            properties: {
-                /**
-                 * Label for the title
-                 * @type {string}
-                 * @default Login
-                 */
-                title: {
-                    type: String,
-                    value: 'Login'
-                },
+        properties: {
+          /**
+           * Label for the title
+           * @type {string}
+           * @default Login
+           */
+          title: {
+            type: String,
+            value: 'Login'
+          },
 
-                /**
-                 * [elevation(음영높이) for login form]
-                 * @type {Number}
-                 */
-                elevation: {
-                    type: Number,
-                    value: 4
-                },
+          /**
+           * elevation(음영높이) for login form
+           * @type {Number}
+           */
+          elevation: {
+            type: Number,
+            value: 4
+          },
 
-                // /**
-                // * successRoute when login success will routing to the page
-                // * @type {String}
-                // */
-                // successRoute: {
-                //     type: String
-                // },
+          /**
+           * Pattern used to validate username,  ex: '^[a-zA-Z0-9]+$'
+           * @type {string}
+           */
+          usernameValidationPattern: {
+            type: String
+          },
 
-                /**
-                 * Pattern used to validate username,  ex: '^[a-zA-Z0-9]+$'
-                 * @type {string}
-                 */
-                usernameValidationPattern: {
-                    type: String
-                },
+          /**
+           * Error message displayed if `usernameValidationPattern` is not matched.
+           * @type {string}
+           */
+          usernameErrorMessage: {
+            type: String,
+            value: 'letters and numbers only'
+          },
 
-                /**
-                 * Error message displayed if `usernameValidationPattern` is not matched.
-                 * @type {string}
-                 */
-                usernameErrorMessage: {
-                    type: String,
-                    value: 'letters and numbers only'
-                },
+          /**
+           * Pattern used to validate password, ex: '^[a-zA-Z0-9]+$'
+           * @type {string}
+           */
+          passwordValidationPattern: {
+            type: String
+          },
 
+          /**
+           * Error message displayed if `passwordValidationPattern` is not matched.
+           * @type {string}
+           */
+          passwordErrorMessage: {
+            type: Object,
+            value: 'letters and numbers only'
+          },
 
-                /**
-                 * Pattern used to validate password, ex: '^[a-zA-Z0-9]+$'
-                 * @type {string}
-                 */
-                passwordValidationPattern: {
-                    type: String
-                },
+          /**
+           * login request header
+           * @type {Object}
+           */
+          headers: {
+            type: Object
+          },
 
-                /**
-                 * Error message displayed if `passwordValidationPattern` is not matched.
-                 * @type {string}
-                 */
-                passwordErrorMessage: {
-                    type: Object,
-                    value: 'letters and numbers only'
-                },
+          /**
+           * login request url except basic url
+           * @type {Object}
+           */
+          loginPath: {
+            type: String,
+            notify: true
+          },
 
-                /**
-                 * [headers description]
-                 * @type {Object}
-                 */
-                headers: {
-                    type: Object,
-                    value: ""
-                },
+          /**
+           * login request full url
+           * @type {Object}
+           */
+          action: {
+            type: String,
+            computed: '_computeActionUrl(globals.baseUrl, loginPath)'
+          },
 
-                /**
-                 * [action description]
-                 * @type {Object}
-                 */
-                loginPath: {
-                    type: String,
-                    notify: true
-                },
+          /**
+           * login request content type
+           * @type {Object}
+           */
+          contentType: {
+            type: String,
+            value: 'application/x-www-form-urlencoded'
+          },
 
-                /**
-                 * [action description]
-                 * @type {Object}
-                 */
-                action: {
-                    type: String,
-                    computed: '_computeActionUrl(globals.baseUrl, loginPath)'
-                },
+          /**
+           * login request method
+           */
+          method: {
+            type: String,
+            value: 'POST'
+          },
 
-                /**
-                 * [contentType description]
-                 * @type {Object}
-                 */
-                contentType: {
-                    type: String,
-                    value: 'application/x-www-form-urlencoded'
-                },
+          /**
+           * Label for the submit button
+           * @type {string}
+           * @default Submit
+           */
+          submitLabel: {
+            type: String,
+            value: 'Submit'
+          }
 
-                /**
-                 *
-                 */
-                method: {
-                    type: String,
-                    value: 'POST'
-                },
+          /**
+           * 로그인 성공시 fire
+           *
+           * @event things-login-succeed
+           */
+        },
 
-                /**
-                 * Label for the submit button
-                 * @type {string}
-                 * @default Submit
-                 */
-                submitLabel: {
-                    type: String,
-                    value: 'Submit'
-                }
+        behaviors: [
+          Things.GlobalBehavior,
+          Things.MsgBoxBehavior
+        ],
 
-                /**
-                 * 로그인 성공시 fire
-                 *
-                 * @event things-login-succeed
-                 */
-            },
+        listeners: {
+          'change': 'onFormChange',
+          'iron-form-submit': '_afterFormSubmit',
+          'iron-form-response': '_successResponse',
+          'iron-form-error': '_failureResponse'
+        },
 
-            behaviors: [
-                Things.GlobalBehavior,
-                Things.MsgBoxBehavior
-            ],
+        /**
+         * compute action url of sign in
+         */
+        _computeActionUrl: function(baseUrl, url) {
+          return baseUrl + '/' + url;
+        },        
 
-            listeners: {
-                'change': 'onFormChange',
-                'iron-form-submit': '_afterFormSubmit',
-                'iron-form-response': '_successResponse',
-                'iron-form-error': '_failureResponse'
-            },
+        /**
+         * Form change
+         */
+        onFormChange: function(event) {
+          // Validate the entire form to see if we should enable the `Submit` button.
+          this.$.submitButton.disabled = !this.$.loginForm.validate();
+        },
 
-            onFormChange: function(event) {
-                // Validate the entire form to see if we should enable the `Submit` button.
-                this.$.submitButton.disabled = !this.$.loginForm.validate();
-            },
+        /**
+         * Signup button tap
+         */
+        _onSignupTap: function(event) {
+          var signup = document.createElement('things-signup');
+          signup.title = this.lSignUp;
+          //signup.actionUrl = 'users/register';
+          signup.actionUrl = 'request_auths/account/register/request'
+          signup.method = 'POST';
 
-            _onSignupTap: function(event) {
-                var signup = document.createElement("things-signup");
-                signup.title = this.lSignUp;
-                signup.actionUrl = 'users/register';
-                signup.method = 'POST';
+          signup.addEventListener('things-signup-success', function(event) {
+            var eventDetail = this;
+            var event = new CustomEvent('things-close-popup-view', { 'detail': eventDetail });
+            document.dispatchEvent(event);
+          });
 
-                signup.addEventListener("things-signup-success", function(event) {
-                    var eventDetail = this;
-                    var event = new CustomEvent('things-close-popup-view', {
-                        'detail': eventDetail
-                    });
-                    document.dispatchEvent(event);
-                });
+          signup.addEventListener('things-signup-failure', function(event) {
+            var response = event.detail.request.xhr.response;
+            this.openResponseError(response);
+          })
 
-                signup.addEventListener("things-signup-failure", function(event) {
-                    var response = event.detail.request.xhr.response;
-                    this.openResponseError(response);
-                })
+          var event = new CustomEvent('things-open-popup-view', {
+            'detail': { 'view': signup, 'modal': true, 'openCallback': null }
+          });
 
-                var eventDetail = {
-                    'view': signup,
-                    'modal': true,
-                    'openCallback': null
-                };
-                var event = new CustomEvent('things-open-popup-view', {
-                    'detail': eventDetail
-                });
-                document.dispatchEvent(event);
-            },
+          document.dispatchEvent(event);
+        },
 
-            _onRequestActive: function(event) {
-                var requestActive = document.createElement("things-request-active");
-                requestActive.title = this.lRequestActive;
-                requestActive.actionUrl = 'users/request_active';
-                requestActive.method = 'POST';
+        /**
+         * Request account activation button tap
+         */
+        _onRequestAccountActivateTap: function(event) {
+          var requestActive = document.createElement('things-request-active');
+          requestActive.title = this.lRequestActive;
+          //requestActive.actionUrl = 'users/request_active';
+          requestActive.actionUrl = 'request_auths/account/activate/request';
+          requestActive.method = 'POST';
 
-                requestActive.addEventListener("things-request-active-success", function(event) {
-                    var eventDetail = this;
-                    var event = new CustomEvent('things-close-popup-view', {
-                        'detail': eventDetail
-                    });
-                    document.dispatchEvent(event);
-                });
+          requestActive.addEventListener('things-request-active-success', function(event) {
+            var eventDetail = this;
+            var event = new CustomEvent('things-close-popup-view', { 'detail': eventDetail });
+            document.dispatchEvent(event);
+          });
 
-                requestActive.addEventListener("things-request-active-failure", function(event) {
-                    var response = event.detail.request.xhr.response;
-                    this.openResponseError(response);
-                })
+          requestActive.addEventListener('things-request-active-failure', function(event) {
+            var response = event.detail.request.xhr.response;
+            this.openResponseError(response);
+          })
 
-                var eventDetail = {
-                    'view': requestActive,
-                    'modal': true,
-                    'openCallback': null
-                };
-                var event = new CustomEvent('things-open-popup-view', {
-                    'detail': eventDetail
-                });
-                document.dispatchEvent(event);
-            },
+          var event = new CustomEvent('things-open-popup-view', {
+            'detail': { 'view': requestActive, 'modal': true, 'openCallback': null }
+          });
 
-            _onRequestpInitPass: function(event) {
-                var pwInit = document.createElement("things-password-init");
-                pwInit.title = this.lResetPass;
-                pwInit.actionUrl = "users/request_init_pass";
-                pwInit.method = "POST";
+          document.dispatchEvent(event);
+        },
 
-                pwInit.addEventListener("things-password-init-success", function(event) {
-                    var eventDetail = this;
-                    var event = new CustomEvent('things-close-popup-view', {
-                        'detail': eventDetail
-                    });
-                    document.dispatchEvent(event);
-                });
+        /**
+         * Request password reset button tap
+         */
+        _onRequestPasswordResetTap: function(event) {
+          var pwInit = document.createElement("things-password-init");
+          pwInit.title = this.lResetPass;
+          //pwInit.actionUrl = "users/request_init_pass";
+          pwInit.actionUrl = "request_auths/password/reset/request";
+          pwInit.method = "POST";
 
-                pwInit.addEventListener("things-password-init-failure", function(event) {
-                    var response = event.detail.request.xhr.response;
-                    this.openResponseError(response);
-                });
+          pwInit.addEventListener("things-password-init-success", function(event) {
+            var eventDetail = this;
+            var event = new CustomEvent('things-close-popup-view', { 'detail': eventDetail });
+            document.dispatchEvent(event);
+          });
 
-                var eventDetail = {
-                    'view': pwInit,
-                    'modal': true,
-                    'openCallback': null
-                };
-                var event = new CustomEvent('things-open-popup-view', {
-                    'detail': eventDetail
-                });
-                document.dispatchEvent(event);
-            },
+          pwInit.addEventListener("things-password-init-failure", function(event) {
+            var response = event.detail.request.xhr.response;
+            this.openResponseError(response);
+          });
 
-            submitHandler: function(event) {
-                spinner.active = true;
-                spinner.hidden = false;
-                this.$.submitButton.disabled = true;
-                this.$.loginForm.submit();
-            },
+          var event = new CustomEvent('things-open-popup-view', {
+            'detail': { 'view': pwInit, 'modal': true, 'openCallback': null }
+          });
+          document.dispatchEvent(event);
+        },
 
-            resetHandler: function(event) {
-                this.$.loginForm.reset();
-            },
+        /**
+         * Submit button tap
+         */
+        submitHandler: function(event) {
+          spinner.active = true;
+          spinner.hidden = false;
+          this.$.submitButton.disabled = true;
+          this.$.loginForm.submit();
+        },
 
-            keypressHandler: function(event, detail, sender) {
-                var code = event.keyCode;
-                if (code == 13) {
-                    this.submitHandler(event);
-                }
-            },
+        /**
+         * Submit (Sign In) button tap
+         */
+        resetHandler: function(event) {
+          this.$.loginForm.reset();
+        },
 
-            _computeActionUrl: function(baseUrl, url) {
-                return baseUrl + '/' + url;
-            },
+        /**
+         * On keypress
+         */
+        keypressHandler: function(event, detail, sender) {
+          var code = event.keyCode;
+          if (code == 13) {
+            this.submitHandler(event);
+          }
+        },
 
-            _afterFormSubmit: function(event) {
-                spinner.active = false;
-                spinner.hidden = true;
-                submitButton.disabled = false;
-            },
+        /**
+         * After submit
+         */
+        _afterFormSubmit: function(event) {
+          spinner.active = false;
+          spinner.hidden = true;
+          submitButton.disabled = false;
+        },
 
-            _successResponse: function(event) {
-                var user = event.detail.__data__.response;
-                delete user['encryptedPassword'];
-                delete user['creator'];
-                delete user['updater'];
-                delete user['creatorId'];
-                delete user['createdAt'];
-                delete user['updaterId'];
-                delete user['updatedAt'];
+        /**
+         * After signed in
+         */
+        _successResponse: function(event) {
+          var user = event.detail.__data__.response;
+          delete user['encryptedPassword'];
+          delete user['creator'];
+          delete user['updater'];
+          delete user['creatorId'];
+          delete user['createdAt'];
+          delete user['updaterId'];
+          delete user['updatedAt'];
 
-                // 1. save user information
-                this.set('globals.user', user);
-                // 2. reset login form
-                this.$.loginForm.reset();
-                // 3. fire event
-                this.fire('things-login-succeed');
-                // 4. init url
-                page('/');
-                location.reload(true);
-            },
+          // 1. save user information
+          this.set('globals.user', user);
+          // 2. reset login form
+          this.$.loginForm.reset();
+          // 3. fire event
+          this.fire('things-login-succeed');
+          // 4. init url
+          page('/');
+          location.reload(true);
+        },
 
-            _failureResponse: function(event) {
-                this.openInfoMsg(this.tLoginFailure);
-            }
-
-        });
-
+        /**
+         * After failed sigin in
+         */
+        _failureResponse: function(event) {
+          this.openInfoMsg(this.tLoginFailure);
+        }
+      });
     </script>
 </dom-module>
