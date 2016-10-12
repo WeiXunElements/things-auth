@@ -166,9 +166,9 @@ Example:
             <paper-button on-tap="_onRequestPasswordResetTap">
               <things-i18n-msg auto msgid="button.reset_password">Reset Password</things-i18n-msg>
             </paper-button>
+            
 
             <paper-button id="submitButton" raised disabled on-tap="submitHandler">
-              <paper-spinner id="spinner" hidden></paper-spinner>
               <things-i18n-msg auto msgid="button.sign_in">Sign In</things-i18n-msg>
             </paper-button>
           </div>
@@ -409,8 +409,11 @@ Example:
          * Submit button tap
          */
         submitHandler: function(event) {
-          spinner.active = true;
-          spinner.hidden = false;
+          this.openInfoMsg({
+            title: 'Sign-in Processing.',
+            text: 'Please Wait...'
+          });
+
           this.$.submitButton.disabled = true;
           this.$.loginForm.submit();
         },
@@ -436,8 +439,6 @@ Example:
          * After submit
          */
         _afterFormSubmit: function(event) {
-          spinner.active = false;
-          spinner.hidden = true;
           submitButton.disabled = false;
         },
 
