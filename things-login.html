@@ -167,7 +167,6 @@ Example:
               <things-i18n-msg auto msgid="button.reset_password">Reset Password</things-i18n-msg>
             </paper-button>
             
-
             <paper-button id="submitButton" raised disabled on-tap="submitHandler">
               <things-i18n-msg auto msgid="button.sign_in">Sign In</things-i18n-msg>
             </paper-button>
@@ -286,6 +285,22 @@ Example:
           submitLabel: {
             type: String,
             value: 'Submit'
+          },
+
+          /**
+           * OI 화면을 사용할 지 여부 
+           */
+          useOiScreen: {
+            type: Boolean,
+            value: false
+          },
+
+          /**
+           * OI 화면 URL
+           */
+          oiScreenPath: {
+            type: String,
+            value: 'index_io.html'
           }
 
           /**
@@ -328,13 +343,11 @@ Example:
         _onSignupTap: function(event) {
           var signup = document.createElement('things-signup');
           signup.title = this.lSignUp;
-          //signup.actionUrl = 'users/register';
           signup.actionUrl = 'request_auths/account/register/request'
           signup.method = 'POST';
 
           signup.addEventListener('things-signup-success', function(event) {
-            var eventDetail = this;
-            var event = new CustomEvent('things-close-popup-view', { 'detail': eventDetail });
+            var event = new CustomEvent('things-close-popup-view', { detail: this });
             document.dispatchEvent(event);
           });
 
@@ -344,7 +357,7 @@ Example:
           })
 
           var event = new CustomEvent('things-open-popup-view', {
-            'detail': { 'view': signup, 'modal': true, 'openCallback': null }
+            detail: { view: signup, modal: true, openCallback: null }
           });
 
           document.dispatchEvent(event);
@@ -356,13 +369,11 @@ Example:
         _onRequestAccountActivateTap: function(event) {
           var requestActive = document.createElement('things-request-active');
           requestActive.title = this.lRequestActive;
-          //requestActive.actionUrl = 'users/request_active';
           requestActive.actionUrl = 'request_auths/account/activate/request';
           requestActive.method = 'POST';
 
           requestActive.addEventListener('things-request-active-success', function(event) {
-            var eventDetail = this;
-            var event = new CustomEvent('things-close-popup-view', { 'detail': eventDetail });
+            var event = new CustomEvent('things-close-popup-view', { detail: this });
             document.dispatchEvent(event);
           });
 
@@ -372,7 +383,7 @@ Example:
           })
 
           var event = new CustomEvent('things-open-popup-view', {
-            'detail': { 'view': requestActive, 'modal': true, 'openCallback': null }
+            detail: { view: requestActive, modal: true, openCallback: null }
           });
 
           document.dispatchEvent(event);
@@ -384,24 +395,23 @@ Example:
         _onRequestPasswordResetTap: function(event) {
           var pwInit = document.createElement("things-password-init");
           pwInit.title = this.lResetPass;
-          //pwInit.actionUrl = "users/request_init_pass";
           pwInit.actionUrl = "request_auths/password/reset/request";
           pwInit.method = "POST";
 
-          pwInit.addEventListener("things-password-init-success", function(event) {
-            var eventDetail = this;
-            var event = new CustomEvent('things-close-popup-view', { 'detail': eventDetail });
+          pwInit.addEventListener('things-password-init-success', function(event) {
+            var event = new CustomEvent('things-close-popup-view', { detail: this });
             document.dispatchEvent(event);
           });
 
-          pwInit.addEventListener("things-password-init-failure", function(event) {
+          pwInit.addEventListener('things-password-init-failure', function(event) {
             var response = event.detail.request.xhr.response;
             this.openResponseError(response);
           });
 
           var event = new CustomEvent('things-open-popup-view', {
-            'detail': { 'view': pwInit, 'modal': true, 'openCallback': null }
+            detail: { view: pwInit, modal: true, openCallback: null }
           });
+
           document.dispatchEvent(event);
         },
 
@@ -447,23 +457,26 @@ Example:
          */
         _successResponse: function(event) {
           var user = event.detail.__data__.response;
-          delete user['encryptedPassword'];
-          delete user['creator'];
-          delete user['updater'];
-          delete user['creatorId'];
-          delete user['createdAt'];
-          delete user['updaterId'];
-          delete user['updatedAt'];
-
           // 1. save user information
           this.set('globals.user', user);
           // 2. reset login form
           this.$.loginForm.reset();
           // 3. fire event
           this.fire('things-login-succeed');
-          // 4. init url
-          page('/');
-          location.reload(true);
+          // 4. redirect
+          this._redirectAfterLogin(user);
+        },
+
+        /**
+         * Redirect after login success
+         */
+        _redirectAfterLogin: function(user) {
+          if(this.useOiScreen && user.operator_flag === true) {
+            location.href = this.oiScreenPath;
+          } else {
+            page('/');
+            location.reload(true);
+          }
         },
 
         /**
