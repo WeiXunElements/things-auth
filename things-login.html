@@ -393,10 +393,10 @@ Example:
          * Request password reset button tap
          */
         _onRequestPasswordResetTap: function(event) {
-          var pwInit = document.createElement("things-password-init");
+          var pwInit = document.createElement('things-password-init');
           pwInit.title = this.lResetPass;
-          pwInit.actionUrl = "request_auths/password/reset/request";
-          pwInit.method = "POST";
+          pwInit.actionUrl = 'request_auths/password/reset/request';
+          pwInit.method = 'POST';
 
           pwInit.addEventListener('things-password-init-success', function(event) {
             var event = new CustomEvent('things-close-popup-view', { detail: this });
@@ -420,8 +420,11 @@ Example:
          */
         submitHandler: function(event) {
           this.openInfoMsg({
-            title: 'Sign-in Processing.',
-            text: 'Please Wait...'
+            type: 'info',
+            title: 'Sign-in Processing...',
+            html: true,
+            text: '<br/><h3><span>Please Wait.</span><h3>',
+            showConfirmButton: false
           });
 
           this.$.submitButton.disabled = true;
