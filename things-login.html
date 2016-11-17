@@ -461,7 +461,12 @@ Example:
         _successResponse: function(event) {
           var user = event.detail.__data__.response;
           // 1. save user information
-          this.set('globals.user', user);
+          if(user){
+            this.set('globals.user', user);
+            if(user.stomp_url){
+              this.set('globals.wsUrl',user.stomp_url);
+            }
+          }
           // 2. reset login form
           this.$.loginForm.reset();
           // 3. fire event
