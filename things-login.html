@@ -140,7 +140,9 @@ Example:
                        pattern="[[usernameValidationPattern]]" 
                        error-message="[[usernameErrorMessage]]" 
                        required 
-                       auto-validate>
+                       auto-validate
+                       autofocus
+                       tabindex='1'>
           </paper-input>
 
           <paper-input id="password" 
@@ -151,7 +153,8 @@ Example:
                        pattern="[[passwordValidationPattern]]" 
                        error-message="[[passwordErrorMessage]]" 
                        required 
-                       auto-validate>
+                       auto-validate
+                       tabindex='2'>
           </paper-input>
 
           <div>
@@ -167,7 +170,7 @@ Example:
               <things-i18n-msg auto msgid="button.reset_password">Reset Password</things-i18n-msg>
             </paper-button>
             
-            <paper-button id="submitButton" raised disabled on-tap="submitHandler">
+            <paper-button id="submitButton" raised disabled on-tap="submitHandler" tabindex='3'>
               <things-i18n-msg auto msgid="button.sign_in">Sign In</things-i18n-msg>
             </paper-button>
           </div>
@@ -491,7 +494,14 @@ Example:
          * After failed sigin in
          */
         _failureResponse: function(event) {
-          this.openInfoMsg(this.tLoginFailure);
+          console.log(event.detail.request.xhr.response);
+          var response = event.detail.request.xhr.response
+          if(response) {
+            this.openResponseError(response);
+          } else {
+            response = event.detail.request;
+            this.openUnkownError(response);
+          }
         }
       });
     </script>
