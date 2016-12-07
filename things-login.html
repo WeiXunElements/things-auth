@@ -494,7 +494,6 @@ Example:
          * After failed sigin in
          */
         _failureResponse: function(event) {
-          console.log(event.detail.request.xhr.response);
           var response = event.detail.request.xhr.response
           if(response) {
             this.openResponseError(response);
