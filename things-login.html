@@ -304,6 +304,15 @@ Example:
           oiScreenPath: {
             type: String,
             value: 'index_io.html'
+          },
+
+          redirectCallback:{
+            type: Object,
+            value: function(){
+              return function(){
+                return true
+              }
+            }
           }
 
           /**
@@ -477,17 +486,27 @@ Example:
           // 4. redirect
           this._redirectAfterLogin(user);
         },
-
+        /**
+         * Callback 호출 
+         */
+        applyCallback: function(callback) {
+          if(callback && typeof callback == 'function') {
+            return callback.apply(this);
+          }
+          return true;
+        },
         /**
          * Redirect after login success
          */
         _redirectAfterLogin: function(user) {
-          if(this.useOiScreen && user.operator_flag === true) {
-            location.href = this.oiScreenPath;
-          } else {
-            page('/');
-            location.reload(true);
-          }
+          if(this.applyCallback(this.redirectCallback)){
+            if(this.useOiScreen && user.operator_flag === true) {
+              location.href = this.oiScreenPath;
+            } else {
+              page('/');
+              location.reload(true);
+            }
+          };
         },
 
         /**
