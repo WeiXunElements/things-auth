@@ -170,7 +170,7 @@ Example:
               <things-i18n-msg auto msgid="button.reset_password">Reset Password</things-i18n-msg>
             </paper-button>
             
-            <paper-button id="submitButton" raised disabled on-tap="submitHandler" tabindex='3'>
+            <paper-button id="submitButton" raised on-tap="submitHandler" tabindex='3'>
               <things-i18n-msg auto msgid="button.sign_in">Sign In</things-i18n-msg>
             </paper-button>
           </div>
@@ -345,8 +345,6 @@ Example:
          * Form change
          */
         onFormChange: function(event) {
-          // Validate the entire form to see if we should enable the `Submit` button.
-          this.$.submitButton.disabled = !this.$.loginForm.validate();
         },
 
         /**
@@ -431,16 +429,18 @@ Example:
          * Submit button tap
          */
         submitHandler: function(event) {
-          this.openInfoMsg({
-            type: 'info',
-            title: 'Sign-in Processing...',
-            html: true,
-            text: '<br/><h3><span>Please Wait.</span><h3>',
-            showConfirmButton: false
-          });
+          if(this.$.loginForm.validate()){
+            this.openInfoMsg({
+              type: 'info',
+              title: 'Sign-in Processing...',
+              html: true,
+              text: '<br/><h3><span>Please Wait.</span><h3>',
+              showConfirmButton: false
+            });
 
-          this.$.submitButton.disabled = true;
-          this.$.loginForm.submit();
+            this.$.submitButton.disabled = true;
+            this.$.loginForm.submit();
+          }
         },
 
         /**
