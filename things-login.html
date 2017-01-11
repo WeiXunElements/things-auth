@@ -464,13 +464,14 @@ Example:
          * After submit
          */
         _afterFormSubmit: function(event) {
-          submitButton.disabled = false;
+          this.$.submitButton.disabled = false;
         },
 
         /**
          * After signed in
          */
         _successResponse: function(event) {
+          submitButton.disabled = false;
           var user = event.detail.__data__.response;
           // 1. save user information
           if(user){
@@ -513,7 +514,9 @@ Example:
          * After failed sigin in
          */
         _failureResponse: function(event) {
+          this.$.submitButton.disabled = false;
           var response = event.detail.request.xhr.response
+          
           if(response) {
             this.openResponseError(response);
           } else {
