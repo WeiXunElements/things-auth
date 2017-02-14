@@ -39,10 +39,10 @@ Example:
     <style>
       :host {
         display: block;
-        background-image: url(/images/bg-rail.png), url(/images/bg-blue.png), url(/images/bg-green.png);
-        background-position: 50% 100%, 0 0, 100% 50%;
-        background-repeat: no-repeat;
-        background-color: #f1f1f1;
+        @apply(--things-home-image);
+        background-image : var(--things-home-image-url);
+        background-position : var(--things-home-image-position);
+        margin:90px 58px !important;
       }
 
       paper-material {
