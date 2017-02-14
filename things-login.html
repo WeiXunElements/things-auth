@@ -1,17 +1,17 @@
-<link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../iron-input/iron-input.html">
-<link rel="import" href="../iron-form/iron-form.html">
-<link rel="import" href="../paper-input/paper-input.html">
-<link rel="import" href="../paper-button/paper-button.html">
-<link rel="import" href="../paper-material/paper-material.html">
-<link rel="import" href="../gold-email-input/gold-email-input.html">
-<link rel="import" href="../things-global-behavior/things-global-behavior.html">
-<link rel="import" href="../things-msg-box-behavior/things-msg-box-behavior.html">
-<link rel="import" href="../things-i18n-msg/things-i18n-msg.html">
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-input/iron-input.html">
+<link rel="import" href="../../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/gold-email-input/gold-email-input.html">
+<link rel="import" href="../../bower_components/things-global-behavior/things-global-behavior.html">
+<link rel="import" href="../../bower_components/things-msg-box-behavior/things-msg-box-behavior.html">
+<link rel="import" href="../../bower_components/things-i18n-msg/things-i18n-msg.html">
 
-<link rel="import" href="./things-signup.html">
-<link rel="import" href="./things-password-init.html">
-<link rel="import" href="./things-request-active.html">
+<link rel="import" href="../../bower_components/things-auth/things-signup.html">
+<link rel="import" href="../../bower_components/things-auth/things-password-init.html">
+<link rel="import" href="../../bower_components/things-auth/things-request-active.html">
 
 <!--
 A things login form asking for login and password.
@@ -36,17 +36,23 @@ Example:
 
 <dom-module id="things-login">
   <template>
-    <style>
+    <style is="custom-style">
       :host {
+        --color: green;
         display: block;
         @apply(--things-home-image);
         background-image : var(--things-home-image-url);
         background-position : var(--things-home-image-position);
         margin:90px 58px !important;
       }
-
+      @media screen and (max-width:999px) {
+        :host{
+          @apply(--things-home-image-small);
+          margin:90px 58px 0 58px !important
+        }
+      }
       paper-material {
-        @apply(--things-login)
+        @apply(--things-login);
       }
 
       .header {
@@ -80,34 +86,22 @@ Example:
       }
 
       paper-button {
-        @apply(--things-button);
-        color: #fff;
+        @apply(--things-login-link-button);
+      }
+      paper-button:hover{
+        color:#dd2c00;
       }
 
       #submitButton {
-        @apply(--things-button-important);
-        float: right;
-        width: 30%;
-        color: #fff;
+        @apply(--things-login-button);
+      }
+      #submitButton:hover{
+        background-color:#9c7964;
+        color:#fff;
       }
 
       div {
-        margin-top: 50px;
-      }
-
-      @media only all and (max-width:600px) {
-        paper-button {
-          padding: 9px 7px 7px 7px !important;
-          margin: 0;
-          width: initial !important
-        }
-      }
-
-      @media only all and (max-width:600px) {
-        form {
-          padding-left: 12px;
-          padding-right: 12px
-        }
+        margin-top: 10px;
       }
     </style>
 
@@ -123,41 +117,45 @@ Example:
         <strong><things-i18n-msg auto msgid="label.login">LOGIN</things-i18n-msg></strong>
       </span>
 
-        <form is="iron-form" 
-              id="loginForm" 
-              headers="[[headers]]" 
-              login-path="[[loginPath]]" 
-              action="{{action}}" 
-              content-type="[[contentType]]" 
-              method="[[method]]" 
+        <form is="iron-form"
+              id="loginForm"
+              headers="[[headers]]"
+              login-path="[[loginPath]]"
+              action="{{action}}"
+              content-type="[[contentType]]"
+              method="[[method]]"
               with-credentials>
 
-          <paper-input id="username" 
-                       name="email" 
-                       type="text" 
-                       label="[[lUserId]]" 
-                       value="{{username}}" 
-                       pattern="[[usernameValidationPattern]]" 
-                       error-message="[[usernameErrorMessage]]" 
-                       required 
+          <paper-input id="username"
+                       name="email"
+                       type="text"
+                       label="[[lUserId]]"
+                       value="{{username}}"
+                       pattern="[[usernameValidationPattern]]"
+                       error-message="[[usernameErrorMessage]]"
+                       required
                        auto-validate
                        autofocus
                        tabindex='1'>
           </paper-input>
 
-          <paper-input id="password" 
-                       name="password" 
-                       type="password" 
-                       label="[[lPassword]]" 
-                       value="{{password}}" 
-                       pattern="[[passwordValidationPattern]]" 
-                       error-message="[[passwordErrorMessage]]" 
-                       required 
+          <paper-input id="password"
+                       name="password"
+                       type="password"
+                       label="[[lPassword]]"
+                       value="{{password}}"
+                       pattern="[[passwordValidationPattern]]"
+                       error-message="[[passwordErrorMessage]]"
+                       required
                        auto-validate
                        tabindex='2'>
           </paper-input>
 
           <div>
+            <paper-button id="submitButton" raised on-tap="submitHandler" tabindex='3'>
+              <things-i18n-msg auto msgid="button.sign_in">Sign In</things-i18n-msg>
+            </paper-button>
+
             <paper-button on-tap="_onSignupTap">
               <things-i18n-msg auto msgid="button.sign_up">Sign Up</things-i18n-msg>
             </paper-button>
@@ -168,10 +166,6 @@ Example:
 
             <paper-button on-tap="_onRequestPasswordResetTap">
               <things-i18n-msg auto msgid="button.reset_password">Reset Password</things-i18n-msg>
-            </paper-button>
-            
-            <paper-button id="submitButton" raised on-tap="submitHandler" tabindex='3'>
-              <things-i18n-msg auto msgid="button.sign_in">Sign In</things-i18n-msg>
             </paper-button>
           </div>
         </form>
@@ -291,7 +285,7 @@ Example:
           },
 
           /**
-           * OI 화면을 사용할 지 여부 
+           * OI 화면을 사용할 지 여부
            */
           useOiScreen: {
             type: Boolean,
@@ -339,7 +333,7 @@ Example:
          */
         _computeActionUrl: function(baseUrl, url) {
           return baseUrl + '/' + url;
-        },        
+        },
 
         /**
          * Form change
@@ -429,6 +423,7 @@ Example:
          * Submit button tap
          */
         submitHandler: function(event) {
+          console.log(this.customStyle);
           if(this.$.loginForm.validate()){
             this.openInfoMsg({
               type: 'info',
@@ -480,6 +475,8 @@ Example:
               this.set('globals.wsUrl',user.stomp_url);
             }
           }
+          console.log(this.root.customStyle);
+          this.customStyle['--things-background-image'] ='url(/images/bg-rail.png), url(/images/bg-blue.png)'
           // 2. reset login form
           this.$.loginForm.reset();
           // 3. fire event
@@ -488,7 +485,7 @@ Example:
           this._redirectAfterLogin(user);
         },
         /**
-         * Callback 호출 
+         * Callback 호출
          */
         applyCallback: function(callback) {
           if(callback && typeof callback == 'function') {
@@ -516,7 +513,7 @@ Example:
         _failureResponse: function(event) {
           this.$.submitButton.disabled = false;
           var response = event.detail.request.xhr.response
-          
+
           if(response) {
             this.openResponseError(response);
           } else {
