@@ -306,6 +306,15 @@ Example:
                 return true
               }
             }
+          },
+
+
+          /*
+           * 로그인 성공 후 마지막에 접속했던 페이지로 이동할 지 여부
+           */
+          redirectToLastPageWhenLoggedIn: {
+            type: Boolean,
+            value: false
           }
 
           /**
@@ -500,7 +509,11 @@ Example:
             if(this.useOiScreen && user.operator_flag === true) {
               location.href = this.oiScreenPath;
             } else {
-              page('/');
+              var redirectURL = '/'
+              if(this.redirectToLastPageWhenLoggedIn)
+                redirectURL = window.sessionStorage.getItem('lastURL') || '/'
+
+              page(redirectURL);
               location.reload(true);
             }
           };
