@@ -7,8 +7,17 @@
 <link rel="import" href="../things-i18n-msg/things-i18n-msg.html">
 
 <!--
-  로그아웃 컴포넌트
+  ## things-logout
+ko-KR
+  ### 로그아웃 컴포넌트
+  ``` html
+  <things-logout id="logout"
+                  logout-path="logout"
+                  icon="icons:power-settings-new"
+                  on-things-logout-succeed = "onThingsLogoutSuccess"></things-logout>
+  ```
 -->
+
 
 <dom-module id="things-logout">
     <template>
@@ -29,21 +38,38 @@
             ],
 
             properties: {
+                /**
+                 * 로그 아웃에 사용되는 url
+                 * ***
+                 * @type {String}
+                 */
                 logoutPath: {
                     type: String,
                     value: ''
                 },
-
-                logoutUrl: {
+                /**
+                 * 로그아웃에 사용되는 full url
+                 * ***
+                 * @type {String}
+                 */
+                _logoutUrl: {
                     type: String,
                     computed: '_computeLogoutUrl(globals.baseUrl, logoutPath)'
                 },
-
+                /**
+                 * signout에 사용될 ajax, iron-ajax
+                 * ***
+                 * @type {Object}
+                 */
                 _signoutAjax: {
                     type: Object,
                     value: {}
                 },
-
+                /**
+                 * icon명
+                 * ***
+                 * @type {String}
+                 */
                 icon: {
                     type: String,
                     value: 'exit-to-app'
@@ -53,22 +79,39 @@
             listeners: {
                 'logout.tap': 'logout'
             },
-
+            /**
+             * compute logout url of logout
+             * ***
+             * @param  {String} baseUrl `globals.baseUrl`이 변화되거나 초기화되어 설정되는 기본서버 url,Things Framework(Elidom Framework)에서는 `.../rest`까지 포함
+             * @param  {String} url     request를 요청한 Rest url Ex:) login
+             * @return {String}         Full url -->globals.baseUrl/url
+             */
             _computeLogoutUrl: function(baseUrl, url) {
                 return baseUrl + '/' + url;
             },
-
+            /**
+             * logout icon button 클릭시
+             * ***
+             * @param  {Object} e logout.tap event
+             * @return {null}
+             */
             logout: function(e) {
-                // console.log(this.isSignedIn());
-                // if (this.isSignedIn()) {
-                    this.signout(this.logoutUrl);
-                // }
+                this.signout(this._logoutUrl);
             },
-
+            /**
+             * 기존에 로그인된 상태인지
+             * ***
+             * @return {Boolean} globals.user가 있으면 true, 없으면 flase
+             */
             isSignedIn: function() {
                 return this.get('globals.user') ? true : false;
             },
-
+            /**
+             * logout-url로 post request전송
+             * ***
+             * @param  {String} logoutUrl logout해 줄수 있는 url
+             * @return {null}
+             */
             signout: function(logoutUrl) {
                 this.set('_signoutAjax', document.createElement('iron-ajax'));
                 this.listen(this._signoutAjax, 'response', '_signoutSuccess');
@@ -79,7 +122,18 @@
                 this._signoutAjax.withCredentials = true;
                 this._signoutAjax.generateRequest();
             },
+            /**
+             * 로그아웃 성공시
+             * ***
+             * @event things-logout-succeed
+             */
 
+             /**
+              * 로그아웃 성공시 호출, things-logout-succeed fire후  request에 대한 response unlisten 및 login라우팅으로 이동
+              * ***
+              * @param  {Object} event iron-ajax의 response이벤트
+              * @return {null}
+              */
             _signoutSuccess: function(event) {
                 this.set('globals.user', null);
                 this.fire('things-logout-succeed');
@@ -87,7 +141,12 @@
                 this.unlisten(this._signoutAjax, 'error', '_signoutFailure');
                 page('/login');
             },
-
+            /**
+             * 로그아웃 실폐시 호출
+             * ***
+             * @param  {Object} event iron-ajax의 error이벤트
+             * @return {null}
+             */
             _signoutFailure: function(event) {
                 if (event && event.detail && event.detail.error && event.detail.error.target && event.detail.error.target.statusText) {
                     this.openInfoMsg(event.detail.error.target.statusText);

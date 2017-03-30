@@ -12,7 +12,9 @@
 <link rel="import" href="../things-spinner/things-spinner-behavior.html">
 
 <!--
-  사용자 계정 활성화 요청 화면 
+## things-request-active
+ko-KR
+### 사용자 계정 활성화 요청 화면
 
 @demo demo/index.html
 -->
@@ -38,38 +40,38 @@
     <things-i18n-msg auto msgid="text.invalid_input" msg="{{tInvalidInput}}" hidden>Invalid Input.</things-i18n-msg>
     <things-i18n-msg auto msgid="text.info_invalid" msg="{{tInfoInvalid}}" hidden>Typed information is not valid.</things-i18n-msg>
 
-    <form is="iron-form" 
-          id="form" 
-          action=[[action]] 
-          headers="[[headers]]" 
-          content-type="application/json" 
-          method="[[method]]" 
-          with-credentials=true 
+    <form is="iron-form"
+          id="form"
+          action=[[action]]
+          headers="[[headers]]"
+          content-type="application/json"
+          method="[[method]]"
+          with-credentials=true
           last-response="{{lastResponse}}">
       <things-i18n-msg msgid="label.user_name" msg="{{lUserName}}" auto hidden>User Name</things-i18n-msg>
       <things-i18n-msg msgid="label.email_address" msg="{{lEmailAddress}}" auto hidden>Email Address</things-i18n-msg>
       <things-i18n-msg msgid="label.password" msg="{{lPassword}}" auto hidden>Password</things-i18n-msg>
 
-      <paper-input required 
-                   name="name" 
-                   label="[[lUserName]]" 
-                   value="{{userName}}" 
-                   required 
+      <paper-input required
+                   name="name"
+                   label="[[lUserName]]"
+                   value="{{userName}}"
+                   required
                    auto-validate>
       </paper-input>
 
-      <gold-email-input auto-validate 
-                        required 
-                        name="email" 
-                        label="[[lEmailAddress]]" 
+      <gold-email-input auto-validate
+                        required
+                        name="email"
+                        label="[[lEmailAddress]]"
                         value="[[userEmail]]">
       </gold-email-input>
 
-      <paper-input id="current-pw" 
-                   auto-validate 
-                   required 
-                   name="current_pass" 
-                   type="password" 
+      <paper-input id="current-pw"
+                   auto-validate
+                   required
+                   name="current_pass"
+                   type="password"
                    label="[[lPassword]]">
       </paper-input>
 
@@ -88,15 +90,28 @@
       is: 'things-request-active',
 
       properties: {
+        /**
+         * 현재 로그인된 사용자 정보
+         * ***
+         * @type {Object}
+         */
         currentUserInfo: {
           type: Object,
           observer: '_currentUserInfoChanged'
         },
-
+        /**
+         * 사용자명
+         *****
+         * @type {String}
+         */
         userName: {
           type: String
         },
-
+        /**
+         * 사용자 Email
+         *****
+         * @type {String}
+         */
         userEmail: {
           type: String
         }
@@ -112,11 +127,22 @@
         'iron-form-response': '_successResponseHandler',
         'iron-form-error': '_errorResponseHandler'
       },
-
+      /**
+       * active요청 성공시
+         *****
+       * @event things-reqeust-active-success
+       * @param {Object} serializedForm
+       */
+      /**
+       * 성공한 경우
+       *****
+       * @param  {Object} event
+       * @return {null}
+       */
       _successResponseHandler: function(event) {
         this.stopSpinner();
         var me = this;
-        
+
         this.openConfirmMsg({
             title: 'Request active success',
             text: 'Active requested succesfully.'
@@ -124,7 +150,18 @@
             me.fire("things-reqeust-active-success", me.serializeMyForm());
         });
       },
-
+      /**
+       * active요청 실폐시
+       *****
+       * @event things-request-active-failure
+       * @param {Object} iron-form-error
+       */
+      /**
+       * 에러가 발생할 경우
+       *****
+       * @param  {Object} event
+       * @return {null}
+       */
       _errorResponseHandler: function(event) {
         this.stopSpinner();
         var me = this;
@@ -137,16 +174,31 @@
           me.fire("things-request-active-failure", event.detail);
         });
       },
-
+      /**
+       * 계정 활성화 요청
+       *****
+       * @param  {Object} event Submit button tap
+       * @return {null}
+       */
       _submitMyForm: function(event) {
         this.$['form'].submit();
         this.fire('things-request-active-submited');
       },
-
+      /**
+       * 화면 초기화
+       *****
+       * @param  {Object} event reset button tap
+       * @return {null}
+       */
       _resetMyForm: function(event) {
         this.resetMyForm();
       },
-
+      /**
+       * 사용자 정보 변경시 업저버
+       *****
+       * @param  {Object} userInfo
+       * @return {null}
+       */
       _currentUserInfoChanged: function(userInfo) {
         this.userName = userInfo.name;
         this.userEmail = userInfo.email;

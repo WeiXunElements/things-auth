@@ -14,7 +14,9 @@
 <link rel="import" href="../things-msg-box-behavior/things-msg-box-behavior.html">
 
 <!--
-    회원가입 화면 
+## things-signup
+ko-KR
+### 회원가입 화면
 -->
 
 <dom-module id="things-signup">
@@ -48,13 +50,13 @@
     <things-i18n-msg auto msgid="label.password" msg="{{lPassword}}" hidden>Current Password</things-i18n-msg>
     <things-i18n-msg auto msgid="label.confirmed_password" msg="{{lConfirmedPassword}}" hidden>Confirm Password</things-i18n-msg>
 
-    <form 
-      is="iron-form" 
-      id="form" 
-      action=[[action]] 
-      headers="[[headers]]" 
-      content-type="application/json" 
-      method="[[method]]" 
+    <form
+      is="iron-form"
+      id="form"
+      action=[[action]]
+      headers="[[headers]]"
+      content-type="application/json"
+      method="[[method]]"
       last-response="{{lastResponse}}">
       <things-resource-combo required name="domain_id" label="[[lDomain]]" resource-url="domains/list" items-prop="" label-path="name" value-path="id"></things-resource-combo>
 
@@ -68,21 +70,21 @@
 
       <paper-input id="pw" required name="encrypted_password" type="password" label="[[lPassword]]"></paper-input>
 
-      <paper-input 
-        id="confirmed-pw" 
-        auto-validate 
-        required 
-        name="confirmed_password" 
-        type="password" 
-        label="[[lConfirmedPassword]]" 
-        validator="_passwordValidate" 
+      <paper-input
+        id="confirmed-pw"
+        auto-validate
+        required
+        name="confirmed_password"
+        type="password"
+        label="[[lConfirmedPassword]]"
+        validator="_passwordValidate"
         errorMessage="Password mismatch password and confirmed password">
       </paper-input>
 
       <paper-button class="btn-submit" raised on-click="_submitMyForm">
         <things-i18n-msg msgid="button.submit" auto>Submit</things-i18n-msg>
       </paper-button>
-  
+
       <paper-button raised on-click="_resetMyForm">
         <things-i18n-msg msgid="button.reset" auto>Reset</things-i18n-msg>
       </paper-button>
@@ -92,9 +94,6 @@
   <script>
     Polymer({
       is: 'things-signup',
-
-      properties: {
-      },
 
       behaviors: [
         Things.FormBehavior,
@@ -106,7 +105,17 @@
         'iron-form-response': '_successResponseHandler',
         'iron-form-error': '_errorResponseHandler'
       },
-
+      /**
+       * ID등록 요청 성공시
+       *****
+       * @event things-signup-success
+       * @param {Object} serializedForm
+       */
+      /**
+       * ID등록 요청 성공시
+       * @param  {Object} event iron-form-response
+       * @return {null}
+       */
       _successResponseHandler: function(event) {
         this.stopSpinner();
         var me = this;
@@ -118,17 +127,32 @@
           me.fire("things-signup-success", me.serializeMyForm());
         });
       },
-
+      /**
+       * ID등록 요청 실폐시
+       *****
+       * @event things-signup-failure
+       * @param {Object} ironRequest
+       */
+      /**
+       * ID등록 요청 실폐시
+       * @param  {Object} event iron-form-error
+       * @return {null}
+       */
       _errorResponseHandler: function(event) {
         this.stopSpinner();
         var me = this;
-
+        this.fire("things-signup-failure",event.detail);
         this.openConfirmMsg({
           type: 'warning',
           title: this.tInvalidInput,
           text: this.tInfoInvalid
         });
       },
+      /**
+       * ID등록 요청 발송후
+       *****
+       * @event things-signup-submited
+       */
 
       _submitMyForm: function(event) {
         if (this._passwordValidate()) {

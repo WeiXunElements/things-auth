@@ -1,23 +1,27 @@
-<link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../bower_components/iron-input/iron-input.html">
-<link rel="import" href="../../bower_components/iron-form/iron-form.html">
-<link rel="import" href="../../bower_components/paper-input/paper-input.html">
-<link rel="import" href="../../bower_components/paper-button/paper-button.html">
-<link rel="import" href="../../bower_components/paper-material/paper-material.html">
-<link rel="import" href="../../bower_components/gold-email-input/gold-email-input.html">
-<link rel="import" href="../../bower_components/things-global-behavior/things-global-behavior.html">
-<link rel="import" href="../../bower_components/things-msg-box-behavior/things-msg-box-behavior.html">
-<link rel="import" href="../../bower_components/things-i18n-msg/things-i18n-msg.html">
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-input/iron-input.html">
+<link rel="import" href="../iron-form/iron-form.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-material/paper-material.html">
+<link rel="import" href="../gold-email-input/gold-email-input.html">
+<link rel="import" href="../things-global-behavior/things-global-behavior.html">
+<link rel="import" href="../things-msg-box-behavior/things-msg-box-behavior.html">
+<link rel="import" href="../things-i18n-msg/things-i18n-msg.html">
 
-<link rel="import" href="../../bower_components/things-auth/things-signup.html">
-<link rel="import" href="../../bower_components/things-auth/things-password-init.html">
-<link rel="import" href="../../bower_components/things-auth/things-request-active.html">
+<link rel="import" href="./things-signup.html">
+<link rel="import" href="./things-password-init.html">
+<link rel="import" href="./things-request-active.html">
+
+
 
 <!--
-A things login form asking for login and password.
+## things-login
+ko-KR
+### 로그인 화면
 
 Example:
-
+```html
 <things-login data-route="login"
               route ="{{route}}"
               title="Things Label Management"
@@ -30,9 +34,31 @@ Example:
               Reset-label = "Reset">
   <img avatar src="https://maps.gstatic.com/tactile/pane/default_geocode-1x.png"/>
 </things-login>
+```
 
-@demo demo/index.html
--->
+****
+
+en-US
+### A things login form asking for login and password.
+
+Example:
+```html
+<things-login data-route="login"
+              route ="{{route}}"
+              title="Things Label Management"
+              login-path="login"
+              content-type="application/x-www-form-urlencoded"
+              success-route="list"
+              username-input-label="ID"
+              password-input-label="Password"
+              submit-label ="Submit"
+              Reset-label = "Reset">
+  <img avatar src="https://maps.gstatic.com/tactile/pane/default_geocode-1x.png"/>
+</things-login>
+```
+
+@demo demo/index.html -->
+
 
 <dom-module id="things-login">
   <template>
@@ -104,7 +130,7 @@ Example:
       }
     </style>
 
-    <paper-material elevation="1" on-keypress="keypressHandler">
+    <paper-material elevation="1" on-keypress="_keypressHandler">
       <things-i18n-msg auto msgid="text.login_failure" msg="{{tLoginFailure}}" hidden>Login failure.</things-i18n-msg>
       <things-i18n-msg auto msgid="label.id" msg="{{lUserId}}" hidden>ID</things-i18n-msg>
       <things-i18n-msg auto msgid="label.password" msg="{{lPassword}}" hidden>Password</things-i18n-msg>
@@ -151,7 +177,7 @@ Example:
           </paper-input>
 
           <div>
-            <paper-button id="submitButton" raised on-tap="submitHandler" tabindex='3'>
+            <paper-button id="submitButton" raised on-tap="_submitHandler" tabindex='3'>
               <things-i18n-msg auto msgid="button.sign_in">Sign In</things-i18n-msg>
             </paper-button>
 
@@ -179,6 +205,7 @@ Example:
         properties: {
           /**
            * Label for the title
+           *****
            * @type {string}
            * @default Login
            */
@@ -189,6 +216,7 @@ Example:
 
           /**
            * elevation(음영높이) for login form
+           *****
            * @type {Number}
            */
           elevation: {
@@ -198,6 +226,7 @@ Example:
 
           /**
            * Pattern used to validate username,  ex: '^[a-zA-Z0-9]+$'
+           *****
            * @type {string}
            */
           usernameValidationPattern: {
@@ -206,6 +235,7 @@ Example:
 
           /**
            * Error message displayed if `usernameValidationPattern` is not matched.
+           *****
            * @type {string}
            */
           usernameErrorMessage: {
@@ -215,6 +245,7 @@ Example:
 
           /**
            * Pattern used to validate password, ex: '^[a-zA-Z0-9]+$'
+           ******
            * @type {string}
            */
           passwordValidationPattern: {
@@ -223,6 +254,7 @@ Example:
 
           /**
            * Error message displayed if `passwordValidationPattern` is not matched.
+           ******
            * @type {string}
            */
           passwordErrorMessage: {
@@ -232,6 +264,7 @@ Example:
 
           /**
            * login request header
+           ******
            * @type {Object}
            */
           headers: {
@@ -240,6 +273,7 @@ Example:
 
           /**
            * login request url except basic url
+           ******
            * @type {Object}
            */
           loginPath: {
@@ -249,6 +283,7 @@ Example:
 
           /**
            * login request full url
+           ******
            * @type {Object}
            */
           action: {
@@ -258,6 +293,7 @@ Example:
 
           /**
            * login request content type
+           ******
            * @type {Object}
            */
           contentType: {
@@ -267,6 +303,9 @@ Example:
 
           /**
            * login request method
+           ******
+           * @type {String}
+           * @default POST
            */
           method: {
             type: String,
@@ -275,7 +314,8 @@ Example:
 
           /**
            * Label for the submit button
-           * @type {string}
+           ******
+           * @type {String}
            * @default Submit
            */
           submitLabel: {
@@ -285,6 +325,9 @@ Example:
 
           /**
            * OI 화면을 사용할 지 여부
+           ******
+           * @type {Boolean}
+           * @default {false}
            */
           useOiScreen: {
             type: Boolean,
@@ -293,12 +336,20 @@ Example:
 
           /**
            * OI 화면 URL
+           ******
+           * @type {String}
+           * @default index_io.html
            */
           oiScreenPath: {
             type: String,
             value: 'index_io.html'
           },
-
+          /**
+           * 로그인 후 적용하는 callback function
+           *****
+           * @type {Object}
+           * @default function(){return true}
+           */
           redirectCallback:{
             type: Object,
             value: function(){
@@ -307,10 +358,11 @@ Example:
               }
             }
           },
-
-
-          /*
+          /**
            * 로그인 성공 후 마지막에 접속했던 페이지로 이동할 지 여부
+           * ****
+           * @type {Boolean}
+           * @default false
            */
           redirectToLastPageWhenLoggedIn: {
             type: Boolean,
@@ -330,27 +382,35 @@ Example:
         ],
 
         listeners: {
-          'change': 'onFormChange',
           'iron-form-submit': '_afterFormSubmit',
           'iron-form-response': '_successResponse',
           'iron-form-error': '_failureResponse'
         },
-
         /**
          * compute action url of sign in
+         * ***
+         * @param  {String} baseUrl `globals.baseUrl`이 변화되거나 초기화되어 설정되는 기본서버 url,Things Framework(Elidom Framework)에서는 `.../rest`까지 포함
+         * @param  {String} url     request를 요청한 Rest url Ex:) login
+         * @return {String}         Full url -->globals.baseUrl/url
          */
         _computeActionUrl: function(baseUrl, url) {
           return baseUrl + '/' + url;
         },
 
         /**
-         * Form change
+         * 사용자 신청,활성화,비밀번호 초기화 Popup을 open하기 위한 event
+         *****
+         * @event document.things-open-popup-view
+         * @param {Element} view  :things-signup/things-request-active/things-password-init
+         * @param {Boolean} modal  :true/false
+         * @param {function} openCallback : function
          */
-        onFormChange: function(event) {
-        },
 
         /**
          * Signup button tap
+         *****
+         * @param  {String} event signup button tap event
+         * @return {null}
          */
         _onSignupTap: function(event) {
           var signup = document.createElement('things-signup');
@@ -375,9 +435,12 @@ Example:
           document.dispatchEvent(event);
         },
 
-        /**
-         * Request account activation button tap
-         */
+         /**
+          * Request account activation button tap
+          *****
+          * @param  {String} event request active tap event
+          * @return {null}
+          */
         _onRequestAccountActivateTap: function(event) {
           var requestActive = document.createElement('things-request-active');
           requestActive.title = this.lRequestActive;
@@ -403,6 +466,9 @@ Example:
 
         /**
          * Request password reset button tap
+         *****
+         * @param  {String} event Reset Password tap event
+         * @return {null}
          */
         _onRequestPasswordResetTap: function(event) {
           var pwInit = document.createElement('things-password-init');
@@ -428,10 +494,12 @@ Example:
         },
 
         /**
-         * Submit button tap
+         * Sign In tap
+         *****
+         * @param  {String} event Sign In tap event
+         * @return {null}
          */
-        submitHandler: function(event) {
-          console.log(this.customStyle);
+        _submitHandler: function(event) {
           if(this.$.loginForm.validate()){
             this.openInfoMsg({
               type: 'info',
@@ -449,29 +517,54 @@ Example:
         /**
          * Submit (Sign In) button tap
          */
-        resetHandler: function(event) {
-          this.$.loginForm.reset();
-        },
+        // resetHandler: function(event) {
+        //   this.$.loginForm.reset();
+        // },
 
         /**
-         * On keypress
+         * on keypress event
+         *****
+         * @param  {String} event when keypress event fire
+         * @return {null}
          */
-        keypressHandler: function(event, detail, sender) {
+        _keypressHandler: function(event) {
           var code = event.keyCode;
           if (code == 13) {
-            this.submitHandler(event);
+            this._submitHandler(event);
           }
         },
 
         /**
-         * After submit
+         * After submit disable login button
+         *****
+         * @param  {String} event when iron-form-submit fire
+         * @return {null}
          */
         _afterFormSubmit: function(event) {
           this.$.submitButton.disabled = false;
         },
 
         /**
-         * After signed in
+         * ko-KR
+         * 로그인이 성공하여 iron-form-response가 발생하면 해당 함수를 부른다.
+         *  1. 사용자정보를 globals에 저장 및 local-storage에 저장
+         *  2. 로그인 폼 리셋
+         *  3. fire things-login-succeed event
+         *  4. 화면이동
+         *    만일 redirectCallback가 있으면 적용하고 반환값이 true이면 사용자정보의
+         *    user.operator_flag과 useOiScreen 옵션을 이용하여 oi로 이동할 것인지 standard로 이동할 것인지 판단한다.
+         * ****
+         * en-US
+         * After submit disable login button
+         *  1. save user information
+         *  2. reset login form
+         *  3. fire things-login-succeed event
+         *  4. redirect
+         *    if there's have redirectCallback apply redirectCallback and check return if it is true
+         *    use data from user.operator_flag and useOiScreen option
+         *****
+         * @param  {String} event when iron-form-response fire
+         * @return {null}
          */
         _successResponse: function(event) {
           submitButton.disabled = false;
@@ -483,7 +576,6 @@ Example:
               this.set('globals.wsUrl',user.stomp_url);
             }
           }
-          console.log(this.root.customStyle);
           this.customStyle['--things-background-image'] ='url(/images/bg-rail.png), url(/images/bg-blue.png)'
           // 2. reset login form
           this.$.loginForm.reset();
@@ -494,8 +586,11 @@ Example:
         },
         /**
          * Callback 호출
+         *****
+         * @param  {Function} callback redirectCallback
+         * @return {Boolean}            redirectCallback을 적용한 값을 리턴, 없을 경우는 true
          */
-        applyCallback: function(callback) {
+        _applyCallback: function(callback) {
           if(callback && typeof callback == 'function') {
             return callback.apply(this);
           }
@@ -503,9 +598,12 @@ Example:
         },
         /**
          * Redirect after login success
+         ****
+         * @param  {Object} user 사용자 정보
+         * @return {null}
          */
         _redirectAfterLogin: function(user) {
-          if(this.applyCallback(this.redirectCallback)){
+          if(this._applyCallback(this.redirectCallback)){
             if(this.useOiScreen && user.operator_flag === true) {
               location.href = this.oiScreenPath;
             } else {
@@ -521,6 +619,8 @@ Example:
 
         /**
          * After failed sigin in
+         * @param  {Object} event iron-form-error
+         * @return {null}
          */
         _failureResponse: function(event) {
           this.$.submitButton.disabled = false;
