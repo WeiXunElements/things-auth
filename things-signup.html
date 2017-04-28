@@ -12,6 +12,7 @@
 <link rel="import" href="../things-resource-combo/things-resource-combo.html">
 <link rel="import" href="../things-spinner/things-spinner-behavior.html">
 <link rel="import" href="../things-msg-box-behavior/things-msg-box-behavior.html">
+<link rel="import" href="../things-msg-box-behavior/things-assert-behavior.html">
 
 <!--
 ## things-signup
@@ -44,11 +45,22 @@ ko-KR
     <things-i18n-msg auto msgid="text.check_register_in_mail" msg="{{tCheckRegInMail}}" hidden>You can check result of acceptance through your email.</things-i18n-msg>
 
     <things-i18n-msg auto msgid="label.domain" msg="{{lDomain}}" hidden>Domain</things-i18n-msg>
+    <things-i18n-msg auto msgid="label.login" msg="{{lLogin}}" hidden>Login ID</things-i18n-msg>
     <things-i18n-msg auto msgid="label.user_name" msg="{{lUserName}}" hidden>User Name</things-i18n-msg>
     <things-i18n-msg auto msgid="label.email_address" msg="{{lEmailAddress}}" hidden>Email Address</things-i18n-msg>
     <things-i18n-msg auto msgid="label.language" msg="{{lLocale}}" hidden>Locale</things-i18n-msg>
     <things-i18n-msg auto msgid="label.password" msg="{{lPassword}}" hidden>Current Password</things-i18n-msg>
     <things-i18n-msg auto msgid="label.confirmed_password" msg="{{lConfirmedPassword}}" hidden>Confirm Password</things-i18n-msg>
+
+
+    <things-ajax
+      id="get-userid-ajax"
+      method="GET"
+      resource-url="users/exist/:id"
+      resource-id="{{userLoginId}}"
+      last-response="{{userExist}}">
+    </things-ajax>
+
 
     <form
       is="iron-form"
@@ -58,11 +70,16 @@ ko-KR
       content-type="application/json"
       method="[[method]]"
       last-response="{{lastResponse}}">
-      <things-resource-combo required name="domain_id" label="[[lDomain]]" resource-url="domains/list" items-prop="" label-path="name" value-path="id"></things-resource-combo>
+      <things-spinner id="thingsspinner"></things-spinner>
+      <things-resource-combo required id="domain" name="domain_id" label="[[lDomain]]" resource-url="domains/list" items-prop="" label-path="name" value-path="id"></things-resource-combo>
 
-      <things-code-combo name="locale" label="[[lLocale]]" code-name="LOCALE"></things-code-combo>
-
-      <paper-input required name="name" label="[[lUserName]]"></paper-input>
+      <things-code-combo id="locale" name="locale" label="[[lLocale]]" code-name="LOCALE"></things-code-combo>
+      <paper-button raised on-click="_loginIdRepeatCheck">
+        <things-i18n-msg msgid="button.repeat-check" auto>Repeat Check</things-i18n-msg>
+      </paper-button>
+      <paper-input id="userlogin" required name="login" label="[[lLogin]]"></paper-input>
+      <things-i18n-msg id="i18nmsg" auto></things-i18n-msg>
+      <paper-input id="username" required name="name" label="[[lUserName]]"></paper-input>
 
       <gold-email-input auto-validate required name="email" label="[[lEmailAddress]]"></gold-email-input>
 
@@ -98,12 +115,51 @@ ko-KR
       behaviors: [
         Things.FormBehavior,
         Things.SpinnerBehavior,
-        Things.MsgBoxBehavior
+        Things.MsgBoxBehavior,
+        Things.AssertBehavior
       ],
+      properties: {
+        userLoginId:{
+          type:String,
+          value:''
+        },
+        repeatchecked:{
+           type:Boolean,
+           value:false
+        }
+      },
 
       listeners: {
         'iron-form-response': '_successResponseHandler',
-        'iron-form-error': '_errorResponseHandler'
+        'iron-form-error': '_errorResponseHandler',
+        'get-userid-ajax.things-ajax-response': 'openRepeatCheck'
+      },
+      openRepeatCheck:function(event){
+         if(event.detail){
+               this.$['i18nmsg'].msgid="text.repeatCheckMsg_3";
+           }else{
+             this.$['i18nmsg'].msgid="text.repeatCheckMsg_4";
+             this.repeatchecked=true;
+           }
+      },
+       isRegisterUserName: function(s)   {
+        var patrn=/^[a-zA-Z]{1}([a-zA-Z0-9]|[._]){3,19}$/;
+        if (patrn.exec(s)) return false
+        return true
+      },
+      /**
+       * login id 중복 체크
+       */
+      _loginIdRepeatCheck:function(){
+          this.userLoginId=this.$['userlogin'].value;
+
+          if(this.$.userlogin.value==""){
+           this.$['i18nmsg'].msgid="text.repeatCheckMsg_1";
+         }else if(this.isRegisterUserName(this.$.userlogin.value)){
+             this.$['i18nmsg'].msgid="text.repeatCheckMsg_2";
+          }else{
+         this.$['get-userid-ajax'].generateRequest();
+       }
       },
       /**
        * ID등록 요청 성공시
@@ -124,7 +180,7 @@ ko-KR
           title: this.tRegInProcess,
           text: this.tCheckRegInMail
         }, function() {
-          me.fire("things-signup-success", me.serializeMyForm());
+          if(this.repeatchecked){me.fire("things-signup-success", me.serializeMyForm());}
         });
       },
       /**
@@ -155,16 +211,26 @@ ko-KR
        */
 
       _submitMyForm: function(event) {
-        if (this._passwordValidate()) {
+        if(this.repeatchecked){
+        if (this._validateForm()){
           this.$['form'].submit();
           this.fire('things-signup-submited');
-        } else {
-          this.openInfoMsg(this.tPasswordMismatch);
+        }}else{
+         this.$['i18nmsg'].msgid="text.repeatCheckMsg_5";
         }
       },
 
       _resetMyForm: function(event) {
         this.resetMyForm();
+      },
+
+      _validateForm: function(){
+        this.assertNotEmpty(this.$.domain.value, 'domain');
+        this.assertNotEmpty(this.$.locale.value, 'locale');
+        this.assertNotEmpty(this.$.pw.value, 'password');
+        this.assertNotEmpty(this.$['confirmed-pw'].value, 'confirmed_password');
+        this.assertEqual(this.$.pw.value, this.$['confirmed-pw'].value, 'password', 'confirmed_password');
+        return true;
       },
 
       _passwordValidate: function() {
