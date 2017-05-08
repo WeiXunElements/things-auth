@@ -136,9 +136,9 @@ ko-KR
       },
       openRepeatCheck:function(event){
          if(event.detail){
-               this.$['i18nmsg'].msgid="text.repeatCheckMsg_3";
+               this.$['i18nmsg'].msgid="text.signupCheckLoginIdRepeated";
            }else{
-             this.$['i18nmsg'].msgid="text.repeatCheckMsg_4";
+             this.$['i18nmsg'].msgid="text.signupCheckLoginIdNoRepeated";
              this.repeatchecked=true;
            }
       },
@@ -154,9 +154,9 @@ ko-KR
           this.userLoginId=this.$['userlogin'].value;
 
           if(this.$.userlogin.value==""){
-           this.$['i18nmsg'].msgid="text.repeatCheckMsg_1";
+           this.$['i18nmsg'].msgid="text.signupCheckLoginRepeat";
          }else if(this.isRegisterUserName(this.$.userlogin.value)){
-             this.$['i18nmsg'].msgid="text.repeatCheckMsg_2";
+             this.$['i18nmsg'].msgid="text.signupCheckLoginId";
           }else{
          this.$['get-userid-ajax'].generateRequest();
        }
@@ -216,7 +216,7 @@ ko-KR
           this.$['form'].submit();
           this.fire('things-signup-submited');
         }}else{
-         this.$['i18nmsg'].msgid="text.repeatCheckMsg_5";
+         this.$['i18nmsg'].msgid="text.signupCheckLoginIdPlease";
         }
       },
 
