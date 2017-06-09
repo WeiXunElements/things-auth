@@ -9,10 +9,12 @@
 <link rel="import" href="../things-global-behavior/things-global-behavior.html">
 <link rel="import" href="../things-msg-box-behavior/things-msg-box-behavior.html">
 <link rel="import" href="../things-i18n-msg/things-i18n-msg.html">
+<link rel="import" href="../things-portal-display/things-portal-display.html">
 
 <link rel="import" href="./things-signup.html">
 <link rel="import" href="./things-password-init.html">
 <link rel="import" href="./things-request-active.html">
+
 
 <!--
 ## things-login
@@ -131,6 +133,10 @@ Example:
         margin-top: 10px;
       }
     </style>
+
+    <template is="dom-if" if="[[isMobile]]">
+      <things-portal-display></things-portal-display>
+    </template>
 
     <paper-material elevation="1" on-keypress="_keypressHandler">
       <things-i18n-msg auto msgid="label.id" msg="{{lUserId}}" hidden>ID</things-i18n-msg>
