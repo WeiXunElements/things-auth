@@ -43,7 +43,7 @@ You can launch the server from `build/bundled` or `build/unbundled` with the fol
 $ polymer serve build/bundled
 ```
 
-### 2.3 Run Tests
+### 2.4 Run Tests
 
 ```
 $ polymer test
