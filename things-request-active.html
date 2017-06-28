@@ -136,12 +136,16 @@ ko-KR
         this.stopSpinner();
         var me = this;
 
-        this.openConfirmMsg({
-            title: 'Request active success',
-            text: 'Active requested succesfully.'
-        }, function() {
+        var config = {
+          title: Things.DataGlobal.t('label.success'),
+          text: Things.DataGlobal.t('text.check_register_in_mail')
+        };
+
+        this.openConfirmMsg(config, function() {
             me.fire("things-reqeust-active-success", me.serializeMyForm());
         });
+
+        this.fire('things-all-dialog-close');
       },
       /**
        * active요청 실폐시
@@ -157,15 +161,7 @@ ko-KR
        */
       _errorResponseHandler: function(event) {
         this.stopSpinner();
-        var me = this;
-
-        this.openConfirmMsg({
-          type: 'warning',
-          title: this.tInvalidInput,
-          text: this.tInfoInvalid
-        }, function() {
-          me.fire("things-request-active-failure", event.detail);
-        });
+        this.fire('things-request-active-failure', event.detail);
       },
       /**
        * 계정 활성화 요청
