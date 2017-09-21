@@ -132,7 +132,9 @@ Example:
         background-color:#9c7964;
         color:#fff;
       }
-
+      paper-dialog {
+        padding: 0;
+      }
       div {
         margin-top: 10px;
       }
@@ -141,6 +143,10 @@ Example:
     <template is="dom-if" if="[[isMobile]]">
       <things-portal-display></things-portal-display>
     </template>
+
+    <paper-dialog id="pwd-expired-dialog" modal>
+      <things-password-expired></things-password-expired>
+    </paper-dialog>
 
     <paper-material elevation="1" on-keypress="_keypressHandler">
       <things-i18n-msg auto msgid="label.id" msg="{{lUserId}}" hidden>ID</things-i18n-msg>
@@ -551,19 +557,21 @@ Example:
         /**
          * ko-KR
          * 로그인이 성공하여 iron-form-response가 발생하면 해당 함수를 부른다.
-         *  1. 사용자정보를 globals에 저장 및 local-storage에 저장
-         *  2. 로그인 폼 리셋
-         *  3. fire things-login-succeed event
-         *  4. 화면이동
+         *  1. response의 사용자 정보를 토대로 비밀번호 변경 필요시 로그아웃 수행 후 비밀번호 변경 화면 노출 변경 필요 없을시 2. 진행
+         *  2. 사용자정보를 globals에 저장 및 local-storage에 저장
+         *  3. 로그인 폼 리셋
+         *  4. fire things-login-succeed event
+         *  5. 화면이동
          *    만일 redirectCallback가 있으면 적용하고 반환값이 true이면 사용자정보의
          *    user.operator_flag과 useOiScreen 옵션을 이용하여 oi로 이동할 것인지 standard로 이동할 것인지 판단한다.
          * ****
          * en-US
          * After submit disable login button
-         *  1. save user information
-         *  2. reset login form
-         *  3. fire things-login-succeed event
-         *  4. redirect
+         *  1. If user have to change account password because of expired password, logout and expose password change view. If password is still valid continue to 2.
+         *  2. save user information
+         *  3. reset login form
+         *  4. fire things-login-succeed event
+         *  5. redirect
          *    if there's have redirectCallback apply redirectCallback and check return if it is true
          *    use data from user.operator_flag and useOiScreen option
          *****
@@ -585,8 +593,51 @@ Example:
           this.$.loginForm.reset();
           // 3. fire event
           this.fire('things-login-succeed');
-          // 4. redirect
-          this._redirectAfterLogin(user);
+          
+          if(!this.isPasswordExpired(user)) {;
+            // 4. redirect
+            this._redirectAfterLogin(user);
+          }
+        },
+
+        /**
+         * 사용자의 password가 갱신 기간이 지났는지 여부를 판단.
+         * @param  Object  user 사용자 정보
+         * @return Boolean 비밀번호 만료 여부
+         */
+        isPasswordExpired: function(user) {
+          // 사용자의 계정상태가 비밀번호 변경 상태 일때의 처리
+          if(user.account_status == 'password_change') {
+            swal.close();
+            var me = this;
+
+            var logoutElement = document.querySelector('things-logout');
+            var changePwdView = document.createElement('things-change-password');
+            changePwdView.addEventListener('things-expired-password-changed', function() {
+              user.account_status = '';
+              localStorage['setting.user'] = JSON.stringify(user);
+              
+              this._redirectAfterLogin(user);
+            }.bind(this));
+
+            this.fire('things-open-popup-view', {
+              view: changePwdView,
+              modal: true,
+              openCallback: function() {
+                changePwdView.title = Things.DataGlobal.t('button.change_password');
+                changePwdView.actionUrl = 'users/change_pass/' + user.id;
+                changePwdView.method = 'POST';
+                changePwdView.currentUserInfo = user;
+              },
+              closeCallback: function() {
+                logoutElement.logout();
+              }
+            });
+
+            return true;
+          } else {
+            return false;
+          }
         },
 
         /**
