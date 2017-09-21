@@ -409,6 +409,17 @@ Example:
           'iron-form-error': '_failureResponse'
         },
 
+        observers: [
+          '_userInfoChanged(globals.user)'
+        ],
+
+        /**
+         * user info 변경시 호출되며 사용자 정보를 통해 패스워드가 만료 되었는지를 판단함
+         */
+        _userInfoChanged: function(userInfo) {
+          if(userInfo) this.isPasswordExpired(userInfo);
+        },
+
         /**
          * compute action url of sign in
          * *******
