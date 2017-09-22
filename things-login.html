@@ -116,6 +116,10 @@ Example:
         padding-top: 10px;
       }
 
+      #loginForm {
+        display: none;
+      }
+
       paper-button {
         @apply(--things-login-link-button);
       }
@@ -138,7 +142,18 @@ Example:
       div {
         margin-top: 10px;
       }
+      #loginForm {
+        display: none;
+      }
     </style>
+
+    <things-ajax
+        id="extend-pwd-ajax"
+        resource-url="users/change_pass_later/:id"
+        resource-id="[[user.id]]"
+        content-type="application/json"
+        method="POST">
+    </things-ajax>
 
     <template is="dom-if" if="[[isMobile]]">
       <things-portal-display></things-portal-display>
@@ -171,6 +186,11 @@ Example:
               method="[[method]]"
               with-credentials>
 
+              <input name="email" value="{{username}}" />
+              <input name="password" type="password" value="{{encryptedPassword}}" />
+        </form>
+
+        <form>
           <paper-input id="username"
                        name="email"
                        type="text"
@@ -400,18 +420,26 @@ Example:
 
         behaviors: [
           Things.GlobalBehavior,
-          Things.MsgBoxBehavior
+          Things.MsgBoxBehavior,
+          Things.EncryptBehavior
         ],
 
         listeners: {
           'iron-form-submit': '_afterFormSubmit',
           'iron-form-response': '_successResponse',
-          'iron-form-error': '_failureResponse'
+          'iron-form-error': '_failureResponse',
+          'extend-pwd-ajax.things-ajax-response': '_extendPwdResponsed'
         },
 
         observers: [
           '_userInfoChanged(globals.user)'
         ],
+
+        ready: function() {
+          document.addEventListener('things-expired-password-changed', function() {
+            this._afterExpiredPwdChanged();
+          }.bind(this));
+        },
 
         /**
          * user info 변경시 호출되며 사용자 정보를 통해 패스워드가 만료 되었는지를 판단함
@@ -540,8 +568,20 @@ Example:
             });
 
             this.$.submitButton.disabled = true;
+            // password encrypte
+            // this.$.loginForm.password.value = this.encryptePassword(this.$.loginForm.password.value);
+            this.$.loginForm.password.value = this.password;
             this.$.loginForm.submit();
           }
+        },
+
+        /**
+         * 전달받은 값을 암호화하고 결과를 return
+         * @param  String password
+         * @return String encryptedPassword
+         */
+        encryptePassword: function(password) {
+          return this.sha256(password);
         },
 
         /**
@@ -619,36 +659,60 @@ Example:
         isPasswordExpired: function(user) {
           // 사용자의 계정상태가 비밀번호 변경 상태 일때의 처리
           if(user.account_status == 'password_change') {
-            swal.close();
             var me = this;
-
-            var logoutElement = document.querySelector('things-logout');
-            var changePwdView = document.createElement('things-change-password');
-            changePwdView.addEventListener('things-expired-password-changed', function() {
-              user.account_status = '';
-              localStorage['setting.user'] = JSON.stringify(user);
+            this.openConfirmMsg({
+              type: 'info',
+              title: Things.DataGlobal.t('label.password_expired'),
+              text: Things.DataGlobal.t('text.password_expired'),
+              showCancelButton: true,
+              cancelButtonText: Things.DataGlobal.t('button.extend'),
+              confirmButtonText: Things.DataGlobal.t('button.password_change'),
+              allowEscapeKey: false
+            }, function() {
+              var changePwdView = document.createElement('things-change-password');
               
-              this._redirectAfterLogin(user);
-            }.bind(this));
-
-            this.fire('things-open-popup-view', {
-              view: changePwdView,
-              modal: true,
-              openCallback: function() {
-                changePwdView.title = Things.DataGlobal.t('button.change_password');
-                changePwdView.actionUrl = 'users/change_pass/' + user.id;
-                changePwdView.method = 'POST';
-                changePwdView.currentUserInfo = user;
-              },
-              closeCallback: function() {
-                logoutElement.logout();
-              }
+              me.fire('things-open-popup-view', {
+                view: changePwdView,
+                modal: true,
+                openCallback: function() {
+                  changePwdView.title = Things.DataGlobal.t('button.change_password');
+                  changePwdView.actionUrl = 'users/change_pass/' + user.id;
+                  changePwdView.method = 'POST';
+                  changePwdView.currentUserInfo = user;
+                }, closeCallback: function() {
+                  var logoutElement = document.querySelector('things-logout');
+                  logoutElement.logout();
+                }
+              })
+            }, function() {
+              var extendPwdAjax = me.$['extend-pwd-ajax'];
+              extendPwdAjax.resourceId = Things.DataGlobal.user.id;
+              extendPwdAjax.generateRequest();
             });
 
             return true;
           } else {
             return false;
           }
+        },
+
+        /**
+         * 비밀번호 변경기한 연장 ajax의 response listener
+         * things-expired-password-chagned 이벤트 호출
+         */
+        _extendPwdResponsed: function(event) {
+          this.fire('things-expired-password-changed');
+        },
+
+        /**
+         * things-expired-password-changed event listener
+         * global 변수와 localstorage를 초기화 후 browser reload
+         */
+        _afterExpiredPwdChanged: function() {
+          var user = Things.DataGlobal.user;
+          user.account_status = '';
+          localStorage['setting.user'] = JSON.stringify(user);
+          this._redirectAfterLogin(user);
         },
 
         /**
