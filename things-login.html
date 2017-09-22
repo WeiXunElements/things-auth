@@ -186,8 +186,8 @@ Example:
               method="[[method]]"
               with-credentials>
 
-              <input name="email" value="{{username}}" />
-              <input name="password" type="password" value="{{encryptedPassword}}" />
+              <input name="email" readonly value="{{username}}" />
+              <input name="password" type="password" readonly value="{{encryptedPassword}}" />
         </form>
 
         <form>
@@ -569,19 +569,9 @@ Example:
 
             this.$.submitButton.disabled = true;
             // password encrypte
-            // this.$.loginForm.password.value = this.encryptePassword(this.$.loginForm.password.value);
-            this.$.loginForm.password.value = this.password;
+            this.encryptedPassword = this.sha256(this.password);
             this.$.loginForm.submit();
           }
-        },
-
-        /**
-         * 전달받은 값을 암호화하고 결과를 return
-         * @param  String password
-         * @return String encryptedPassword
-         */
-        encryptePassword: function(password) {
-          return this.sha256(password);
         },
 
         /**
