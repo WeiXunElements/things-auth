@@ -38,6 +38,9 @@ ko-KR
       .btn-submit {
         @apply(--things-button-important)
       }
+      #form {
+        display: none;
+      }
     </style>
 
     <things-i18n-msg auto msgid="text.password_mismatch" msg="{{tPasswordMismatch}}" hidden>Password mismatch password and confirmed password.</things-i18n-msg>
@@ -72,21 +75,30 @@ ko-KR
       content-type="application/json"
       method="[[method]]"
       last-response="{{lastResponse}}">
+
+      <input name="locale" readonly value="{{locale}}" />
+      <input name="login" readonly value="{{loginId}}" />
+      <input name="name" readonly value="{{name}}" />
+      <input name="email" readonly value="{{email}}" />
+      <input name="pw" type="password" readonly value="{{encryptedPassword}}" />
+    </form>
+
+    <form>
       <things-spinner id="thingsspinner"></things-spinner>
       <things-resource-combo required id="domain" name="domain_id" label="[[lDomain]]" resource-url="domains/list" items-prop="" label-path="name" value-path="id"></things-resource-combo>
 
-      <things-code-combo id="locale" name="locale" label="[[lLocale]]" code-name="LOCALE"></things-code-combo>
+      <things-code-combo id="locale" name="locale" label="[[lLocale]]" code-name="LOCALE" value="{{locale}}"></things-code-combo>
       <div>
         <paper-button raised on-tap="_checkDuplication">[[bCheckDuplicate]]</paper-button>
         <paper-input id="userlogin" required auto-validate error-message="[[tInvalidInput]]" name="login" label="[[lLogin]]" value="{{loginId}}"></paper-input>        
       </div>
-      <paper-input id="username" required name="name" label="[[lUserName]]"></paper-input>
+      <paper-input id="username" required name="name" label="[[lUserName]]" value="{{name}}"></paper-input>
 
-      <gold-email-input id="email" auto-validate required name="email" label="[[lEmailAddress]]"></gold-email-input>
+      <gold-email-input id="email" auto-validate required name="email" label="[[lEmailAddress]]" value="{{email}}"></gold-email-input>
 
       <!--paper-input required name ="timezone" label="Timezone"></paper-input-->
 
-      <paper-input id="pw" required name="encrypted_password" type="password" label="[[lPassword]]"></paper-input>
+      <paper-input id="pw" required name="encrypted_password" type="password" label="[[lPassword]]" value="{{password}}"></paper-input>
 
       <paper-input
         id="confirmed-pw"
@@ -117,7 +129,8 @@ ko-KR
         Things.FormBehavior,
         Things.SpinnerBehavior,
         Things.MsgBoxBehavior,
-        Things.AssertBehavior
+        Things.AssertBehavior,
+        Things.EncryptBehavior
       ],
       properties: {
 
@@ -263,6 +276,7 @@ ko-KR
        */
       _submitMyForm: function(event) {
         if(this._validateForm()) {
+          this.encryptedPassword = this.sha256(this.password);
           this.$['form'].submit();
           this.fire('things-signup-submited');
         }

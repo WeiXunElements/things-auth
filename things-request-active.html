@@ -39,6 +39,9 @@ ko-KR
       .btn-submit {
         @apply(--things-button-important)
       }
+      #form {
+        display: none;
+      }
     </style>
 
     <things-i18n-msg auto msgid="text.invalid_input" msg="{{tInvalidInput}}" hidden>Invalid Input.</things-i18n-msg>
@@ -52,6 +55,12 @@ ko-KR
           method="[[method]]"
           with-credentials=true
           last-response="{{lastResponse}}">
+
+          <input name="login" value="{{login}}" />
+          <input name="current_pass" value="{{encryptedPassword}}" />
+    </form>
+
+    <form>
       <things-i18n-msg msgid="label.login" msg="{{lLogin}}" auto hidden>Login ID</things-i18n-msg>
       <things-i18n-msg msgid="label.password" msg="{{lPassword}}" auto hidden>Password</things-i18n-msg>
 
@@ -117,7 +126,8 @@ ko-KR
       behaviors: [
         Things.FormBehavior,
         Things.SpinnerBehavior,
-        Things.MsgBoxBehavior
+        Things.MsgBoxBehavior,
+        Things.EncryptBehavior
       ],
 
       listeners: {
@@ -174,6 +184,8 @@ ko-KR
        * @return {null}
        */
       _submitMyForm: function(event) {
+        this.encryptedPassword = this.sha256(this.password);
+        this.$['form'].action = 'test';
         this.$['form'].submit();
         this.fire('things-request-active-submited');
       },
