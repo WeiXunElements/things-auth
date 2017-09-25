@@ -116,10 +116,6 @@ Example:
         padding-top: 10px;
       }
 
-      #loginForm {
-        display: none;
-      }
-
       paper-button {
         @apply(--things-login-link-button);
       }
@@ -141,9 +137,6 @@ Example:
       }
       div {
         margin-top: 10px;
-      }
-      #loginForm {
-        display: none;
       }
     </style>
 
@@ -177,20 +170,16 @@ Example:
         <strong><things-i18n-msg auto msgid="label.login">LOGIN</things-i18n-msg></strong>
       </span>
 
-        <form is="iron-form"
-              id="loginForm"
-              headers="[[headers]]"
-              login-path="[[loginPath]]"
-              action="{{action}}"
-              content-type="[[contentType]]"
-              method="[[method]]"
-              with-credentials>
+        <form
+          is="iron-form"
+          id="loginForm"
+          headers="[[headers]]"
+          login-path="[[loginPath]]"
+          action="{{action}}"
+          content-type="[[contentType]]"
+          method="[[method]]"
+          with-credentials>
 
-              <input name="email" readonly value="{{username}}" />
-              <input name="password" type="password" readonly value="{{encryptedPassword}}" />
-        </form>
-
-        <form>
           <paper-input id="username"
                        name="email"
                        type="text"
@@ -205,7 +194,6 @@ Example:
           </paper-input>
 
           <paper-input id="password"
-                       name="password"
                        type="password"
                        label="[[lPassword]]"
                        value="{{password}}"
@@ -216,7 +204,9 @@ Example:
                        tabindex='2'>
           </paper-input>
 
-          <div>
+          <input name="password" type="password" hidden value="{{encryptedPassword}}" />
+
+        <div>
             <paper-button id="submitButton" raised on-tap="_submitHandler" tabindex='3'>
               <things-i18n-msg auto msgid="button.sign_in">Sign In</things-i18n-msg>
             </paper-button>
@@ -632,6 +622,7 @@ Example:
           this.customStyle['--things-background-image'] = 'url(/images/bg-rail.png), url(/images/bg-blue.png)';
           // 2. reset login form
           this.$.loginForm.reset();
+          this.encryptedPassword = '';
           // 3. fire event
           this.fire('things-login-succeed');
           
