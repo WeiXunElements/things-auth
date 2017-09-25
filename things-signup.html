@@ -76,16 +76,17 @@ ko-KR
       method="[[method]]"
       last-response="{{lastResponse}}">
 
-      <input name="locale" readonly value="{{locale}}" />
-      <input name="login" readonly value="{{loginId}}" />
-      <input name="name" readonly value="{{name}}" />
-      <input name="email" readonly value="{{email}}" />
-      <input name="pw" type="password" readonly value="{{encryptedPassword}}" />
+      <input name="domain_id" hidden value="{{domain}}" />
+      <input name="locale" hidden value="{{locale}}" />
+      <input name="login" hidden value="{{loginId}}" />
+      <input name="name" hidden value="{{name}}" />
+      <input name="email" hidden value="{{email}}" />
+      <input name="encrypted_password" type="password" hidden value="{{encryptedPassword}}" />
     </form>
 
     <form>
       <things-spinner id="thingsspinner"></things-spinner>
-      <things-resource-combo required id="domain" name="domain_id" label="[[lDomain]]" resource-url="domains/list" items-prop="" label-path="name" value-path="id"></things-resource-combo>
+      <things-resource-combo required id="domain" name="domain_id" label="[[lDomain]]" resource-url="domains/list" items-prop="" label-path="name" value-path="id" value="{{domain}}"></things-resource-combo>
 
       <things-code-combo id="locale" name="locale" label="[[lLocale]]" code-name="LOCALE" value="{{locale}}"></things-code-combo>
       <div>
