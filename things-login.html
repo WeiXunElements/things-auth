@@ -435,7 +435,7 @@ Example:
          * user info 변경시 호출되며 사용자 정보를 통해 패스워드가 만료 되었는지를 판단함
          */
         _userInfoChanged: function(userInfo) {
-          if(userInfo) this.isPasswordExpired(userInfo);
+          if(userInfo) this.isUserStatusInvalid(userInfo);
         },
 
         /**
@@ -626,7 +626,7 @@ Example:
           // 3. fire event
           this.fire('things-login-succeed');
           
-          if(!this.isPasswordExpired(user)) {;
+          if(!this.isUserStatusInvalid(user)) {;
             // 4. redirect
             this._redirectAfterLogin(user);
           }
@@ -637,15 +637,35 @@ Example:
          * @param  Object  user 사용자 정보
          * @return Boolean 비밀번호 만료 여부
          */
-        isPasswordExpired: function(user) {
+        isUserStatusInvalid: function(user) {
           // 사용자의 계정상태가 비밀번호 변경 상태 일때의 처리
-          if(user.account_status == 'password_change') {
+          // password_chage => 비밀번호 연장이 불가하며 반드시 변경해야 로그인이 가능한 경우
+          // password_expired => 비밀번호 연장이 가능하여 비밀번호 변경, 연장 후 로그인이 가능한 경우
+          if(user.status == 'password_change' || user.status == 'password_expired') {
             var me = this;
+            var title = '';
+            var text = '';
+            var pwdExtendButton = false;
+
+            // status에 따라 alert 타이틀과 메시지를 초기화
+            switch (user.status) {
+              case 'password_change':
+                title = Things.DataGlobal.t('button.password_change');
+                text = Things.DataGlobal.t('text.password_need_change');
+                break;
+
+              case 'password_expired':
+                title = Things.DataGlobal.t('label.password_expired');
+                text = Things.DataGlobal.t('text.password_expired');
+                pwdExtendButton = true;
+                break;
+            }
+
             this.openConfirmMsg({
               type: 'info',
-              title: Things.DataGlobal.t('label.password_expired'),
-              text: Things.DataGlobal.t('text.password_expired'),
-              showCancelButton: true,
+              title: title,
+              text: text,
+              showCancelButton: pwdExtendButton,
               cancelButtonText: Things.DataGlobal.t('button.extend'),
               confirmButtonText: Things.DataGlobal.t('button.password_change'),
               allowEscapeKey: false
@@ -691,7 +711,7 @@ Example:
          */
         _afterExpiredPwdChanged: function() {
           var user = Things.DataGlobal.user;
-          user.account_status = '';
+          delete user.status;
           localStorage['setting.user'] = JSON.stringify(user);
           this._redirectAfterLogin(user);
         },
