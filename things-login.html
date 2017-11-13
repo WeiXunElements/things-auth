@@ -138,6 +138,59 @@ Example:
       div {
         margin-top: 10px;
       }
+      div[prefix]{
+        margin:-4px 4px 0 0
+      }
+      div[prefix] iron-icon{
+        --iron-icon-height:20px;
+        --iron-icon-width:20px;
+        opacity:.7;
+        fill:var(--things-secondary-color);
+      }
+      @media screen and (max-width:760px) {
+        :host{
+          @apply(--things-home-image-small);
+          margin:0 !important;
+        }
+        paper-material {
+          @apply(--things-mobile-login);
+        }
+        .header{
+          padding:0;
+        }
+        .header:before {
+          content: var(--things-brand-name);
+          /*content: "Things-Board";*/
+          background:none var(--things-secondary-color);
+          margin:0;
+          width:100%;height:45px;
+          color:#fff;
+          font-size:20px;
+          font-weight:500;
+          line-height:45px;
+        }
+        .header:after{
+          content:"";
+          background: url(/images/icon-mobile-brand.png) 50% 60% no-repeat;
+          background-size:200px auto;
+          display:block;
+          width:100%;height:120px;
+          margin:0;
+        }
+        .header strong{
+          display:none
+        }
+        .extra-links{
+          font-size:14px;
+          position: relative;
+        }
+        .extra-links:nth-child(3){
+          left:calc(32% - 60px);
+        }
+        .extra-links:last-child{
+          float:right;
+        }
+      }
     </style>
 
     <things-ajax
@@ -191,6 +244,7 @@ Example:
                        auto-validate
                        autofocus
                        tabindex='1'>
+            <div prefix><iron-icon icon="icons:account-circle" slot="prefix"></iron-icon></div>
           </paper-input>
 
           <paper-input id="password"
@@ -202,6 +256,7 @@ Example:
                        required
                        auto-validate
                        tabindex='2'>
+            <div prefix><iron-icon icon="icons:lock-open" slot="prefix"></iron-icon></div>
           </paper-input>
 
           <input name="password" type="password" hidden value="{{encryptedPassword}}" />
@@ -211,15 +266,15 @@ Example:
               <things-i18n-msg auto msgid="button.sign_in">Sign In</things-i18n-msg>
             </paper-button>
 
-            <paper-button on-tap="_onSignupTap">
+            <paper-button on-tap="_onSignupTap" class="extra-links">
               <things-i18n-msg auto msgid="button.sign_up">Sign Up</things-i18n-msg>
             </paper-button>
 
-            <paper-button on-tap="_onRequestAccountActivateTap">
+            <paper-button on-tap="_onRequestAccountActivateTap" class="extra-links">
               <things-i18n-msg auto msgid="button.request_active">Request Active</things-i18n-msg>
             </paper-button>
 
-            <paper-button on-tap="_onRequestPasswordResetTap">
+            <paper-button on-tap="_onRequestPasswordResetTap" class="extra-links">
               <things-i18n-msg auto msgid="button.reset_password">Reset Password</things-i18n-msg>
             </paper-button>
           </div>
@@ -242,6 +297,15 @@ Example:
           title: {
             type: String,
             value: 'Login'
+          },
+
+          /**
+           * Brand Name
+           * @type {String}
+           */
+          brandName: {
+            type: String,
+            observer: '_onBrandNameChanged'
           },
 
           /**
@@ -450,6 +514,17 @@ Example:
         },
 
         /**
+         * brandName change event handler
+         * BrandName이 변경되었을 때 모바일 login 화면의 header content를
+         * BrandName으로 변경
+         * @param  {String} brandName [description]
+         */
+        _onBrandNameChanged: function(brandName) {
+          this.customStyle['--things-brand-name'] = '"' + brandName + '"';
+          this.updateStyles();
+        },
+
+        /**
          * 사용자 신청,활성화,비밀번호 초기화 Popup을 open하기 위한 event
          *****
          * @event document.things-open-popup-view
@@ -625,7 +700,7 @@ Example:
           this.encryptedPassword = '';
           // 3. fire event
           this.fire('things-login-succeed');
-          
+
           if(!this.isUserStatusInvalid(user)) {;
             // 4. redirect
             this._redirectAfterLogin(user);
@@ -671,7 +746,7 @@ Example:
               allowEscapeKey: false
             }, function() {
               var changePwdView = document.createElement('things-change-password');
-              
+
               me.fire('things-open-popup-view', {
                 view: changePwdView,
                 modal: true,
