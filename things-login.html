@@ -520,8 +520,10 @@ Example:
          * @param  {String} brandName [description]
          */
         _onBrandNameChanged: function(brandName) {
-          this.customStyle['--things-brand-name'] = '"' + brandName + '"';
-          this.updateStyles();
+          if(brandName) {
+            this.customStyle['--things-brand-name'] = '"' + brandName + '"';
+            this.updateStyles();
+          }
         },
 
         /**
