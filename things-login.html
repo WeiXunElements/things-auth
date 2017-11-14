@@ -155,11 +155,14 @@ Example:
         paper-material {
           @apply(--things-mobile-login);
         }
+        paper-toolbar{
+          display:none !important;
+        }
         .header{
           padding:0;
         }
         .header:before {
-          content: var(--things-brand-name);
+          content: "var(--things-brand-name)";
           /*content: "Things-Board";*/
           background:none var(--things-secondary-color);
           margin:0;
@@ -181,7 +184,7 @@ Example:
           display:none
         }
         .extra-links{
-          font-size:14px;
+          font-size:13px;
           position: relative;
         }
         .extra-links:nth-child(3){
