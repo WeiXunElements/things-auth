@@ -72,12 +72,12 @@ ko-KR
                    auto-validate>
       </paper-input>
 
-
       <paper-input id="current-pw"
                    auto-validate
                    required
                    name="current_pass"
                    type="password"
+                   value="{{password}}"
                    label="[[lPassword]]">
       </paper-input>
 
@@ -96,15 +96,6 @@ ko-KR
       is: 'things-request-active',
 
       properties: {
-        /**
-         * 현재 로그인된 사용자 정보
-         * ***
-         * @type {Object}
-         */
-        currentUserInfo: {
-          type: Object,
-          observer: '_currentUserInfoChanged'
-        },
         /**
          * 사용자명
          *****
@@ -184,10 +175,19 @@ ko-KR
        * @return {null}
        */
       _submitMyForm: function(event) {
-        this.encryptedPassword = this.sha256(this.password);
-        this.$['form'].action = 'test';
-        this.$['form'].submit();
-        this.fire('things-request-active-submited');
+        if(this.login && this.password) {
+          this.encryptedPassword = this.sha256(this.password);
+          this.$['form'].submit();
+          this.fire('things-request-active-submited');
+        } else {
+          var emptyValue = !this.login ? 'label.login' : 'label.password'; 
+
+          this.openInfoMsg({
+            type: 'error',
+            title: Things.DataGlobal.t('error.VALIDATION_ERROR'),
+            text: Things.DataGlobal.t('error.SHOULD_NOT_BE_EMPTY', {value: Things.DataGlobal.t(emptyValue)})
+          });
+        }
       },
       /**
        * 화면 초기화
@@ -196,16 +196,10 @@ ko-KR
        * @return {null}
        */
       _resetMyForm: function(event) {
-        this.resetMyForm();
-      },
-      /**
-       * 사용자 정보 변경시 업저버
-       *****
-       * @param  {Object} userInfo
-       * @return {null}
-       */
-      _currentUserInfoChanged: function(userInfo) {
-        this.login = userInfo.login;
+        var inputs = this.querySelectorAll('paper-input');
+        inputs.forEach(function(input) {
+          input.value = '';
+        });
       }
     });
   </script>
