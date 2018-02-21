@@ -18,6 +18,9 @@ Copyright © HatioLab Inc. All rights reserved.
 <link rel="import" href="../things-msg-box-behavior/things-msg-box-behavior.html">
 <link rel="import" href="../things-msg-box-behavior/things-assert-behavior.html">
 <link rel="import" href="../things-id/things-encrypt-behavior.html">
+
+<link rel="import" href="things-pwd-validate-behavior.html">
+
 <!--
 ## things-signup
 ko-KR
@@ -41,9 +44,8 @@ ko-KR
       #form {
         display: none;
       }
-    </style>
+    </style>    
 
-    <things-i18n-msg auto msgid="text.password_mismatch" msg="{{tPasswordMismatch}}" hidden>Password mismatch password and confirmed password.</things-i18n-msg>
     <things-i18n-msg auto msgid="text.invalid_input" msg="{{tInvalidInput}}" hidden>Invalid Input.</things-i18n-msg>
     <things-i18n-msg auto msgid="text.info_invalid" msg="{{tInfoInvalid}}" hidden>Typed information is not valid.</things-i18n-msg>
     <things-i18n-msg auto msgid="text.register_in_process" msg="{{tRegInProcess}}" hidden>User registering is on processing.</things-i18n-msg>
@@ -59,6 +61,13 @@ ko-KR
 
     <things-i18n-msg auto msgid="button.check_duplication" msg="{{bCheckDuplicate}}" hidden>Check Duplication</things-i18n-msg>
     <things-i18n-msg auto msgid="text.pls_check_id_duplicate" msg="{{tPlsCheckDuplicate}}" hidden>Please Check ID Duplication</things-i18n-msg>
+
+    <things-ajax
+      id="check-use-validation"
+      resource-url="settings/show_by_name"
+      resource-action="show_by_name"
+      last-response="{{useValidation}}">
+    </things-ajax>
 
     <things-ajax
       id="check-id-duplicate"
@@ -84,32 +93,88 @@ ko-KR
       <input name="encrypted_password" type="password" hidden value="{{encryptedPassword}}" />
     </form>
 
-    <form>
-      <things-spinner id="thingsspinner"></things-spinner>
-      <things-resource-combo required id="domain" name="domain_id" label="[[lDomain]]" resource-url="domains/list" items-prop="" label-path="name" value-path="id" value="{{domain}}"></things-resource-combo>
+    <things-spinner id="thingsspinner"></things-spinner>
+    
+    <things-resource-combo
+      required
+      id="domain"
+      name="domain_id"
+      label="[[lDomain]]"
+      resource-url="domains/list"
+      items-prop=""
+      label-path="name"
+      value-path="id"
+      value="{{domain}}">
+    </things-resource-combo>
 
-      <things-code-combo id="locale" name="locale" label="[[lLocale]]" code-name="LOCALE" value="{{locale}}"></things-code-combo>
-      <div>
-        <paper-button raised on-tap="_checkDuplication">[[bCheckDuplicate]]</paper-button>
-        <paper-input id="userlogin" required auto-validate error-message="[[tInvalidInput]]" name="login" label="[[lLogin]]" value="{{loginId}}"></paper-input>        
-      </div>
-      <paper-input id="username" required name="name" label="[[lUserName]]" value="{{name}}"></paper-input>
+    <things-code-combo
+      id="locale"
+      name="locale"
+      label="[[lLocale]]"
+      code-name="LOCALE"
+      value="{{locale}}">
+    </things-code-combo>
 
-      <gold-email-input id="email" auto-validate required name="email" label="[[lEmailAddress]]" value="{{email}}"></gold-email-input>
+    <paper-button
+      raised
+      on-tap="_checkDuplication">[[bCheckDuplicate]]
+    </paper-button>
+
+    <form id="input-form">
+      <paper-input
+        id="userlogin"
+        name="login"
+        label="[[lLogin]]"
+        value="{{loginId}}"
+        required
+        invalid
+        auto-validate
+        error-message="[[tInvalidInput]]">
+      </paper-input>
+
+      <paper-input
+        id="username"
+        name="name"
+        label="[[lUserName]]"
+        value="{{name}}"
+        required
+        invalid
+        auto-validate
+        error-message="[[tInvalidInput]]">
+      </paper-input>
+
+      <gold-email-input
+        id="email"
+        name="email"
+        label="[[lEmailAddress]]"
+        value="{{email}}"
+        required
+        invalid
+        auto-validate
+        error-message="[[tInvalidInput]]">
+      </gold-email-input>
 
       <!--paper-input required name ="timezone" label="Timezone"></paper-input-->
 
-      <paper-input id="pw" required name="encrypted_password" type="password" label="[[lPassword]]" value="{{password}}"></paper-input>
+      <paper-input
+        id="pw"
+        name="encrypted_password"
+        type="password"
+        label="[[lPassword]]"
+        value="{{password}}"
+        on-input="_passwordValidate"
+        invalid
+        error-message="[[tInvalidInput]]">
+      </paper-input>
 
       <paper-input
         id="confirmed-pw"
-        auto-validate
-        required
         name="confirmed_password"
         type="password"
         label="[[lConfirmedPassword]]"
-        validator="_passwordValidate"
-        errorMessage="Password mismatch password and confirmed password">
+        on-input="_confirmPasswordValidate"
+        invalid
+        error-message="[[tInvalidInput]]">
       </paper-input>
 
       <paper-button class="btn-submit" raised on-click="_submitMyForm">
@@ -131,7 +196,8 @@ ko-KR
         Things.SpinnerBehavior,
         Things.MsgBoxBehavior,
         Things.AssertBehavior,
-        Things.EncryptBehavior
+        Things.EncryptBehavior,
+        Things.PwdValidateBehavior
       ],
       properties: {
 
@@ -147,13 +213,51 @@ ko-KR
         isDuplicateChecked: {
            type:Boolean,
            value:false
-        }
+        },
+
+				/**
+				 * password validation 사용 여부
+				 */
+        usePwdValidation: {
+            type: Boolean,
+            value: false,
+            computed: '_computeUsePwdValidation(useValidation)'
+        }        
       },
 
       listeners: {
         'iron-form-response': '_successResponseHandler',
         'iron-form-error': '_errorResponseHandler',
         'check-id-duplicate.things-ajax-response': '_checkDupliResponsed'
+      },
+
+      /**
+       * checkUseValidation 호출하여 setting의 값을 읽어옴
+       */
+      ready: function() {
+        this.checkUseValidation();
+      },
+
+      /**
+       * things framework의 설정 값중 'user.password.validation.enable'에 해당되는 value를 조회
+       * 하는 ajax를 호출
+       */
+      checkUseValidation: function() {
+        var checkUseValidationAjax = this.$['check-use-validation'];
+        checkUseValidationAjax.params = {
+          name: 'user.password.validation.enable'
+        };
+        checkUseValidationAjax.generateRequest();
+      },
+
+      /**
+       * 비밀번호 validation 사용 여부를 결정
+       * things-framework의 'user.password.validation.enable에 의해 결정됨
+       * true => Password validation을 사용함
+       * false => Password validation을 사용하지 않음
+       */
+      _computeUsePwdValidation: function(useValidation) {
+        return JSON.parse(useValidation.value);
       },
 
       /**
@@ -276,10 +380,16 @@ ko-KR
        * @event things-signup-submited
        */
       _submitMyForm: function(event) {
-        if(this._validateForm()) {
+        if(this._formValidate()) {
           this.encryptedPassword = this.sha256(this.password);
           this.$['form'].submit();
           this.fire('things-signup-submited');
+        } else {
+          this.openConfirmMsg({
+            type: 'error',
+            title: Things.DataGlobal.t('error.VALIDATION_ERROR'),
+            text: this.tInvalidInput
+          })
         }
       },
 
@@ -294,19 +404,71 @@ ko-KR
       /**
        * form submit 이전에 유효성 검사를 수행한다.
        * 유효성 검사 도중 문제 발생시 throw 문제가 없다면 true를 리턴
+       * 
+       * form element 아래의 모든 input 중 invalid가 true인 (validation 실패한) 필드가 있다면
+       * false를 return
+       * 
        * @return Boolean
        */
-      _validateForm: function(){
+       _formValidate: function(){
         this.assertNotEmpty(this.$.domain.value, 'domain');
         this.assertNotEmpty(this.$.locale.value, 'locale');
-        this.assertNotEmpty(this.$.userlogin.value, 'login');
         this.dupliValidation();
-        this.assertNotEmpty(this.$.username.value, 'user_name');
-        this.assertNotEmpty(this.$.email.value, 'email');
-        this.assertNotEmpty(this.$.pw.value, 'password');
-        this.assertNotEmpty(this.$['confirmed-pw'].value, 'confirmed_password');
-        this.assertEqual(this.$.pw.value, this.$['confirmed-pw'].value, 'password', 'confirmed_password');
-        return true;
+
+        var result = true;
+        var form = this.$['input-form'];
+        for(var i = 0; i < form.children.length; i++) {
+          if(form.children[i].invalid) {
+            result = false;
+            break;
+          }
+        }
+
+        return result;
+      },
+
+      /**
+       * on-input event handler
+       * 새로운 비밀번호에 대한 validation 수행
+       * things-pwd-validate-behavior의 함수를 통해
+       * validation을 수행하고 결과값 (errorMessage)를 input field에 초기화함
+       */
+      _passwordValidate: function(event) {
+        var pwField = event.currentTarget;
+        var pw = pwField.value;
+        pwField.invalid = false;
+
+        try {
+          this.checkEmpty(pw, 'label.password');
+          this.execPwdValidation({
+            id: this.loginId,
+            password: pw
+          });
+        } catch (e) {
+          pwField.errorMessage = e;
+          pwField.invalid = true;
+        }
+      },
+
+
+      /**
+       * on-input event hadler
+       * 새로운 비밀번호에 대한 validation 수행
+       * things-pwd-validate-behavior의 함수를 통해
+       * validation을 수행하고 결과값 (errorMessage)를 input field에 초기화함
+       */
+      _confirmPasswordValidate: function(event) {
+        var confirmPwField = event.currentTarget;
+        var confirmPw = confirmPwField.value;
+        confirmPwField.invalid = false;
+
+        try {
+          this.checkEmpty(confirmPw, 'label.confirmed_password');
+          this.checkNotEqual(this.$['pw'].value, confirmPw);
+        } catch (e) {
+          confirmPwField.errorMessage = e;
+          confirmPwField.invalid = true;
+        }
       },
 
       /**
@@ -322,14 +484,6 @@ ko-KR
           });
           throw { msg: 'id duplication checking is not finished yet'};
         }
-      },
-
-      /**
-       * 비밀번호 필드와 비밀번호 확인 필드의 값이 서로 동일한지 확인하고 해당 결과를 리턴
-       * @return Boolean
-       */
-      _passwordValidate: function() {
-        return this.$.pw.value === this.$['confirmed-pw'].value;
       }
     });
   </script>
