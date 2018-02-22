@@ -104,6 +104,11 @@ Copyright © HatioLab Inc. All rights reserved.
 
     // 3. ID와 유사한 패스워드 사용하고 있는지 확인
     similarValidate: function(id, password) {
+      if(!id) {
+        var errorMsg = Things.DataGlobal.t('error.SHOULD_NOT_BE_EMPTY', {value: Things.DataGlobal.t('label.login')});
+        throw errorMsg;
+      }
+
       var chunkedIdList = [];
 
       for(var i = 0; i <= id.length - 4; i++) {
