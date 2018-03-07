@@ -6,6 +6,9 @@ Copyright © HatioLab Inc. All rights reserved.
 
 <link rel="import" href="../iron-input/iron-input.html">
 <link rel="import" href="../iron-form/iron-form.html">
+<link rel="import" href="../paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../paper-listbox/paper-listbox.html">
+<link rel="import" href="../paper-item/paper-item.html">
 <link rel="import" href="../paper-input/paper-input.html">
 <link rel="import" href="../paper-button/paper-button.html">
 <link rel="import" href="../paper-material/paper-material.html">
@@ -123,7 +126,16 @@ Example:
       paper-button:hover {
         color:#dd2c00;
       }
-
+      .name-locale-container {
+        @apply(--layout-horizontal);
+      }
+      .name-locale-container paper-input {
+        @apply(--layout-flex);
+      }
+      .name-locale-container paper-dropdown-menu {
+        width: 25%;
+        padding-left: 15px;
+      }
       #submitButton {
         @apply(--things-login-button);
       }
@@ -232,19 +244,29 @@ Example:
           method="[[method]]"
           with-credentials>
 
-          <paper-input id="username"
-                       name="email"
-                       type="text"
-                       label="[[lUserId]]"
-                       value="{{username}}"
-                       pattern="[[usernameValidationPattern]]"
-                       error-message="[[usernameErrorMessage]]"
-                       required
-                       auto-validate
-                       autofocus
-                       tabindex='1'>
-            <div prefix><iron-icon icon="icons:account-circle" slot="prefix"></iron-icon></div>
-          </paper-input>
+          <div class="name-locale-container">
+            <paper-input id="username"
+                        name="email"
+                        type="text"
+                        label="[[lUserId]]"
+                        value="{{username}}"
+                        pattern="[[usernameValidationPattern]]"
+                        error-message="[[usernameErrorMessage]]"
+                        required
+                        auto-validate
+                        autofocus
+                        tabindex='1'>
+              <div prefix><iron-icon icon="icons:account-circle" slot="prefix"></iron-icon></div>
+            </paper-input>
+
+            <paper-dropdown-menu id="locale-combo" label="Locale">
+                <paper-listbox id="locale-list" class="dropdown-content">
+                  <template is="dom-repeat" items="[[locales]]">
+                    <paper-item>[[item.description]]</paper-item>
+                  </template>
+                </paper-listbox>
+              </paper-dropdown-menu>            
+          </div>
 
           <paper-input id="password"
                        type="password"
@@ -315,6 +337,25 @@ Example:
           elevation: {
             type: Number,
             value: 4
+          },
+
+          /**
+           * locale combo에 출력되는 locale list
+           */
+          locales: {
+            type: Array,
+            value: function() {
+              return [{
+                key: 'en-US',
+                description: 'English'
+              }, {
+                key: 'ko-KR',
+                description: '한글'
+              }, {
+                key: 'zh-CN',
+                description: '中文'
+              }];
+            }
           },
 
           /**
@@ -478,6 +519,7 @@ Example:
         ],
 
         listeners: {
+          'locale-list.selected-changed': '_localeValueChanged',
           'iron-form-submit': '_afterFormSubmit',
           'iron-form-response': '_successResponse',
           'iron-form-error': '_failureResponse',
@@ -492,6 +534,33 @@ Example:
           document.addEventListener('things-expired-password-changed', function() {
             this._afterExpiredPwdChanged();
           }.bind(this));
+
+          this._setCurrentLocale();
+        },
+
+        /**
+         * local storage에 저장되어 있는 현재 locale 정보를 통해
+         * combo box의 값을 결정함
+         */
+        _setCurrentLocale: function() {
+          var currentLocale = JSON.parse(localStorage.getItem('setting.locale'));
+          var localeList = this.$['locale-list'];
+          if(currentLocale !== null) {
+            this.locales.forEach(function(locale, index) {
+              if(locale.key === currentLocale) {
+                localeList.selected = index;
+              }
+            })
+          }
+        },
+
+        /**
+         * locale-list의 selected-chaged event handler
+         * locale 리스트의 선택된 값이 변경될 경우 locale을 적용함
+         */
+        _localeValueChanged: function(event) {
+          var localeIdx = event.detail.value;
+          this.set('globals.locale', this.locales[localeIdx].key);
         },
 
         /**
