@@ -33,18 +33,21 @@ ko-KR
       :host {
         @apply(--things-loose-padding)
       }
+
       paper-button {
         @apply(--things-button);
         float: right;
         margin-top: 15px;
       }
+
       .btn-submit {
         @apply(--things-button-important)
       }
+
       #form {
         display: none;
       }
-    </style>    
+    </style>
 
     <things-i18n-msg auto msgid="text.invalid_input" msg="{{tInvalidInput}}" hidden>Invalid Input.</things-i18n-msg>
     <things-i18n-msg auto msgid="text.info_invalid" msg="{{tInfoInvalid}}" hidden>Typed information is not valid.</things-i18n-msg>
@@ -62,27 +65,13 @@ ko-KR
     <things-i18n-msg auto msgid="button.check_duplication" msg="{{bCheckDuplicate}}" hidden>Check Duplication</things-i18n-msg>
     <things-i18n-msg auto msgid="text.pls_check_id_duplicate" msg="{{tPlsCheckDuplicate}}" hidden>Please Check ID Duplication</things-i18n-msg>
 
-    <things-ajax
-      id="check-use-validation"
-      resource-url="settings/show_by_name"
-      resource-action="show_by_name"
-      last-response="{{useValidation}}">
+    <things-ajax id="check-use-validation" resource-url="settings/show_by_name" resource-action="show_by_name" last-response="{{useValidation}}">
     </things-ajax>
 
-    <things-ajax
-      id="check-id-duplicate"
-      method="GET"
-      resource-url="users/exist/:id"
-      resource-id="{{userLoginId}}">
+    <things-ajax id="check-id-duplicate" method="GET" resource-url="users/exist/:id" resource-id="{{userLoginId}}">
     </things-ajax>
 
-    <form
-      is="iron-form"
-      id="form"
-      action=[[action]]
-      headers="[[headers]]"
-      content-type="application/json"
-      method="[[method]]"
+    <form is="iron-form" id="form" action=[[action]] headers="[[headers]]" content-type="application/json" method="[[method]]"
       last-response="{{lastResponse}}">
 
       <input name="domain_id" hidden value="{{domain}}" />
@@ -94,88 +83,39 @@ ko-KR
     </form>
 
     <things-spinner id="thingsspinner"></things-spinner>
-    
-    <things-resource-combo
-      required
-      id="domain"
-      name="domain_id"
-      label="[[lDomain]]"
-      resource-url="domains/list"
-      items-prop=""
-      label-path="name"
-      value-path="id"
-      value="{{domain}}">
+
+    <things-resource-combo required id="domain" name="domain_id" label="[[lDomain]]" resource-url="domains/list" items-prop=""
+      label-path="name" value-path="id" value="{{domain}}">
     </things-resource-combo>
 
-    <things-code-combo
-      id="locale"
-      name="locale"
-      label="[[lLocale]]"
-      code-name="LOCALE"
-      value="{{locale}}">
+    <things-code-combo id="locale" name="locale" label="[[lLocale]]" code-name="LOCALE" value="{{locale}}">
     </things-code-combo>
 
-    <paper-button
-      raised
-      on-tap="_checkDuplication">[[bCheckDuplicate]]
+    <paper-button raised on-tap="_checkDuplication">[[bCheckDuplicate]]
     </paper-button>
 
     <form id="input-form">
-      <paper-input
-        id="userlogin"
-        name="login"
-        label="[[lLogin]]"
-        value="{{loginId}}"
-        required
-        invalid
-        auto-validate
-        error-message="[[tInvalidInput]]">
+      <paper-input id="userlogin" name="login" label="[[lLogin]]" value="{{loginId}}" required invalid auto-validate error-message="[[tInvalidInput]]">
       </paper-input>
 
-      <paper-input
-        id="username"
-        name="name"
-        label="[[lUserName]]"
-        value="{{name}}"
-        required
-        invalid
-        auto-validate
-        error-message="[[tInvalidInput]]">
+      <paper-input id="username" name="name" label="[[lUserName]]" value="{{name}}" required invalid auto-validate error-message="[[tInvalidInput]]">
       </paper-input>
 
-      <gold-email-input
-        id="email"
-        name="email"
-        label="[[lEmailAddress]]"
-        value="{{email}}"
-        required
-        invalid
-        auto-validate
-        error-message="[[tInvalidInput]]">
-      </gold-email-input>
+      <template is="dom-if" if="[[checkEmailAble('true')]]">
+        <gold-email-input id="email" name="email" label="[[lEmailAddress]]" value="{{email}}" required invalid auto-validate error-message="[[tInvalidInput]]">
+        </gold-email-input>
+      </template>
 
       <!--paper-input required name ="timezone" label="Timezone"></paper-input-->
+      <template is="dom-if" if="[[checkPwdAble('true')]]">
+        <paper-input id="pw" name="encrypted_password" type="password" label="[[lPassword]]" value="{{password}}" on-input="_passwordValidate"
+          invalid error-message="[[tInvalidInput]]">
+        </paper-input>
 
-      <paper-input
-        id="pw"
-        name="encrypted_password"
-        type="password"
-        label="[[lPassword]]"
-        value="{{password}}"
-        on-input="_passwordValidate"
-        invalid
-        error-message="[[tInvalidInput]]">
-      </paper-input>
-
-      <paper-input
-        id="confirmed-pw"
-        name="confirmed_password"
-        type="password"
-        label="[[lConfirmedPassword]]"
-        on-input="_confirmPasswordValidate"
-        invalid
-        error-message="[[tInvalidInput]]">
-      </paper-input>
+        <paper-input id="confirmed-pw" name="confirmed_password" type="password" label="[[lConfirmedPassword]]" on-input="_confirmPasswordValidate"
+          invalid error-message="[[tInvalidInput]]">
+        </paper-input>
+      </template>
 
       <paper-button class="btn-submit" raised on-click="_submitMyForm">
         <things-i18n-msg msgid="button.submit" auto>Submit</things-i18n-msg>
@@ -211,18 +151,36 @@ ko-KR
          * @type Boolean
          */
         isDuplicateChecked: {
-           type:Boolean,
-           value:false
+          type: Boolean,
+          value: false
         },
 
-				/**
-				 * password validation 사용 여부
-				 */
+        /**
+         * password validation 사용 여부
+         */
         usePwdValidation: {
-            type: Boolean,
-            value: false,
-            computed: '_computeUsePwdValidation(useValidation)'
-        }        
+          type: Boolean,
+          value: false,
+          computed: '_computeUsePwdValidation(useValidation)'
+        },
+        /**
+         * 이메일 입력 가능여부
+         * ********
+         * @type: Boolean
+         */
+        inputEmailAble: {
+          type: Boolean,
+          value: true
+        },
+        /**
+         * 패스워드 입력 가능여부
+         * ********
+         * @type: Boolean
+         */
+        inputpasswdAble: {
+          type: Boolean,
+          value: true
+        }
       },
 
       listeners: {
@@ -234,7 +192,7 @@ ko-KR
       /**
        * checkUseValidation 호출하여 setting의 값을 읽어옴
        */
-      ready: function() {
+      ready: function () {
         this.checkUseValidation();
       },
 
@@ -242,7 +200,7 @@ ko-KR
        * things framework의 설정 값중 'user.password.validation.enable'에 해당되는 value를 조회
        * 하는 ajax를 호출
        */
-      checkUseValidation: function() {
+      checkUseValidation: function () {
         var checkUseValidationAjax = this.$['check-use-validation'];
         checkUseValidationAjax.params = {
           name: 'user.password.validation.enable'
@@ -256,7 +214,7 @@ ko-KR
        * true => Password validation을 사용함
        * false => Password validation을 사용하지 않음
        */
-      _computeUsePwdValidation: function(useValidation) {
+      _computeUsePwdValidation: function (useValidation) {
         return JSON.parse(useValidation.value);
       },
 
@@ -267,7 +225,7 @@ ko-KR
        * 
        * @param  String loginId input field의 value
        */
-      _loginIdChanged: function(loginId) {
+      _loginIdChanged: function (loginId) {
         this.isDuplicateChecked = false;
       },
 
@@ -278,11 +236,13 @@ ko-KR
        * 
        * @param  Object event ajax response
        */
-      _checkDupliResponsed:function(event) {
+      _checkDupliResponsed: function (event) {
         var isDuplicated = event.detail;
-        
-        if(isDuplicated) {
-          var dupliMsg = Things.DataGlobal.t('error.VALUE_IS_DUPLICATED', { value: this.lLogin});
+
+        if (isDuplicated) {
+          var dupliMsg = Things.DataGlobal.t('error.VALUE_IS_DUPLICATED', {
+            value: this.lLogin
+          });
 
           this.openConfirmMsg({
             type: 'error',
@@ -295,7 +255,7 @@ ko-KR
           this.openConfirmMsg({
             title: this.bCheckDuplicate,
             text: dupliMsg
-          });          
+          });
           this.isDuplicateChecked = true;
         }
       },
@@ -306,10 +266,10 @@ ko-KR
        * 만약 올바른 형식의 패턴이 아니면 input field의 invalid를 true로 변경하여 error message가 출력되게 한다.
        * @return {[type]} [description]
        */
-      _checkDuplication: function() {
+      _checkDuplication: function () {
         var patternResult = this._isValidPattern(this.loginId);
 
-        if(this.loginId && patternResult) {
+        if (this.loginId && patternResult) {
           var checkIdDuplicate = this.$['check-id-duplicate'];
           checkIdDuplicate.resourceId = this.loginId;
           checkIdDuplicate.generateRequest();
@@ -323,10 +283,10 @@ ko-KR
        * @param  String  loginId 
        * @return Boolean
        */
-      _isValidPattern: function(loginId) {
+      _isValidPattern: function (loginId) {
         var pattern = /^[a-zA-Z]{1}([a-zA-Z0-9]|[._]){3,19}$/;
         return (pattern.test(loginId));
-      },      
+      },
 
       /**
        * ID등록 요청 성공시
@@ -339,15 +299,17 @@ ko-KR
        * @param  {Object} event iron-form-response
        * @return {null}
        */
-      _successResponseHandler: function(event) {
+      _successResponseHandler: function (event) {
         this.stopSpinner();
         var me = this;
 
         this.openConfirmMsg({
           title: this.tRegInProcess,
           text: this.tCheckRegInMail
-        }, function() {
-          if(this.isDuplicateChecked) { me.fire("things-signup-success", me.serializeMyForm()); }
+        }, function () {
+          if (this.isDuplicateChecked) {
+            me.fire("things-signup-success", me.serializeMyForm());
+          }
         });
 
         this.fire('things-all-dialog-close');
@@ -363,11 +325,11 @@ ko-KR
        * @param  {Object} event iron-form-error
        * @return {null}
        */
-      _errorResponseHandler: function(event) {
+      _errorResponseHandler: function (event) {
         this.stopSpinner();
         var me = this;
-        this.fire("things-signup-failure",event.detail);
-        
+        this.fire("things-signup-failure", event.detail);
+
         this.openConfirmMsg({
           type: 'warning',
           title: this.tInvalidInput,
@@ -379,9 +341,15 @@ ko-KR
        *****
        * @event things-signup-submited
        */
-      _submitMyForm: function(event) {
-        if(this._formValidate()) {
-          this.encryptedPassword = this.sha256(this.password);
+      _submitMyForm: function (event) {
+        console.log(this.password);
+        if (this._formValidate()) {
+          //password여부에 따라 분기문 작성 입력된 값이 없으면 null로 입력해주기
+          if (!this.password) {
+            this.encryptedPassword = null;
+          } else {
+            this.encryptedPassword = this.sha256(this.password);
+          }
           this.$['form'].submit();
           this.fire('things-signup-submited');
         } else {
@@ -397,7 +365,7 @@ ko-KR
        * reset form
        * @param  Object event
        */
-      _resetMyForm: function(event) {
+      _resetMyForm: function (event) {
         this.resetMyForm();
       },
 
@@ -410,15 +378,15 @@ ko-KR
        * 
        * @return Boolean
        */
-       _formValidate: function(){
+      _formValidate: function () {
         this.assertNotEmpty(this.$.domain.value, 'domain');
         this.assertNotEmpty(this.$.locale.value, 'locale');
         this.dupliValidation();
 
         var result = true;
         var form = this.$['input-form'];
-        for(var i = 0; i < form.children.length; i++) {
-          if(form.children[i].invalid) {
+        for (var i = 0; i < form.children.length; i++) {
+          if (form.children[i].invalid) {
             result = false;
             break;
           }
@@ -433,7 +401,7 @@ ko-KR
        * things-pwd-validate-behavior의 함수를 통해
        * validation을 수행하고 결과값 (errorMessage)를 input field에 초기화함
        */
-      _passwordValidate: function(event) {
+      _passwordValidate: function (event) {
         var pwField = event.currentTarget;
         var pw = pwField.value;
         pwField.invalid = false;
@@ -457,14 +425,14 @@ ko-KR
        * things-pwd-validate-behavior의 함수를 통해
        * validation을 수행하고 결과값 (errorMessage)를 input field에 초기화함
        */
-      _confirmPasswordValidate: function(event) {
+      _confirmPasswordValidate: function (event) {
         var confirmPwField = event.currentTarget;
         var confirmPw = confirmPwField.value;
         confirmPwField.invalid = false;
 
         try {
           this.checkEmpty(confirmPw, 'label.confirmed_password');
-          this.checkNotEqual(this.$['pw'].value, confirmPw);
+          this.checkNotEqual(this.$$('#pw').value, confirmPw);
         } catch (e) {
           confirmPwField.errorMessage = e;
           confirmPwField.invalid = true;
@@ -475,15 +443,33 @@ ko-KR
        * isDuplicateChecked를 통해 아이디 중복 체크를 수행했는지 여부를 판단한다.
        * 판단 결과에 따라 메시지를 출력하고 throw
        */
-      dupliValidation: function() {
-        if(!this.isDuplicateChecked) {
+      dupliValidation: function () {
+        if (!this.isDuplicateChecked) {
           this.openConfirmMsg({
             type: 'error',
             title: this.bCheckDuplicate,
             text: this.tPlsCheckDuplicate
           });
-          throw { msg: 'id duplication checking is not finished yet'};
+          throw {
+            msg: 'id duplication checking is not finished yet'
+          };
         }
+      },
+      /**
+       * email입력여부 선택하는 dom-if에서 쓰이는 함수
+       * *******
+       *@return {String} false or true 값
+       */
+      checkEmailAble: function (e) {
+        return e == 'false';
+      },
+      /**
+       * password입력여부 선택하는 dom-if에서 쓰이는 함수
+       * *******
+       *@return {String} false or true 값
+       */
+      checkPwdAble: function (e) {
+        return e == 'false';
       }
     });
   </script>
