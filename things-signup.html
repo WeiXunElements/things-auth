@@ -101,13 +101,13 @@ ko-KR
       <paper-input id="username" name="name" label="[[lUserName]]" value="{{name}}" required invalid auto-validate error-message="[[tInvalidInput]]">
       </paper-input>
 
-      <template is="dom-if" if="[[checkEmailAble('true')]]">
+      <template is="dom-if" if="{{inputEmailAble}}">
         <gold-email-input id="email" name="email" label="[[lEmailAddress]]" value="{{email}}" required invalid auto-validate error-message="[[tInvalidInput]]">
         </gold-email-input>
       </template>
 
       <!--paper-input required name ="timezone" label="Timezone"></paper-input-->
-      <template is="dom-if" if="[[checkPwdAble('true')]]">
+      <template is="dom-if" if="{{inputpasswdAble}}">
         <paper-input id="pw" name="encrypted_password" type="password" label="[[lPassword]]" value="{{password}}" on-input="_passwordValidate"
           invalid error-message="[[tInvalidInput]]">
         </paper-input>
@@ -170,7 +170,7 @@ ko-KR
          */
         inputEmailAble: {
           type: Boolean,
-          value: true
+          value: false
         },
         /**
          * 패스워드 입력 가능여부
@@ -179,7 +179,7 @@ ko-KR
          */
         inputpasswdAble: {
           type: Boolean,
-          value: true
+          value: false
         }
       },
 
@@ -454,22 +454,6 @@ ko-KR
             msg: 'id duplication checking is not finished yet'
           };
         }
-      },
-      /**
-       * email입력여부 선택하는 dom-if에서 쓰이는 함수
-       * *******
-       *@return {String} false or true 값
-       */
-      checkEmailAble: function (e) {
-        return e == 'false';
-      },
-      /**
-       * password입력여부 선택하는 dom-if에서 쓰이는 함수
-       * *******
-       *@return {String} false or true 값
-       */
-      checkPwdAble: function (e) {
-        return e == 'false';
       }
     });
   </script>
