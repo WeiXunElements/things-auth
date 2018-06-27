@@ -242,6 +242,7 @@ Example:
           action="{{action}}"
           content-type="[[contentType]]"
           method="[[method]]"
+          on-keydown="_keydownHandler"
           with-credentials>
 
           <div class="name-locale-container">
@@ -720,7 +721,28 @@ Example:
             this._submitHandler(event);
           }
         },
-
+        /**
+         * on keydown event, for after failed to login
+         ********
+         * @param  {String} event when keypress event fire
+         */
+        _keydownHandler: function(event){
+          var code = event.keyCode;
+          if (code == 9){
+            event.preventDefault();
+            var els = [].slice.call(this.querySelectorAll('input[tabindex], paper-button[tabindex]'));
+            var tabableEls = els.filter(function(el){
+              return el.tabIndex>=0
+            }).sort(function(el1,el2){
+              return el1.tabIndex-el2.tabIndex;
+            });
+            if(tabableEls.indexOf(event.target)+1>=tabableEls.length){
+              tabableEls[0].focus();
+            }else{
+              tabableEls[tabableEls.indexOf(event.target)+1].focus();
+            }
+          }
+        },
         /**
          * After submit disable login button
          ********
