@@ -74,14 +74,14 @@ Example:
         --color: green;
         display: block;
         @apply(--things-home-image);
-        background-image : var(--things-home-image-url);
-        background-position : var(--things-home-image-position);
+        background-image: var(--things-home-image-url);
+        background-position: var(--things-home-image-position);
       }
 
       @media screen and (max-width:999px) {
-        :host{
+        :host {
           @apply(--things-home-image-small);
-          margin:90px 58px 0 58px !important
+          margin: 90px 58px 0 58px !important
         }
       }
 
@@ -124,96 +124,103 @@ Example:
       }
 
       paper-button:hover {
-        color:#dd2c00;
+        color: #dd2c00;
       }
+
       .name-locale-container {
         @apply(--layout-horizontal);
       }
+
       .name-locale-container paper-input {
         @apply(--layout-flex);
       }
+
       .name-locale-container paper-dropdown-menu {
         width: 25%;
         padding-left: 15px;
       }
+
       #submitButton {
         @apply(--things-login-button);
       }
 
       #submitButton:hover {
-        background-color:#9c7964;
-        color:#fff;
+        background-color: #9c7964;
+        color: #fff;
       }
+
       paper-dialog {
         padding: 0;
       }
+
       div {
         margin-top: 10px;
       }
-      div[prefix]{
-        margin:-4px 4px 0 0
+
+      div[prefix] {
+        margin: -4px 4px 0 0
       }
-      div[prefix] iron-icon{
-        --iron-icon-height:20px;
-        --iron-icon-width:20px;
-        opacity:.7;
-        fill:var(--things-secondary-color);
+
+      div[prefix] iron-icon {
+        --iron-icon-height: 20px;
+        --iron-icon-width: 20px;
+        opacity: .7;
+        fill: var(--things-secondary-color);
       }
+
       @media screen and (max-width:760px) {
-        :host{
+        :host {
           @apply(--things-home-image-small);
-          margin:0 !important;
+          margin: 0 !important;
         }
         paper-material {
           @apply(--things-mobile-login);
         }
-        paper-toolbar{
-          display:none !important;
+        paper-toolbar {
+          display: none !important;
         }
-        .header{
-          padding:0;
+        .header {
+          padding: 0;
         }
         .header:before {
           content: "var(--things-brand-name)";
           /*content: "Things-Board";*/
-          background:none var(--things-secondary-color);
-          margin:0;
-          width:100%;height:45px;
-          color:#fff;
-          font-size:20px;
-          font-weight:500;
-          line-height:45px;
+          background: none var(--things-secondary-color);
+          margin: 0;
+          width: 100%;
+          height: 45px;
+          color: #fff;
+          font-size: 20px;
+          font-weight: 500;
+          line-height: 45px;
         }
-        .header:after{
-          content:"";
+        .header:after {
+          content: "";
           background: url(/images/icon-mobile-brand.png) 50% 60% no-repeat;
-          background-size:200px auto;
-          display:block;
-          width:100%;height:120px;
-          margin:0;
+          background-size: 200px auto;
+          display: block;
+          width: 100%;
+          height: 120px;
+          margin: 0;
         }
-        .header strong{
-          display:none
+        .header strong {
+          display: none
         }
-        .extra-links{
-          font-size:13px;
+        .extra-links {
+          font-size: 13px;
           position: relative;
         }
-        .extra-links:nth-child(3){
-          left:calc(32% - 60px);
+        .extra-links:nth-child(3) {
+          left: calc(32% - 60px);
         }
-        .extra-links:last-child{
-          float:right;
+        .extra-links:last-child {
+          float: right;
         }
       }
     </style>
 
-    <things-ajax
-        id="extend-pwd-ajax"
-        resource-url="users/change_pass_later/:id"
-        resource-id="[[user.id]]"
-        content-type="application/json"
-        method="POST">
+    <things-ajax id="extend-pwd-ajax" resource-url="users/change_pass_later/:id" resource-id="[[user.id]]" content-type="application/json"
+      method="POST">
     </things-ajax>
 
     <paper-dialog id="pwd-expired-dialog" modal>
@@ -231,690 +238,712 @@ Example:
       <things-i18n-msg auto msgid="text.please_wait" msg="{{tPleaseWait}}" hidden>Please Wait.</things-i18n-msg>
 
       <span class="header">
-        <strong><things-i18n-msg auto msgid="label.login">LOGIN</things-i18n-msg></strong>
+        <strong>
+          <things-i18n-msg auto msgid="label.login">LOGIN</things-i18n-msg>
+        </strong>
       </span>
 
-        <form
-          is="iron-form"
-          id="loginForm"
-          headers="[[headers]]"
-          login-path="[[loginPath]]"
-          action="{{action}}"
-          content-type="[[contentType]]"
-          method="[[method]]"
-          with-credentials>
+      <form is="iron-form" id="loginForm" headers="[[headers]]" login-path="[[loginPath]]" action="{{action}}" content-type="[[contentType]]"
+        method="[[method]]" with-credentials>
 
-          <div class="name-locale-container">
-            <paper-input id="username"
-                        name="email"
-                        type="text"
-                        label="[[lUserId]]"
-                        value="{{username}}"
-                        pattern="[[usernameValidationPattern]]"
-                        error-message="[[usernameErrorMessage]]"
-                        required
-                        auto-validate
-                        autofocus
-                        tabindex='1'>
-              <div prefix><iron-icon icon="icons:account-circle" slot="prefix"></iron-icon></div>
-            </paper-input>
-
-            <paper-dropdown-menu id="locale-combo" label="Locale">
-                <paper-listbox id="locale-list" class="dropdown-content">
-                  <template is="dom-repeat" items="[[locales]]">
-                    <paper-item>[[item.description]]</paper-item>
-                  </template>
-                </paper-listbox>
-              </paper-dropdown-menu>            
-          </div>
-
-          <paper-input id="password"
-                       type="password"
-                       label="[[lPassword]]"
-                       value="{{password}}"
-                       pattern="[[passwordValidationPattern]]"
-                       error-message="[[passwordErrorMessage]]"
-                       required
-                       auto-validate
-                       tabindex='2'>
-            <div prefix><iron-icon icon="icons:lock-open" slot="prefix"></iron-icon></div>
+        <div class="name-locale-container">
+          <paper-input id="username" name="email" type="text" label="[[lUserId]]" value="{{username}}" pattern="[[usernameValidationPattern]]"
+            error-message="[[usernameErrorMessage]]" required auto-validate autofocus tabindex='1'>
+            <div prefix>
+              <iron-icon icon="icons:account-circle" slot="prefix"></iron-icon>
+            </div>
           </paper-input>
 
-          <input name="password" type="password" hidden value="{{encryptedPassword}}" />
+          <paper-dropdown-menu id="locale-combo" label="Locale">
+            <paper-listbox id="locale-list" class="dropdown-content">
+              <template is="dom-repeat" items="[[locales]]">
+                <paper-item>[[item.description]]</paper-item>
+              </template>
+            </paper-listbox>
+          </paper-dropdown-menu>
+        </div>
+
+        <paper-input id="password" type="password" label="[[lPassword]]" value="{{password}}" pattern="[[passwordValidationPattern]]"
+          error-message="[[passwordErrorMessage]]" required auto-validate tabindex='2'>
+          <div prefix>
+            <iron-icon icon="icons:lock-open" slot="prefix"></iron-icon>
+          </div>
+        </paper-input>
+
+        <input name="password" type="password" hidden value="{{encryptedPassword}}" />
 
         <div>
-            <paper-button id="submitButton" raised on-tap="_submitHandler" tabindex='3'>
-              <things-i18n-msg auto msgid="button.sign_in">Sign In</things-i18n-msg>
-            </paper-button>
+          <paper-button id="submitButton" raised on-tap="_submitHandler" tabindex='3'>
+            <things-i18n-msg auto msgid="button.sign_in">Sign In</things-i18n-msg>
+          </paper-button>
 
-            <paper-button on-tap="_onSignupTap" class="extra-links">
-              <things-i18n-msg auto msgid="button.sign_up">Sign Up</things-i18n-msg>
-            </paper-button>
+          <paper-button on-tap="_onSignupTap" class="extra-links">
+            <things-i18n-msg auto msgid="button.sign_up">Sign Up</things-i18n-msg>
+          </paper-button>
 
-            <paper-button on-tap="_onRequestAccountActivateTap" class="extra-links">
-              <things-i18n-msg auto msgid="button.request_active">Request Active</things-i18n-msg>
-            </paper-button>
+          <paper-button on-tap="_onRequestAccountActivateTap" class="extra-links">
+            <things-i18n-msg auto msgid="button.request_active">Request Active</things-i18n-msg>
+          </paper-button>
 
-            <paper-button on-tap="_onRequestPasswordResetTap" class="extra-links">
-              <things-i18n-msg auto msgid="button.reset_password">Reset Password</things-i18n-msg>
-            </paper-button>
-          </div>
-          <content></content>
-        </form>
-      </paper-material>
-    </template>
+          <paper-button on-tap="_onRequestPasswordResetTap" class="extra-links">
+            <things-i18n-msg auto msgid="button.reset_password">Reset Password</things-i18n-msg>
+          </paper-button>
+        </div>
+        <content></content>
+      </form>
+    </paper-material>
+  </template>
 
-    <script>
-      Polymer({
+  <script>
+    Polymer({
 
-        is: 'things-login',
+      is: 'things-login',
 
-        properties: {
-          /**
-           * Label for the title
-           *****
-           * @type {string}
-           * @default Login
-           */
-          title: {
-            type: String,
-            value: 'Login'
-          },
+      properties: {
+        /**
+         * Label for the title
+         *****
+         * @type {string}
+         * @default Login
+         */
+        title: {
+          type: String,
+          value: 'Login'
+        },
 
-          /**
-           * Brand Name
-           * @type {String}
-           */
-          brandName: {
-            type: String,
-            observer: '_onBrandNameChanged'
-          },
+        /**
+         * Brand Name
+         * @type {String}
+         */
+        brandName: {
+          type: String,
+          observer: '_onBrandNameChanged'
+        },
 
-          /**
-           * elevation(음영높이) for login form
-           *****
-           * @type {Number}
-           */
-          elevation: {
-            type: Number,
-            value: 4
-          },
+        /**
+         * elevation(음영높이) for login form
+         *****
+         * @type {Number}
+         */
+        elevation: {
+          type: Number,
+          value: 4
+        },
 
-          /**
-           * locale combo에 출력되는 locale list
-           */
-          locales: {
-            type: Array,
-            value: function() {
-              return [{
-                key: 'en-US',
-                description: 'English'
-              }, {
-                key: 'ko-KR',
-                description: '한글'
-              }, {
-                key: 'zh-CN',
-                description: '中文'
-              }];
+        /**
+         * locale combo에 출력되는 locale list
+         */
+        locales: {
+          type: Array,
+          value: function () {
+            return [{
+              key: 'en-US',
+              description: 'English'
+            }, {
+              key: 'ko-KR',
+              description: '한글'
+            }, {
+              key: 'zh-CN',
+              description: '中文'
+            }];
+          }
+        },
+
+        /**
+         * Pattern used to validate username,  ex: '^[a-zA-Z0-9]+$'
+         *****
+         * @type {string}
+         */
+        usernameValidationPattern: {
+          type: String
+        },
+
+        /**
+         * Error message displayed if `usernameValidationPattern` is not matched.
+         *****
+         * @type {string}
+         */
+        usernameErrorMessage: {
+          type: String,
+          value: 'letters and numbers only'
+        },
+
+        /**
+         * Pattern used to validate password, ex: '^[a-zA-Z0-9]+$'
+         ******
+         * @type {string}
+         */
+        passwordValidationPattern: {
+          type: String
+        },
+
+        /**
+         * Error message displayed if `passwordValidationPattern` is not matched.
+         ******
+         * @type {string}
+         */
+        passwordErrorMessage: {
+          type: Object,
+          value: 'letters and numbers only'
+        },
+
+        /**
+         * login request header
+         ******
+         * @type {Object}
+         */
+        headers: {
+          type: Object
+        },
+
+        /**
+         * login request url except basic url
+         ******
+         * @type {Object}
+         */
+        loginPath: {
+          type: String,
+          notify: true
+        },
+
+        /**
+         * login request full url
+         ******
+         * @type {Object}
+         */
+        action: {
+          type: String,
+          computed: '_computeActionUrl(globals.baseUrl, loginPath)'
+        },
+
+        /**
+         * login request content type
+         ******
+         * @type {Object}
+         */
+        contentType: {
+          type: String,
+          value: 'application/x-www-form-urlencoded'
+        },
+
+        /**
+         * login request method
+         ******
+         * @type {String}
+         * @default POST
+         */
+        method: {
+          type: String,
+          value: 'POST'
+        },
+
+        /**
+         * Label for the submit button
+         ******
+         * @type {String}
+         * @default Submit
+         */
+        submitLabel: {
+          type: String,
+          value: 'Submit'
+        },
+
+        /**
+         * OI 화면을 사용할 지 여부
+         ******
+         * @type {Boolean}
+         * @default {false}
+         */
+        useOiScreen: {
+          type: Boolean,
+          value: false
+        },
+
+        /**
+         * OI 화면 URL
+         ******
+         * @type {String}
+         * @default index_io.html
+         */
+        oiScreenPath: {
+          type: String,
+          value: 'index_io.html'
+        },
+
+        /**
+         * 로그인 후 적용하는 callback function
+         *****
+         * @type {Object}
+         * @default function() { return true }
+         */
+        redirectCallback: {
+          type: Object,
+          value: function () {
+            return function () {
+              return true
             }
-          },
-
-          /**
-           * Pattern used to validate username,  ex: '^[a-zA-Z0-9]+$'
-           *****
-           * @type {string}
-           */
-          usernameValidationPattern: {
-            type: String
-          },
-
-          /**
-           * Error message displayed if `usernameValidationPattern` is not matched.
-           *****
-           * @type {string}
-           */
-          usernameErrorMessage: {
-            type: String,
-            value: 'letters and numbers only'
-          },
-
-          /**
-           * Pattern used to validate password, ex: '^[a-zA-Z0-9]+$'
-           ******
-           * @type {string}
-           */
-          passwordValidationPattern: {
-            type: String
-          },
-
-          /**
-           * Error message displayed if `passwordValidationPattern` is not matched.
-           ******
-           * @type {string}
-           */
-          passwordErrorMessage: {
-            type: Object,
-            value: 'letters and numbers only'
-          },
-
-          /**
-           * login request header
-           ******
-           * @type {Object}
-           */
-          headers: {
-            type: Object
-          },
-
-          /**
-           * login request url except basic url
-           ******
-           * @type {Object}
-           */
-          loginPath: {
-            type: String,
-            notify: true
-          },
-
-          /**
-           * login request full url
-           ******
-           * @type {Object}
-           */
-          action: {
-            type: String,
-            computed: '_computeActionUrl(globals.baseUrl, loginPath)'
-          },
-
-          /**
-           * login request content type
-           ******
-           * @type {Object}
-           */
-          contentType: {
-            type: String,
-            value: 'application/x-www-form-urlencoded'
-          },
-
-          /**
-           * login request method
-           ******
-           * @type {String}
-           * @default POST
-           */
-          method: {
-            type: String,
-            value: 'POST'
-          },
-
-          /**
-           * Label for the submit button
-           ******
-           * @type {String}
-           * @default Submit
-           */
-          submitLabel: {
-            type: String,
-            value: 'Submit'
-          },
-
-          /**
-           * OI 화면을 사용할 지 여부
-           ******
-           * @type {Boolean}
-           * @default {false}
-           */
-          useOiScreen: {
-            type: Boolean,
-            value: false
-          },
-
-          /**
-           * OI 화면 URL
-           ******
-           * @type {String}
-           * @default index_io.html
-           */
-          oiScreenPath: {
-            type: String,
-            value: 'index_io.html'
-          },
-
-          /**
-           * 로그인 후 적용하는 callback function
-           *****
-           * @type {Object}
-           * @default function() { return true }
-           */
-          redirectCallback: {
-            type: Object,
-            value: function() {
-              return function() {
-                return true
-              }
-            }
-          },
-
-          /**
-           * 로그인 성공 후 마지막에 접속했던 페이지로 이동할 지 여부
-           * ****
-           * @type {Boolean}
-           * @default false
-           */
-          redirectToLastPageWhenLoggedIn: {
-            type: Boolean,
-            value: false
-          }
-
-          /**
-           * 로그인 성공시 fire
-           *
-           * @event things-login-succeed
-           */
-        },
-
-        behaviors: [
-          Things.GlobalBehavior,
-          Things.MsgBoxBehavior,
-          Things.EncryptBehavior
-        ],
-
-        listeners: {
-          'locale-list.selected-changed': '_localeValueChanged',
-          'iron-form-submit': '_afterFormSubmit',
-          'iron-form-response': '_successResponse',
-          'iron-form-error': '_failureResponse',
-          'extend-pwd-ajax.things-ajax-response': '_extendPwdResponsed'
-        },
-
-        observers: [
-          '_userInfoChanged(globals.user)'
-        ],
-
-        ready: function() {
-          document.addEventListener('things-expired-password-changed', function() {
-            this._afterExpiredPwdChanged();
-          }.bind(this));
-
-          this._setCurrentLocale();
-        },
-
-        /**
-         * local storage에 저장되어 있는 현재 locale 정보를 통해
-         * combo box의 값을 결정함
-         */
-        _setCurrentLocale: function() {
-          var currentLocale = JSON.parse(localStorage.getItem('setting.locale'));
-          var localeList = this.$['locale-list'];
-          if(currentLocale !== null) {
-            this.locales.forEach(function(locale, index) {
-              if(locale.key === currentLocale) {
-                localeList.selected = index;
-              }
-            })
           }
         },
 
         /**
-         * locale-list의 selected-chaged event handler
-         * locale 리스트의 선택된 값이 변경될 경우 locale을 적용함
-         */
-        _localeValueChanged: function(event) {
-          var localeIdx = event.detail.value;
-          this.set('globals.locale', this.locales[localeIdx].key);
-        },
-
-        /**
-         * user info 변경시 호출되며 사용자 정보를 통해 패스워드가 만료 되었는지를 판단함
-         */
-        _userInfoChanged: function(userInfo) {
-          if(userInfo) this.isUserStatusInvalid(userInfo);
-        },
-
-        /**
-         * compute action url of sign in
-         * *******
-         * @param  {String} baseUrl `globals.baseUrl`이 변화되거나 초기화되어 설정되는 기본서버 url,Things Framework(Elidom Framework)에서는 `.../rest`까지 포함
-         * @param  {String} url request를 요청한 Rest url Ex:) login
-         * @return {String} Full url --> globals.baseUrl/url
-         */
-        _computeActionUrl: function(baseUrl, url) {
-          return baseUrl + '/' + url;
-        },
-
-        /**
-         * brandName change event handler
-         * BrandName이 변경되었을 때 모바일 login 화면의 header content를
-         * BrandName으로 변경
-         * @param  {String} brandName [description]
-         */
-        _onBrandNameChanged: function(brandName) {
-          if(brandName) {
-            this.customStyle['--things-brand-name'] = '"' + brandName + '"';
-            this.updateStyles();
-          }
-        },
-
-        /**
-         * 사용자 신청,활성화,비밀번호 초기화 Popup을 open하기 위한 event
-         *****
-         * @event document.things-open-popup-view
-         * @param {Element} view  :things-signup/things-request-active/things-password-init
-         * @param {Boolean} modal  :true/false
-         * @param {function} openCallback : function
-         */
-
-        /**
-         * Signup button tap
-         *****
-         * @param  {String} event signup button tap event
-         */
-        _onSignupTap: function(event) {
-          var signup = document.createElement('things-signup');
-          signup.title = this.lSignUp;
-          signup.actionUrl = 'request_auths/account/register/request'
-          signup.method = 'POST';
-
-          signup.addEventListener('things-signup-success', function(event) {
-            var event = new CustomEvent('things-close-popup-view', { detail: this });
-            document.dispatchEvent(event);
-          });
-
-          signup.addEventListener('things-signup-failure', function(event) {
-            var response = event.detail.request.xhr.response;
-            this.openResponseError(response);
-          })
-
-          var event = new CustomEvent('things-open-popup-view', {
-            detail: { view: signup, modal: true, openCallback: null }
-          });
-
-          document.dispatchEvent(event);
-        },
-
-         /**
-          * Request account activation button tap
-          *****
-          * @param  {String} event request active tap event
-          */
-        _onRequestAccountActivateTap: function(event) {
-          var requestActive = document.createElement('things-request-active');
-          requestActive.title = this.lRequestActive;
-          requestActive.actionUrl = 'request_auths/account/activate/request';
-          requestActive.method = 'POST';
-
-          requestActive.addEventListener('things-request-active-success', function(event) {
-            var event = new CustomEvent('things-close-popup-view', { detail: this });
-            document.dispatchEvent(event);
-          });
-
-          requestActive.addEventListener('things-request-active-failure', function(event) {
-            var response = event.detail.request.xhr.response;
-            this.openResponseError(response);
-          })
-
-          var event = new CustomEvent('things-open-popup-view', {
-            detail: { view: requestActive, modal: true, openCallback: null }
-          });
-
-          document.dispatchEvent(event);
-        },
-
-        /**
-         * Request password reset button tap
-         *****
-         * @param  {String} event Reset Password tap event
-         */
-        _onRequestPasswordResetTap: function(event) {
-          var pwInit = document.createElement('things-password-init');
-          pwInit.title = this.lResetPass;
-          pwInit.actionUrl = 'request_auths/password/reset/request';
-          pwInit.method = 'POST';
-
-          pwInit.addEventListener('things-password-init-success', function(event) {
-            var event = new CustomEvent('things-close-popup-view', { detail: this });
-            document.dispatchEvent(event);
-          });
-
-          pwInit.addEventListener('things-password-init-failure', function(event) {
-            var response = event.detail.request.xhr.response;
-            this.openResponseError(response);
-          });
-
-          var event = new CustomEvent('things-open-popup-view', {
-            detail: { view: pwInit, modal: true, openCallback: null }
-          });
-
-          document.dispatchEvent(event);
-        },
-
-        /**
-         * Sign In tap
-         ********
-         * @param  {String} event Sign In tap event
-         */
-        _submitHandler: function(event) {
-          if(this.$.loginForm.validate()) {
-            this.openInfoMsg({
-              type: 'info',
-              title: this.tProcessing,
-              html: true,
-              text: '<br/><h3><span>' + this.tPleaseWait + '</span><h3>',
-              showConfirmButton: false
-            });
-
-            this.$.submitButton.disabled = true;
-            // password encrypte
-            this.encryptedPassword = this.sha256(this.password);
-            this.$.loginForm.submit();
-          }
-        },
-
-        /**
-         * on keypress event
-         ********
-         * @param  {String} event when keypress event fire
-         */
-        _keypressHandler: function(event) {
-          var code = event.keyCode;
-          if (code == 13) {
-            this._submitHandler(event);
-          }
-        },
-
-        /**
-         * After submit disable login button
-         ********
-         * @param  {String} event when iron-form-submit fire
-         */
-        _afterFormSubmit: function(event) {
-          this.$.submitButton.disabled = false;
-        },
-
-        /**
-         * ko-KR
-         * 로그인이 성공하여 iron-form-response가 발생하면 해당 함수를 부른다.
-         *  1. response의 사용자 정보를 토대로 비밀번호 변경 필요시 로그아웃 수행 후 비밀번호 변경 화면 노출 변경 필요 없을시 2. 진행
-         *  2. 사용자정보를 globals에 저장 및 local-storage에 저장
-         *  3. 로그인 폼 리셋
-         *  4. fire things-login-succeed event
-         *  5. 화면이동
-         *    만일 redirectCallback가 있으면 적용하고 반환값이 true이면 사용자정보의
-         *    user.operator_flag과 useOiScreen 옵션을 이용하여 oi로 이동할 것인지 standard로 이동할 것인지 판단한다.
+         * 로그인 성공 후 마지막에 접속했던 페이지로 이동할 지 여부
          * ****
-         * en-US
-         * After submit disable login button
-         *  1. If user have to change account password because of expired password, logout and expose password change view. If password is still valid continue to 2.
-         *  2. save user information
-         *  3. reset login form
-         *  4. fire things-login-succeed event
-         *  5. redirect
-         *    if there's have redirectCallback apply redirectCallback and check return if it is true
-         *    use data from user.operator_flag and useOiScreen option
-         *****
-         * @param  {String} event when iron-form-response fire
+         * @type {Boolean}
+         * @default false
          */
-        _successResponse: function(event) {
-          submitButton.disabled = false;
-          var user = event.detail.__data__.response;
+        redirectToLastPageWhenLoggedIn: {
+          type: Boolean,
+          value: false
+        },
+        /**
+         * 이메일 입력 가능여부
+         * ********
+         * @type: Boolean
+         */
+        inputEmailAble: {
+          type: Boolean,
+          value: false
+        },
+        /**
+         * 패스워드 입력 가능여부
+         * ********
+         * @type: Boolean
+         */
+        inputPasswdAble: {
+          type: Boolean,
+          value: false
+        },
 
-          // 1. save user information
-          if(user) {
-            this.set('globals.user', user);
-            if(user.stomp_url) {
-              this.set('globals.wsUrl', user.stomp_url);
+        /**
+         * 로그인 성공시 fire
+         *
+         * @event things-login-succeed
+         */
+      },
+
+      behaviors: [
+        Things.GlobalBehavior,
+        Things.MsgBoxBehavior,
+        Things.EncryptBehavior
+      ],
+
+      listeners: {
+        'locale-list.selected-changed': '_localeValueChanged',
+        'iron-form-submit': '_afterFormSubmit',
+        'iron-form-response': '_successResponse',
+        'iron-form-error': '_failureResponse',
+        'extend-pwd-ajax.things-ajax-response': '_extendPwdResponsed'
+      },
+
+      observers: [
+        '_userInfoChanged(globals.user)'
+      ],
+
+      ready: function () {
+        document.addEventListener('things-expired-password-changed', function () {
+          this._afterExpiredPwdChanged();
+        }.bind(this));
+
+        this._setCurrentLocale();
+      },
+
+      /**
+       * local storage에 저장되어 있는 현재 locale 정보를 통해
+       * combo box의 값을 결정함
+       */
+      _setCurrentLocale: function () {
+        var currentLocale = JSON.parse(localStorage.getItem('setting.locale'));
+        var localeList = this.$['locale-list'];
+        if (currentLocale !== null) {
+          this.locales.forEach(function (locale, index) {
+            if (locale.key === currentLocale) {
+              localeList.selected = index;
             }
+          })
+        }
+      },
+
+      /**
+       * locale-list의 selected-chaged event handler
+       * locale 리스트의 선택된 값이 변경될 경우 locale을 적용함
+       */
+      _localeValueChanged: function (event) {
+        var localeIdx = event.detail.value;
+        this.set('globals.locale', this.locales[localeIdx].key);
+      },
+
+      /**
+       * user info 변경시 호출되며 사용자 정보를 통해 패스워드가 만료 되었는지를 판단함
+       */
+      _userInfoChanged: function (userInfo) {
+        if (userInfo) this.isUserStatusInvalid(userInfo);
+      },
+
+      /**
+       * compute action url of sign in
+       * *******
+       * @param  {String} baseUrl `globals.baseUrl`이 변화되거나 초기화되어 설정되는 기본서버 url,Things Framework(Elidom Framework)에서는 `.../rest`까지 포함
+       * @param  {String} url request를 요청한 Rest url Ex:) login
+       * @return {String} Full url --> globals.baseUrl/url
+       */
+      _computeActionUrl: function (baseUrl, url) {
+        return baseUrl + '/' + url;
+      },
+
+      /**
+       * brandName change event handler
+       * BrandName이 변경되었을 때 모바일 login 화면의 header content를
+       * BrandName으로 변경
+       * @param  {String} brandName [description]
+       */
+      _onBrandNameChanged: function (brandName) {
+        if (brandName) {
+          this.customStyle['--things-brand-name'] = '"' + brandName + '"';
+          this.updateStyles();
+        }
+      },
+
+      /**
+       * 사용자 신청,활성화,비밀번호 초기화 Popup을 open하기 위한 event
+       *****
+       * @event document.things-open-popup-view
+       * @param {Element} view  :things-signup/things-request-active/things-password-init
+       * @param {Boolean} modal  :true/false
+       * @param {function} openCallback : function
+       */
+
+      /**
+       * Signup button tap
+       *****
+       * @param  {String} event signup button tap event
+       */
+      _onSignupTap: function (event) {
+        var signup = document.createElement('things-signup');
+        signup.title = this.lSignUp;
+        signup.actionUrl = 'request_auths/account/register/request'
+        signup.method = 'POST';
+        signup.inputEmailAble = this.inputEmailAble;
+        signup.inputPasswdAble = this.inputPasswdAble;
+
+        signup.addEventListener('things-signup-success', function (event) {
+          var event = new CustomEvent('things-close-popup-view', {
+            detail: this
+          });
+          document.dispatchEvent(event);
+        });
+
+        signup.addEventListener('things-signup-failure', function (event) {
+          var response = event.detail.request.xhr.response;
+          this.openResponseError(response);
+        })
+
+        var event = new CustomEvent('things-open-popup-view', {
+          detail: {
+            view: signup,
+            modal: true,
+            openCallback: null
           }
-          this.customStyle['--things-background-image'] = 'url(/images/bg-rail.png), url(/images/bg-blue.png)';
-          // 2. reset login form
-          this.$.loginForm.reset();
-          this.encryptedPassword = '';
-          // 3. fire event
-          this.fire('things-login-succeed');
+        });
 
-          if(!this.isUserStatusInvalid(user)) {;
-            // 4. redirect
-            this._redirectAfterLogin(user);
+        document.dispatchEvent(event);
+      },
+
+      /**
+       * Request account activation button tap
+       *****
+       * @param  {String} event request active tap event
+       */
+      _onRequestAccountActivateTap: function (event) {
+        var requestActive = document.createElement('things-request-active');
+        requestActive.title = this.lRequestActive;
+        requestActive.actionUrl = 'request_auths/account/activate/request';
+        requestActive.method = 'POST';
+
+        requestActive.addEventListener('things-request-active-success', function (event) {
+          var event = new CustomEvent('things-close-popup-view', {
+            detail: this
+          });
+          document.dispatchEvent(event);
+        });
+
+        requestActive.addEventListener('things-request-active-failure', function (event) {
+          var response = event.detail.request.xhr.response;
+          this.openResponseError(response);
+        })
+
+        var event = new CustomEvent('things-open-popup-view', {
+          detail: {
+            view: requestActive,
+            modal: true,
+            openCallback: null
           }
-        },
+        });
 
-        /**
-         * 사용자의 password가 갱신 기간이 지났는지 여부를 판단.
-         * @param  Object  user 사용자 정보
-         * @return Boolean 비밀번호 만료 여부
-         */
-        isUserStatusInvalid: function(user) {
-          // 사용자의 계정상태가 비밀번호 변경 상태 일때의 처리
-          // password_chage => 비밀번호 연장이 불가하며 반드시 변경해야 로그인이 가능한 경우
-          // password_expired => 비밀번호 연장이 가능하여 비밀번호 변경, 연장 후 로그인이 가능한 경우
-          if(user.status == 'password_change' || user.status == 'password_expired') {
-            var me = this;
-            var title = '';
-            var text = '';
-            var pwdExtendButton = false;
+        document.dispatchEvent(event);
+      },
 
-            // status에 따라 alert 타이틀과 메시지를 초기화
-            switch (user.status) {
-              case 'password_change':
-                title = Things.DataGlobal.t('button.password_change');
-                text = Things.DataGlobal.t('text.password_need_change');
-                break;
+      /**
+       * Request password reset button tap
+       *****
+       * @param  {String} event Reset Password tap event
+       */
+      _onRequestPasswordResetTap: function (event) {
+        var pwInit = document.createElement('things-password-init');
+        pwInit.title = this.lResetPass;
+        pwInit.actionUrl = 'request_auths/password/reset/request';
+        pwInit.method = 'POST';
 
-              case 'password_expired':
-                title = Things.DataGlobal.t('label.password_expired');
-                text = Things.DataGlobal.t('text.password_expired');
-                pwdExtendButton = true;
-                break;
-            }
+        pwInit.addEventListener('things-password-init-success', function (event) {
+          var event = new CustomEvent('things-close-popup-view', {
+            detail: this
+          });
+          document.dispatchEvent(event);
+        });
 
-            this.openConfirmMsg({
-              type: 'info',
-              title: title,
-              text: text,
-              showCancelButton: pwdExtendButton,
-              cancelButtonText: Things.DataGlobal.t('button.extend'),
-              confirmButtonText: Things.DataGlobal.t('button.password_change'),
-              allowEscapeKey: false
-            }, function() {
-              var changePwdView = document.createElement('things-change-password');
+        pwInit.addEventListener('things-password-init-failure', function (event) {
+          var response = event.detail.request.xhr.response;
+          this.openResponseError(response);
+        });
 
-              me.fire('things-open-popup-view', {
-                view: changePwdView,
-                modal: true,
-                openCallback: function() {
-                  changePwdView.title = Things.DataGlobal.t('button.change_password');
-                  changePwdView.actionUrl = 'users/change_pass/' + user.id;
-                  changePwdView.method = 'POST';
-                  changePwdView.currentUserInfo = user;
-                }, closeCallback: function() {
-                  var logoutElement = document.querySelector('things-logout');
-                  logoutElement.logout();
-                }
-              })
-            }, function() {
-              var extendPwdAjax = me.$['extend-pwd-ajax'];
-              extendPwdAjax.resourceId = Things.DataGlobal.user.id;
-              extendPwdAjax.generateRequest();
-            });
-
-            return true;
-          } else {
-            return false;
+        var event = new CustomEvent('things-open-popup-view', {
+          detail: {
+            view: pwInit,
+            modal: true,
+            openCallback: null
           }
-        },
+        });
 
-        /**
-         * 비밀번호 변경기한 연장 ajax의 response listener
-         * things-expired-password-chagned 이벤트 호출
-         */
-        _extendPwdResponsed: function(event) {
-          this.fire('things-expired-password-changed');
-        },
+        document.dispatchEvent(event);
+      },
 
-        /**
-         * things-expired-password-changed event listener
-         * global 변수와 localstorage를 초기화 후 browser reload
-         */
-        _afterExpiredPwdChanged: function() {
-          var user = Things.DataGlobal.user;
-          delete user.status;
-          localStorage['setting.user'] = JSON.stringify(user);
-          this._redirectAfterLogin(user);
-        },
+      /**
+       * Sign In tap
+       ********
+       * @param  {String} event Sign In tap event
+       */
+      _submitHandler: function (event) {
+        if (this.$.loginForm.validate()) {
+          this.openInfoMsg({
+            type: 'info',
+            title: this.tProcessing,
+            html: true,
+            text: '<br/><h3><span>' + this.tPleaseWait + '</span><h3>',
+            showConfirmButton: false
+          });
 
-        /**
-         * Callback 호출
-         *****
-         * @param {Function} callback redirectCallback
-         * @return {Boolean} redirectCallback을 적용한 값을 리턴, 없을 경우는 true
-         */
-        _applyCallback: function(callback) {
-          if(callback && typeof callback == 'function') {
-            return callback.apply(this);
-          }
+          this.$.submitButton.disabled = true;
+          // password encrypte
+          this.encryptedPassword = this.sha256(this.password);
+          this.$.loginForm.submit();
+        }
+      },
 
-          return true;
-        },
+      /**
+       * on keypress event
+       ********
+       * @param  {String} event when keypress event fire
+       */
+      _keypressHandler: function (event) {
+        var code = event.keyCode;
+        if (code == 13) {
+          this._submitHandler(event);
+        }
+      },
 
-        /**
-         * Redirect after login success
-         *******
-         * @param  {Object} user 사용자 정보
-         */
-        _redirectAfterLogin: function(user) {
-          if(this._applyCallback(this.redirectCallback)) {
+      /**
+       * After submit disable login button
+       ********
+       * @param  {String} event when iron-form-submit fire
+       */
+      _afterFormSubmit: function (event) {
+        this.$.submitButton.disabled = false;
+      },
 
-            if(this.useOiScreen && user.operator_flag === true) {
-              location.href = this.oiScreenPath;
+      /**
+       * ko-KR
+       * 로그인이 성공하여 iron-form-response가 발생하면 해당 함수를 부른다.
+       *  1. response의 사용자 정보를 토대로 비밀번호 변경 필요시 로그아웃 수행 후 비밀번호 변경 화면 노출 변경 필요 없을시 2. 진행
+       *  2. 사용자정보를 globals에 저장 및 local-storage에 저장
+       *  3. 로그인 폼 리셋
+       *  4. fire things-login-succeed event
+       *  5. 화면이동
+       *    만일 redirectCallback가 있으면 적용하고 반환값이 true이면 사용자정보의
+       *    user.operator_flag과 useOiScreen 옵션을 이용하여 oi로 이동할 것인지 standard로 이동할 것인지 판단한다.
+       * ****
+       * en-US
+       * After submit disable login button
+       *  1. If user have to change account password because of expired password, logout and expose password change view. If password is still valid continue to 2.
+       *  2. save user information
+       *  3. reset login form
+       *  4. fire things-login-succeed event
+       *  5. redirect
+       *    if there's have redirectCallback apply redirectCallback and check return if it is true
+       *    use data from user.operator_flag and useOiScreen option
+       *****
+       * @param  {String} event when iron-form-response fire
+       */
+      _successResponse: function (event) {
+        submitButton.disabled = false;
+        var user = event.detail.__data__.response;
 
-            } else {
-              var redirectURL = '/';
-              if(this.redirectToLastPageWhenLoggedIn) {
-                redirectURL = window.sessionStorage.getItem('lastURL') || '/';
-              }
-
-              page(redirectURL);
-              location.reload(true);
-            }
-          };
-        },
-
-        /**
-         * After failed sigin in
-         *******
-         * @param {Object} event iron-form-error
-         */
-        _failureResponse: function(event) {
-          this.$.submitButton.disabled = false;
-          var response = event.detail.request.xhr.response
-
-          if(response) {
-            this.openResponseError(response);
-          } else {
-            response = event.detail.request;
-            this.openUnkownError(response);
+        // 1. save user information
+        if (user) {
+          this.set('globals.user', user);
+          if (user.stomp_url) {
+            this.set('globals.wsUrl', user.stomp_url);
           }
         }
-      });
-    </script>
+        this.customStyle['--things-background-image'] = 'url(/images/bg-rail.png), url(/images/bg-blue.png)';
+        // 2. reset login form
+        this.$.loginForm.reset();
+        this.encryptedPassword = '';
+        // 3. fire event
+        this.fire('things-login-succeed');
+
+        if (!this.isUserStatusInvalid(user)) {;
+          // 4. redirect
+          this._redirectAfterLogin(user);
+        }
+      },
+
+      /**
+       * 사용자의 password가 갱신 기간이 지났는지 여부를 판단.
+       * @param  Object  user 사용자 정보
+       * @return Boolean 비밀번호 만료 여부
+       */
+      isUserStatusInvalid: function (user) {
+        // 사용자의 계정상태가 비밀번호 변경 상태 일때의 처리
+        // password_chage => 비밀번호 연장이 불가하며 반드시 변경해야 로그인이 가능한 경우
+        // password_expired => 비밀번호 연장이 가능하여 비밀번호 변경, 연장 후 로그인이 가능한 경우
+        if (user.status == 'password_change' || user.status == 'password_expired') {
+          var me = this;
+          var title = '';
+          var text = '';
+          var pwdExtendButton = false;
+
+          // status에 따라 alert 타이틀과 메시지를 초기화
+          switch (user.status) {
+            case 'password_change':
+              title = Things.DataGlobal.t('button.password_change');
+              text = Things.DataGlobal.t('text.password_need_change');
+              break;
+
+            case 'password_expired':
+              title = Things.DataGlobal.t('label.password_expired');
+              text = Things.DataGlobal.t('text.password_expired');
+              pwdExtendButton = true;
+              break;
+          }
+
+          this.openConfirmMsg({
+            type: 'info',
+            title: title,
+            text: text,
+            showCancelButton: pwdExtendButton,
+            cancelButtonText: Things.DataGlobal.t('button.extend'),
+            confirmButtonText: Things.DataGlobal.t('button.password_change'),
+            allowEscapeKey: false
+          }, function () {
+            var changePwdView = document.createElement('things-change-password');
+
+            me.fire('things-open-popup-view', {
+              view: changePwdView,
+              modal: true,
+              openCallback: function () {
+                changePwdView.title = Things.DataGlobal.t('button.change_password');
+                changePwdView.actionUrl = 'users/change_pass/' + user.id;
+                changePwdView.method = 'POST';
+                changePwdView.currentUserInfo = user;
+              },
+              closeCallback: function () {
+                var logoutElement = document.querySelector('things-logout');
+                logoutElement.logout();
+              }
+            })
+          }, function () {
+            var extendPwdAjax = me.$['extend-pwd-ajax'];
+            extendPwdAjax.resourceId = Things.DataGlobal.user.id;
+            extendPwdAjax.generateRequest();
+          });
+
+          return true;
+        } else {
+          return false;
+        }
+      },
+
+      /**
+       * 비밀번호 변경기한 연장 ajax의 response listener
+       * things-expired-password-chagned 이벤트 호출
+       */
+      _extendPwdResponsed: function (event) {
+        this.fire('things-expired-password-changed');
+      },
+
+      /**
+       * things-expired-password-changed event listener
+       * global 변수와 localstorage를 초기화 후 browser reload
+       */
+      _afterExpiredPwdChanged: function () {
+        var user = Things.DataGlobal.user;
+        delete user.status;
+        localStorage['setting.user'] = JSON.stringify(user);
+        this._redirectAfterLogin(user);
+      },
+
+      /**
+       * Callback 호출
+       *****
+       * @param {Function} callback redirectCallback
+       * @return {Boolean} redirectCallback을 적용한 값을 리턴, 없을 경우는 true
+       */
+      _applyCallback: function (callback) {
+        if (callback && typeof callback == 'function') {
+          return callback.apply(this);
+        }
+
+        return true;
+      },
+
+      /**
+       * Redirect after login success
+       *******
+       * @param  {Object} user 사용자 정보
+       */
+      _redirectAfterLogin: function (user) {
+        if (this._applyCallback(this.redirectCallback)) {
+
+          if (this.useOiScreen && user.operator_flag === true) {
+            location.href = this.oiScreenPath;
+
+          } else {
+            var redirectURL = '/';
+            if (this.redirectToLastPageWhenLoggedIn) {
+              redirectURL = window.sessionStorage.getItem('lastURL') || '/';
+            }
+
+            page(redirectURL);
+            location.reload(true);
+          }
+        };
+      },
+
+      /**
+       * After failed sigin in
+       *******
+       * @param {Object} event iron-form-error
+       */
+      _failureResponse: function (event) {
+        this.$.submitButton.disabled = false;
+        var response = event.detail.request.xhr.response
+
+        if (response) {
+          this.openResponseError(response);
+        } else {
+          response = event.detail.request;
+          this.openUnkownError(response);
+        }
+      }
+    });
+  </script>
 </dom-module>
