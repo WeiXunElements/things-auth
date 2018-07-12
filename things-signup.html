@@ -324,13 +324,16 @@ ko-KR
        * @event things-signup-submited
        */
       _submitMyForm: function (event) {
-        console.log(this.password);
         if (this._formValidate()) {
           //password여부에 따라 분기문 작성 입력된 값이 없으면 null로 입력해주기
           if (!this.password) {
             this.encryptedPassword = null;
           } else {
             this.encryptedPassword = this.sha256(this.password);
+          }
+          //email값이 없으면 id를 넣어줌
+          if (!this.email) {
+            this.email = this.loginId;
           }
           this.$['form'].submit();
           this.fire('things-signup-submited');
