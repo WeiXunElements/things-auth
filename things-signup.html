@@ -71,6 +71,12 @@ ko-KR
     <things-ajax id="check-id-duplicate" method="GET" resource-url="users/exist/:id" resource-id="{{userLoginId}}">
     </things-ajax>
 
+
+    <things-ajax id="check-email-input-able" resource-url="settings/show_by_name" resource-action="show_by_name" last-response="{{inputEmailAbleValue}}">
+    </things-ajax>
+    <things-ajax id="check-passwd-input-able" resource-url="settings/show_by_name" resource-action="show_by_name" last-response="{{inputPasswdAbleValue}}">
+    </things-ajax>
+
     <form is="iron-form" id="form" action=[[action]] headers="[[headers]]" content-type="application/json" method="[[method]]"
       last-response="{{lastResponse}}">
 
@@ -79,7 +85,9 @@ ko-KR
       <input name="login" hidden value="{{loginId}}" />
       <input name="name" hidden value="{{name}}" />
       <input name="email" hidden value="{{email}}" />
-      <input name="encrypted_password" type="password" hidden value="{{encryptedPassword}}" />
+      <template is="dom-if" if="{{inputPasswdAble}}">
+        <input name="encrypted_password" type="password" hidden value="{{encryptedPassword}}" />
+      </template>
     </form>
 
     <things-spinner id="thingsspinner"></things-spinner>
@@ -107,7 +115,7 @@ ko-KR
       </template>
 
       <!--paper-input required name ="timezone" label="Timezone"></paper-input-->
-      <template is="dom-if" if="{{inputpasswdAble}}">
+      <template is="dom-if" if="{{inputPasswdAble}}">
         <paper-input id="pw" name="encrypted_password" type="password" label="[[lPassword]]" value="{{password}}" on-input="_passwordValidate"
           invalid error-message="[[tInvalidInput]]">
         </paper-input>
@@ -162,6 +170,26 @@ ko-KR
           type: Boolean,
           value: false,
           computed: '_computeUsePwdValidation(useValidation)'
+        },
+        /**
+         * 이메일 입력 가능여부
+         * ********
+         * @type: Boolean
+         */
+        inputEmailAble: {
+          type: Boolean,
+          value: false,
+          computed: '_computeInputEmailAble(inputEmailAbleValue)'
+        },
+        /**
+         * 패스워드 입력 가능여부
+         * ********
+         * @type: Boolean
+         */
+        inputPasswdAble: {
+          type: Boolean,
+          value: false,
+          computed: '_computeInputPasswdAble(inputPasswdAbleValue)'
         }
       },
 
@@ -176,6 +204,8 @@ ko-KR
        */
       ready: function () {
         this.checkUseValidation();
+        this.checkEmailField();
+        this.checkPasswdField();
       },
 
       /**
@@ -325,13 +355,13 @@ ko-KR
        */
       _submitMyForm: function (event) {
         if (this._formValidate()) {
-          //password여부에 따라 분기문 작성 입력된 값이 없으면 null로 입력해주기
+          //password여부에 따라 분기문 작성. 입력된 값이 없으면 null로 넣어주기
           if (!this.password) {
             this.encryptedPassword = null;
           } else {
             this.encryptedPassword = this.sha256(this.password);
           }
-          //email값이 없으면 id를 넣어줌
+          //email값이 없으면 id값 넣어주기
           if (!this.email) {
             this.email = this.loginId;
           }
@@ -439,6 +469,46 @@ ko-KR
             msg: 'id duplication checking is not finished yet'
           };
         }
+      },
+      /**
+       * things framework의 설정 값중 'user.register.email.field.enable'에 해당되는 value를 조회
+       * 하는 ajax를 호출
+       */
+      checkEmailField: function () {
+        var checkEmailFieldAjax = this.$['check-email-input-able'];
+        checkEmailFieldAjax.params = {
+          name: 'user.register.email.field.enable'
+        };
+        checkEmailFieldAjax.generateRequest();
+      },
+      /**
+       * 이메일 필드 여부를 결정
+       * things-framework의 'user.register.email.field.enable'에 의해 결정됨
+       * true => email 필드 사용함
+       * false => email 필드를 사용하지 않음
+       */
+      _computeInputEmailAble(inputEmailAbleValue) {
+        return JSON.parse(inputEmailAbleValue.value);
+      },
+      /**
+       * things framework의 설정 값중 'user.register.password.field.enable'에 해당되는 value를 조회
+       * 하는 ajax를 호출
+       */
+      checkPasswdField: function () {
+        var checkPasswdFieldAjax = this.$['check-passwd-input-able'];
+        checkPasswdFieldAjax.params = {
+          name: 'user.register.password.field.enable'
+        };
+        checkPasswdFieldAjax.generateRequest();
+      },
+      /**
+       * 비밀번호 필드 여부를 결정
+       * things-framework의 'user.register.password.field.enable'에 의해 결정됨
+       * true => Password 필드 사용함
+       * false => Password 필드를 사용하지 않음
+       */
+      _computeInputPasswdAble(inputPasswdAbleValue) {
+        return JSON.parse(inputPasswdAbleValue.value);
       }
     });
   </script>

@@ -496,31 +496,11 @@ Example:
           value: false
         },
         /**
-         * 이메일 입력 가능여부
-         * ********
-         * @type: Boolean
-         */
-        inputEmailAble: {
-          type: Boolean,
-          value: false
-        },
-        /**
-         * 패스워드 입력 가능여부
-         * ********
-         * @type: Boolean
-         */
-        inputPasswdAble: {
-          type: Boolean,
-          value: false
-        },
-
-        /**
          * 로그인 성공시 fire
          *
          * @event things-login-succeed
          */
       },
-
       behaviors: [
         Things.GlobalBehavior,
         Things.MsgBoxBehavior,
@@ -538,12 +518,10 @@ Example:
       observers: [
         '_userInfoChanged(globals.user)'
       ],
-
       ready: function () {
         document.addEventListener('things-expired-password-changed', function () {
           this._afterExpiredPwdChanged();
         }.bind(this));
-
         this._setCurrentLocale();
       },
 
@@ -622,9 +600,6 @@ Example:
         signup.title = this.lSignUp;
         signup.actionUrl = 'request_auths/account/register/request'
         signup.method = 'POST';
-        signup.inputEmailAble = this.inputEmailAble;
-        signup.inputPasswdAble = this.inputPasswdAble;
-
         signup.addEventListener('things-signup-success', function (event) {
           var event = new CustomEvent('things-close-popup-view', {
             detail: this
