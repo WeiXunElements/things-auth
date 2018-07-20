@@ -356,13 +356,13 @@ ko-KR
       _submitMyForm: function (event) {
         if (this._formValidate()) {
           //password여부에 따라 분기문 작성. 입력된 값이 없으면 null로 넣어주기
-          if (!this.password) {
+          if (this.inputPasswdAble == false) {
             this.encryptedPassword = null;
           } else {
             this.encryptedPassword = this.sha256(this.password);
           }
           //email값이 없으면 id값 넣어주기
-          if (!this.email) {
+          if (this.inputEmailAble == false) {
             this.email = this.loginId;
           }
           this.$['form'].submit();
@@ -378,10 +378,20 @@ ko-KR
 
       /**
        * reset form
-       * @param  Object event
+       * 입력 창을 초기화 시켜준다.
        */
-      _resetMyForm: function (event) {
-        this.resetMyForm();
+      _resetMyForm: function () {
+        this.$['userlogin'].value = null;
+        this.$['username'].value = null;
+        // 이메일 입력 가능시 이메일 창도 clear
+        if (this.inputEmailAble == true) {
+          this.$$('#email').value = null;
+        }
+        // 비밀번호 입력 가능시 비밀번호, 비밀번호 확인창도 clear
+        if (this.inputPasswdAble == true) {
+          this.$$('#pw').value = null;
+          this.$$('#confirmed-pw').value = null;
+        }
       },
 
       /**
