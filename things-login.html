@@ -255,31 +255,6 @@ Example:
           on-keydown="_keydownHandler"
           with-credentials>
 
-          <div class="name-locale-container">
-            <paper-input id="username"
-                        name="email"
-                        type="text"
-                        label="[[lUserId]]"
-                        value="{{username}}"
-                        pattern="[[usernameValidationPattern]]"
-                        error-message="[[usernameErrorMessage]]"
-                        required
-                        auto-validate
-                        autofocus
-                        tabindex='1'>
-              <div prefix><iron-icon icon="icons:account-circle" slot="prefix"></iron-icon></div>
-            </paper-input>
-
-            <paper-dropdown-menu id="locale-combo" label="Locale">
-                <paper-listbox id="locale-list" class="dropdown-content">
-                  <template is="dom-repeat" items="[[locales]]">
-                    <paper-item>[[item.description]]</paper-item>
-                  </template>
-                </paper-listbox>
-              </paper-dropdown-menu>            
-          </div>
-
-
         <div class="name-locale-container">
           <paper-input id="username" name="email" type="text" label="[[lUserId]]" value="{{username}}" pattern="[[usernameValidationPattern]]"
             error-message="[[usernameErrorMessage]]" required auto-validate autofocus tabindex='1'>
