@@ -243,8 +243,42 @@ Example:
         </strong>
       </span>
 
-      <form is="iron-form" id="loginForm" headers="[[headers]]" login-path="[[loginPath]]" action="{{action}}" content-type="[[contentType]]"
-        method="[[method]]" with-credentials>
+
+        <form
+          is="iron-form"
+          id="loginForm"
+          headers="[[headers]]"
+          login-path="[[loginPath]]"
+          action="{{action}}"
+          content-type="[[contentType]]"
+          method="[[method]]"
+          on-keydown="_keydownHandler"
+          with-credentials>
+
+          <div class="name-locale-container">
+            <paper-input id="username"
+                        name="email"
+                        type="text"
+                        label="[[lUserId]]"
+                        value="{{username}}"
+                        pattern="[[usernameValidationPattern]]"
+                        error-message="[[usernameErrorMessage]]"
+                        required
+                        auto-validate
+                        autofocus
+                        tabindex='1'>
+              <div prefix><iron-icon icon="icons:account-circle" slot="prefix"></iron-icon></div>
+            </paper-input>
+
+            <paper-dropdown-menu id="locale-combo" label="Locale">
+                <paper-listbox id="locale-list" class="dropdown-content">
+                  <template is="dom-repeat" items="[[locales]]">
+                    <paper-item>[[item.description]]</paper-item>
+                  </template>
+                </paper-listbox>
+              </paper-dropdown-menu>            
+          </div>
+
 
         <div class="name-locale-container">
           <paper-input id="username" name="email" type="text" label="[[lUserId]]" value="{{username}}" pattern="[[usernameValidationPattern]]"
@@ -415,7 +449,28 @@ Example:
           type: String,
           computed: '_computeActionUrl(globals.baseUrl, loginPath)'
         },
-
+        /**
+         * on keydown event, for after failed to login
+         ********
+         * @param  {String} event when keypress event fire
+         */
+        _keydownHandler: function(event){
+          var code = event.keyCode;
+          if (code == 9){
+            event.preventDefault();
+            var els = [].slice.call(this.querySelectorAll('input[tabindex], paper-button[tabindex]'));
+            var tabableEls = els.filter(function(el){
+              return el.tabIndex>=0
+            }).sort(function(el1,el2){
+              return el1.tabIndex-el2.tabIndex;
+            });
+            if(tabableEls.indexOf(event.target)+1>=tabableEls.length){
+              tabableEls[0].focus();
+            }else{
+              tabableEls[tabableEls.indexOf(event.target)+1].focus();
+            }
+          }
+        },
         /**
          * login request content type
          ******
