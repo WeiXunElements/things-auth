@@ -788,7 +788,7 @@ Example:
        * @param  {String} event when iron-form-response fire
        */
       _successResponse: function (event) {
-        submitButton.disabled = false;
+        this.$.submitButton.disabled = false;
         var user = event.detail.__data__.response;
 
         // 1. save user information
