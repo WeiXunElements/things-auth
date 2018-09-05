@@ -223,6 +223,13 @@ Example:
       method="POST">
     </things-ajax>
 
+    <things-ajax 
+      id="check-signup-button-show"  
+      resource-url="settings/show_by_name" 
+      resource-action="show_by_name" 
+      last-response="{{signupButtonShowValue}}">
+    </things-ajax>   
+  
     <paper-dialog id="pwd-expired-dialog" modal>
       <things-password-expired></things-password-expired>
     </paper-dialog>
@@ -285,11 +292,11 @@ Example:
           <paper-button id="submitButton" raised on-tap="_submitHandler" tabindex='3'>
             <things-i18n-msg auto msgid="button.sign_in">Sign In</things-i18n-msg>
           </paper-button>
-
-          <paper-button on-tap="_onSignupTap" class="extra-links">
-            <things-i18n-msg auto msgid="button.sign_up">Sign Up</things-i18n-msg>
-          </paper-button>
-
+          <template is="dom-if" if="{{signupButtonShow}}">
+            <paper-button on-tap="_onSignupTap" class="extra-links">
+              <things-i18n-msg auto msgid="button.sign_up">Sign Up</things-i18n-msg>
+            </paper-button>
+          </template>
           <paper-button on-tap="_onRequestAccountActivateTap" class="extra-links">
             <things-i18n-msg auto msgid="button.request_active">Request Active</things-i18n-msg>
           </paper-button>
@@ -514,7 +521,16 @@ Example:
             }
           }
         },
-
+        /**
+				 * 회원가입 필드 표시 여부
+				 * ********
+				 * @type: Boolean
+				 */
+         signupButtonShow: {
+				    type: Boolean,
+				    value: true,
+				    computed: '_computeSignupShow(signupButtonShowValue)'
+			    },
         /**
          * 로그인 성공 후 마지막에 접속했던 페이지로 이동할 지 여부
          * ****
@@ -553,6 +569,7 @@ Example:
           this._afterExpiredPwdChanged();
         }.bind(this));
         this._setCurrentLocale();
+        this._checkSignupButtonShow();
       },
 
       /**
@@ -948,7 +965,28 @@ Example:
           response = event.detail.request;
           this.openUnkownError(response);
         }
-      }
+      },
+      /**
+			 * things framework의 설정 값중 'user.login.signup.button.enable'에 해당되는 value를 조회
+			 * 하는 ajax를 호출
+			 */
+       _checkSignupButtonShow: function () {
+				var checkSignupAjax = this.$['check-signup-button-show'];
+				checkSignupAjax.params = {
+					name: 'user.login.signup.button.enable'
+				};
+				checkSignupAjax.generateRequest();
+			},
+      /**
+			 * 로그인 화면에서 회원가입 버튼 표시 여부를 결정
+			 * 환경설정의 'user.login.signup.button.enable'에 의해 결정됨
+			 * true => 회원가입 버튼 표시
+			 * false => 회원가입 버튼 표시 안함
+			 */
+       _computeSignupShow(signupButtonShowValue){
+         console.log(signupButtonShowValue);
+				return JSON.parse(signupButtonShowValue.value);
+			}
     });
   </script>
 </dom-module>
