@@ -1,25 +1,25 @@
 <!--
 @license
-Copyright © HatioLab Inc. All rights reserved.
+Copyright © 2015-2021 Shenzhen Weixun All rights reserved.
 -->
-<link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../iron-input/iron-input.html">
-<link rel="import" href="../iron-form/iron-form.html">
-<link rel="import" href="../paper-input/paper-input.html">
-<link rel="import" href="../paper-button/paper-button.html">
-<link rel="import" href="../paper-material/paper-material.html">
-<link rel="import" href="../gold-email-input/gold-email-input.html">
+<link rel="import" href="../polymer/polymer.html" />
+<link rel="import" href="../iron-input/iron-input.html" />
+<link rel="import" href="../iron-form/iron-form.html" />
+<link rel="import" href="../paper-input/paper-input.html" />
+<link rel="import" href="../paper-button/paper-button.html" />
+<link rel="import" href="../paper-material/paper-material.html" />
+<link rel="import" href="../gold-email-input/gold-email-input.html" />
 
-<link rel="import" href="../things-i18n-msg/things-i18n-msg.html">
-<link rel="import" href="../things-form/things-form-behavior.html">
-<link rel="import" href="../things-resource-combo/things-code-combo.html">
-<link rel="import" href="../things-resource-combo/things-resource-combo.html">
-<link rel="import" href="../things-spinner/things-spinner-behavior.html">
-<link rel="import" href="../things-msg-box-behavior/things-msg-box-behavior.html">
-<link rel="import" href="../things-msg-box-behavior/things-assert-behavior.html">
-<link rel="import" href="../things-id/things-encrypt-behavior.html">
+<link rel="import" href="../things-i18n-msg/things-i18n-msg.html" />
+<link rel="import" href="../things-form/things-form-behavior.html" />
+<link rel="import" href="../things-resource-combo/things-code-combo.html" />
+<link rel="import" href="../things-resource-combo/things-resource-combo.html" />
+<link rel="import" href="../things-spinner/things-spinner-behavior.html" />
+<link rel="import" href="../things-msg-box-behavior/things-msg-box-behavior.html" />
+<link rel="import" href="../things-msg-box-behavior/things-assert-behavior.html" />
+<link rel="import" href="../things-id/things-encrypt-behavior.html" />
 
-<link rel="import" href="things-pwd-validate-behavior.html">
+<link rel="import" href="things-pwd-validate-behavior.html" />
 
 <!--
 ## things-signup
@@ -31,17 +31,17 @@ ko-KR
   <template>
     <style>
       :host {
-        @apply(--things-loose-padding)
+        @apply (--things-loose-padding);
       }
 
       paper-button {
-        @apply(--things-button);
+        @apply (--things-button);
         float: right;
         margin-top: 15px;
       }
 
       .btn-submit {
-        @apply(--things-button-important)
+        @apply (--things-button-important);
       }
 
       #form {
@@ -50,9 +50,15 @@ ko-KR
     </style>
 
     <things-i18n-msg auto msgid="text.invalid_input" msg="{{tInvalidInput}}" hidden>Invalid Input.</things-i18n-msg>
-    <things-i18n-msg auto msgid="text.info_invalid" msg="{{tInfoInvalid}}" hidden>Typed information is not valid.</things-i18n-msg>
-    <things-i18n-msg auto msgid="text.register_in_process" msg="{{tRegInProcess}}" hidden>User registering is on processing.</things-i18n-msg>
-    <things-i18n-msg auto msgid="text.check_register_in_mail" msg="{{tCheckRegInMail}}" hidden>You can check result of acceptance through your email.</things-i18n-msg>
+    <things-i18n-msg auto msgid="text.info_invalid" msg="{{tInfoInvalid}}" hidden
+      >Typed information is not valid.</things-i18n-msg
+    >
+    <things-i18n-msg auto msgid="text.register_in_process" msg="{{tRegInProcess}}" hidden
+      >User registering is on processing.</things-i18n-msg
+    >
+    <things-i18n-msg auto msgid="text.check_register_in_mail" msg="{{tCheckRegInMail}}" hidden
+      >You can check result of acceptance through your email.</things-i18n-msg
+    >
 
     <things-i18n-msg auto msgid="label.domain" msg="{{lDomain}}" hidden>Domain</things-i18n-msg>
     <things-i18n-msg auto msgid="label.login" msg="{{lLogin}}" hidden>Login ID</things-i18n-msg>
@@ -60,26 +66,52 @@ ko-KR
     <things-i18n-msg auto msgid="label.email_address" msg="{{lEmailAddress}}" hidden>Email Address</things-i18n-msg>
     <things-i18n-msg auto msgid="label.language" msg="{{lLocale}}" hidden>Locale</things-i18n-msg>
     <things-i18n-msg auto msgid="label.password" msg="{{lPassword}}" hidden>Current Password</things-i18n-msg>
-    <things-i18n-msg auto msgid="label.confirmed_password" msg="{{lConfirmedPassword}}" hidden>Confirm Password</things-i18n-msg>
+    <things-i18n-msg auto msgid="label.confirmed_password" msg="{{lConfirmedPassword}}" hidden
+      >Confirm Password</things-i18n-msg
+    >
 
-    <things-i18n-msg auto msgid="button.check_duplication" msg="{{bCheckDuplicate}}" hidden>Check Duplication</things-i18n-msg>
-    <things-i18n-msg auto msgid="text.pls_check_id_duplicate" msg="{{tPlsCheckDuplicate}}" hidden>Please Check ID Duplication</things-i18n-msg>
+    <things-i18n-msg auto msgid="button.check_duplication" msg="{{bCheckDuplicate}}" hidden
+      >Check Duplication</things-i18n-msg
+    >
+    <things-i18n-msg auto msgid="text.pls_check_id_duplicate" msg="{{tPlsCheckDuplicate}}" hidden
+      >Please Check ID Duplication</things-i18n-msg
+    >
 
-    <things-ajax id="check-use-validation" resource-url="settings/show_by_name" resource-action="show_by_name" last-response="{{useValidation}}">
+    <things-ajax
+      id="check-use-validation"
+      resource-url="settings/show_by_name"
+      resource-action="show_by_name"
+      last-response="{{useValidation}}"
+    >
     </things-ajax>
 
     <things-ajax id="check-id-duplicate" method="GET" resource-url="users/exist/:id" resource-id="{{userLoginId}}">
     </things-ajax>
 
-
-    <things-ajax id="check-email-input-able" resource-url="settings/show_by_name" resource-action="show_by_name" last-response="{{inputEmailAbleValue}}">
+    <things-ajax
+      id="check-email-input-able"
+      resource-url="settings/show_by_name"
+      resource-action="show_by_name"
+      last-response="{{inputEmailAbleValue}}"
+    >
     </things-ajax>
-    <things-ajax id="check-passwd-input-able" resource-url="settings/show_by_name" resource-action="show_by_name" last-response="{{inputPasswdAbleValue}}">
+    <things-ajax
+      id="check-passwd-input-able"
+      resource-url="settings/show_by_name"
+      resource-action="show_by_name"
+      last-response="{{inputPasswdAbleValue}}"
+    >
     </things-ajax>
 
-    <form is="iron-form" id="form" action=[[action]] headers="[[headers]]" content-type="application/json" method="[[method]]"
-      last-response="{{lastResponse}}">
-
+    <form
+      is="iron-form"
+      id="form"
+      action="[[action]]"
+      headers="[[headers]]"
+      content-type="application/json"
+      method="[[method]]"
+      last-response="{{lastResponse}}"
+    >
       <input name="domain_id" hidden value="{{domain}}" />
       <input name="locale" hidden value="{{locale}}" />
       <input name="login" hidden value="{{loginId}}" />
@@ -92,36 +124,86 @@ ko-KR
 
     <things-spinner id="thingsspinner"></things-spinner>
 
-    <things-resource-combo required id="domain" name="domain_id" label="[[lDomain]]" resource-url="domains/list" items-prop=""
-      label-path="name" value-path="id" value="{{domain}}">
+    <things-resource-combo
+      required
+      id="domain"
+      name="domain_id"
+      label="[[lDomain]]"
+      resource-url="domains/list"
+      items-prop=""
+      label-path="name"
+      value-path="id"
+      value="{{domain}}"
+    >
     </things-resource-combo>
 
     <things-code-combo id="locale" name="locale" label="[[lLocale]]" code-name="LOCALE" value="{{locale}}">
     </things-code-combo>
 
-    <paper-button raised on-tap="_checkDuplication">[[bCheckDuplicate]]
-    </paper-button>
+    <paper-button raised on-tap="_checkDuplication">[[bCheckDuplicate]] </paper-button>
 
     <form id="input-form">
-      <paper-input id="userlogin" name="login" label="[[lLogin]]" value="{{loginId}}" required invalid auto-validate error-message="[[tInvalidInput]]">
+      <paper-input
+        id="userlogin"
+        name="login"
+        label="[[lLogin]]"
+        value="{{loginId}}"
+        required
+        invalid
+        auto-validate
+        error-message="[[tInvalidInput]]"
+      >
       </paper-input>
 
-      <paper-input id="username" name="name" label="[[lUserName]]" value="{{name}}" required invalid auto-validate error-message="[[tInvalidInput]]">
+      <paper-input
+        id="username"
+        name="name"
+        label="[[lUserName]]"
+        value="{{name}}"
+        required
+        invalid
+        auto-validate
+        error-message="[[tInvalidInput]]"
+      >
       </paper-input>
 
       <template is="dom-if" if="{{inputEmailAble}}">
-        <gold-email-input id="email" name="email" label="[[lEmailAddress]]" value="{{email}}" required invalid auto-validate error-message="[[tInvalidInput]]">
+        <gold-email-input
+          id="email"
+          name="email"
+          label="[[lEmailAddress]]"
+          value="{{email}}"
+          required
+          invalid
+          auto-validate
+          error-message="[[tInvalidInput]]"
+        >
         </gold-email-input>
       </template>
 
       <!--paper-input required name ="timezone" label="Timezone"></paper-input-->
       <template is="dom-if" if="{{inputPasswdAble}}">
-        <paper-input id="pw" name="encrypted_password" type="password" label="[[lPassword]]" value="{{password}}" on-input="_passwordValidate"
-          invalid error-message="[[tInvalidInput]]">
+        <paper-input
+          id="pw"
+          name="encrypted_password"
+          type="password"
+          label="[[lPassword]]"
+          value="{{password}}"
+          on-input="_passwordValidate"
+          invalid
+          error-message="[[tInvalidInput]]"
+        >
         </paper-input>
 
-        <paper-input id="confirmed-pw" name="confirmed_password" type="password" label="[[lConfirmedPassword]]" on-input="_confirmPasswordValidate"
-          invalid error-message="[[tInvalidInput]]">
+        <paper-input
+          id="confirmed-pw"
+          name="confirmed_password"
+          type="password"
+          label="[[lConfirmedPassword]]"
+          on-input="_confirmPasswordValidate"
+          invalid
+          error-message="[[tInvalidInput]]"
+        >
         </paper-input>
       </template>
 
@@ -137,7 +219,7 @@ ko-KR
 
   <script>
     Polymer({
-      is: 'things-signup',
+      is: "things-signup",
 
       behaviors: [
         Things.FormBehavior,
@@ -145,13 +227,12 @@ ko-KR
         Things.MsgBoxBehavior,
         Things.AssertBehavior,
         Things.EncryptBehavior,
-        Things.PwdValidateBehavior
+        Things.PwdValidateBehavior,
       ],
       properties: {
-
         loginId: {
           type: String,
-          observer: '_loginIdChanged'
+          observer: "_loginIdChanged",
         },
 
         /**
@@ -160,7 +241,7 @@ ko-KR
          */
         isDuplicateChecked: {
           type: Boolean,
-          value: false
+          value: false,
         },
 
         /**
@@ -169,7 +250,7 @@ ko-KR
         usePwdValidation: {
           type: Boolean,
           value: false,
-          computed: '_computeUsePwdValidation(useValidation)'
+          computed: "_computeUsePwdValidation(useValidation)",
         },
         /**
          * 이메일 입력 가능여부
@@ -179,7 +260,7 @@ ko-KR
         inputEmailAble: {
           type: Boolean,
           value: false,
-          computed: '_computeInputEmailAble(inputEmailAbleValue)'
+          computed: "_computeInputEmailAble(inputEmailAbleValue)",
         },
         /**
          * 패스워드 입력 가능여부
@@ -189,14 +270,14 @@ ko-KR
         inputPasswdAble: {
           type: Boolean,
           value: false,
-          computed: '_computeInputPasswdAble(inputPasswdAbleValue)'
-        }
+          computed: "_computeInputPasswdAble(inputPasswdAbleValue)",
+        },
       },
 
       listeners: {
-        'iron-form-response': '_successResponseHandler',
-        'iron-form-error': '_errorResponseHandler',
-        'check-id-duplicate.things-ajax-response': '_checkDupliResponsed'
+        "iron-form-response": "_successResponseHandler",
+        "iron-form-error": "_errorResponseHandler",
+        "check-id-duplicate.things-ajax-response": "_checkDupliResponsed",
       },
 
       /**
@@ -213,9 +294,9 @@ ko-KR
        * 하는 ajax를 호출
        */
       checkUseValidation: function () {
-        var checkUseValidationAjax = this.$['check-use-validation'];
+        var checkUseValidationAjax = this.$["check-use-validation"];
         checkUseValidationAjax.params = {
-          name: 'user.password.validation.enable'
+          name: "user.password.validation.enable",
         };
         checkUseValidationAjax.generateRequest();
       },
@@ -234,7 +315,7 @@ ko-KR
        * loginid 필드의 값이 변경될 때 마다 호출되어
        * 중복 체크 결과를 저장하는 isDuplicateChecked의 값을 false로 초기화한다.
        * loginid의 필드 값이 변경 되면 duplicate checked를 다시 하도록 유도
-       * 
+       *
        * @param  String loginId input field의 value
        */
       _loginIdChanged: function (loginId) {
@@ -245,28 +326,27 @@ ko-KR
        * ID 중복 체크를 위한 ajax의 결과 값을 받는다.
        * 전달받은 event.detail의 값이 true면 중복 false면 중복 아님
        * 해당 값을 통해 올바른 메시지를 출력하고 isDuplicatedChecked의 값을 결정한다.
-       * 
+       *
        * @param  Object event ajax response
        */
       _checkDupliResponsed: function (event) {
         var isDuplicated = event.detail;
 
         if (isDuplicated) {
-          var dupliMsg = Things.DataGlobal.t('error.VALUE_IS_DUPLICATED', {
-            value: this.lLogin
+          var dupliMsg = Things.DataGlobal.t("error.VALUE_IS_DUPLICATED", {
+            value: this.lLogin,
           });
 
           this.openConfirmMsg({
-            type: 'error',
+            type: "error",
             title: this.bCheckDuplicate,
-            text: dupliMsg
+            text: dupliMsg,
           });
-
         } else {
-          var dupliMsg = Things.DataGlobal.t('label.success');
+          var dupliMsg = Things.DataGlobal.t("label.success");
           this.openConfirmMsg({
             title: this.bCheckDuplicate,
-            text: dupliMsg
+            text: dupliMsg,
           });
           this.isDuplicateChecked = true;
         }
@@ -282,22 +362,22 @@ ko-KR
         var patternResult = this._isValidPattern(this.loginId);
 
         if (this.loginId && patternResult) {
-          var checkIdDuplicate = this.$['check-id-duplicate'];
+          var checkIdDuplicate = this.$["check-id-duplicate"];
           checkIdDuplicate.resourceId = this.loginId;
           checkIdDuplicate.generateRequest();
         } else {
-          this.$['userlogin'].invalid = true;
+          this.$["userlogin"].invalid = true;
         }
       },
 
       /**
        * 전달받은 loginId가 아이디로 사용하기에 적절한 패턴을 갖고 있는지 확인하고 해당 결과를 리턴
-       * @param  String  loginId 
+       * @param  String  loginId
        * @return Boolean
        */
       _isValidPattern: function (loginId) {
         var pattern = /^[a-zA-Z]{1}([a-zA-Z0-9]|[._]){3,19}$/;
-        return (pattern.test(loginId));
+        return pattern.test(loginId);
       },
 
       /**
@@ -315,16 +395,19 @@ ko-KR
         this.stopSpinner();
         var me = this;
 
-        this.openConfirmMsg({
-          title: this.tRegInProcess,
-          text: this.tCheckRegInMail
-        }, function () {
-          if (this.isDuplicateChecked) {
-            me.fire("things-signup-success", me.serializeMyForm());
+        this.openConfirmMsg(
+          {
+            title: this.tRegInProcess,
+            text: this.tCheckRegInMail,
+          },
+          function () {
+            if (this.isDuplicateChecked) {
+              me.fire("things-signup-success", me.serializeMyForm());
+            }
           }
-        });
+        );
 
-        this.fire('things-all-dialog-close');
+        this.fire("things-all-dialog-close");
       },
       /**
        * ID등록 요청 실폐시
@@ -343,9 +426,9 @@ ko-KR
         this.fire("things-signup-failure", event.detail);
 
         this.openConfirmMsg({
-          type: 'warning',
+          type: "warning",
           title: this.tInvalidInput,
-          text: this.tInfoInvalid
+          text: this.tInfoInvalid,
         });
       },
       /**
@@ -365,14 +448,14 @@ ko-KR
           if (this.inputEmailAble == false) {
             this.email = this.loginId;
           }
-          this.$['form'].submit();
-          this.fire('things-signup-submited');
+          this.$["form"].submit();
+          this.fire("things-signup-submited");
         } else {
           this.openConfirmMsg({
-            type: 'error',
-            title: Things.DataGlobal.t('error.VALIDATION_ERROR'),
-            text: this.tInvalidInput
-          })
+            type: "error",
+            title: Things.DataGlobal.t("error.VALIDATION_ERROR"),
+            text: this.tInvalidInput,
+          });
         }
       },
 
@@ -381,35 +464,35 @@ ko-KR
        * 입력 창을 초기화 시켜준다.
        */
       _resetMyForm: function () {
-        this.$['userlogin'].value = null;
-        this.$['username'].value = null;
+        this.$["userlogin"].value = null;
+        this.$["username"].value = null;
         // 이메일 입력 가능시 이메일 창도 clear
         if (this.inputEmailAble == true) {
-          this.$$('#email').value = null;
+          this.$$("#email").value = null;
         }
         // 비밀번호 입력 가능시 비밀번호, 비밀번호 확인창도 clear
         if (this.inputPasswdAble == true) {
-          this.$$('#pw').value = null;
-          this.$$('#confirmed-pw').value = null;
+          this.$$("#pw").value = null;
+          this.$$("#confirmed-pw").value = null;
         }
       },
 
       /**
        * form submit 이전에 유효성 검사를 수행한다.
        * 유효성 검사 도중 문제 발생시 throw 문제가 없다면 true를 리턴
-       * 
+       *
        * form element 아래의 모든 input 중 invalid가 true인 (validation 실패한) 필드가 있다면
        * false를 return
-       * 
+       *
        * @return Boolean
        */
       _formValidate: function () {
-        this.assertNotEmpty(this.$.domain.value, 'domain');
-        this.assertNotEmpty(this.$.locale.value, 'locale');
+        this.assertNotEmpty(this.$.domain.value, "domain");
+        this.assertNotEmpty(this.$.locale.value, "locale");
         this.dupliValidation();
 
         var result = true;
-        var form = this.$['input-form'];
+        var form = this.$["input-form"];
         for (var i = 0; i < form.children.length; i++) {
           if (form.children[i].invalid) {
             result = false;
@@ -432,17 +515,16 @@ ko-KR
         pwField.invalid = false;
 
         try {
-          this.checkEmpty(pw, 'label.password');
+          this.checkEmpty(pw, "label.password");
           this.execPwdValidation({
             id: this.loginId,
-            password: pw
+            password: pw,
           });
         } catch (e) {
           pwField.errorMessage = e;
           pwField.invalid = true;
         }
       },
-
 
       /**
        * on-input event hadler
@@ -456,8 +538,8 @@ ko-KR
         confirmPwField.invalid = false;
 
         try {
-          this.checkEmpty(confirmPw, 'label.confirmed_password');
-          this.checkNotEqual(this.$$('#pw').value, confirmPw);
+          this.checkEmpty(confirmPw, "label.confirmed_password");
+          this.checkNotEqual(this.$$("#pw").value, confirmPw);
         } catch (e) {
           confirmPwField.errorMessage = e;
           confirmPwField.invalid = true;
@@ -471,12 +553,12 @@ ko-KR
       dupliValidation: function () {
         if (!this.isDuplicateChecked) {
           this.openConfirmMsg({
-            type: 'error',
+            type: "error",
             title: this.bCheckDuplicate,
-            text: this.tPlsCheckDuplicate
+            text: this.tPlsCheckDuplicate,
           });
           throw {
-            msg: 'id duplication checking is not finished yet'
+            msg: "id duplication checking is not finished yet",
           };
         }
       },
@@ -485,9 +567,9 @@ ko-KR
        * 하는 ajax를 호출
        */
       checkEmailField: function () {
-        var checkEmailFieldAjax = this.$['check-email-input-able'];
+        var checkEmailFieldAjax = this.$["check-email-input-able"];
         checkEmailFieldAjax.params = {
-          name: 'user.register.email.field.enable'
+          name: "user.register.email.field.enable",
         };
         checkEmailFieldAjax.generateRequest();
       },
@@ -505,9 +587,9 @@ ko-KR
        * 하는 ajax를 호출
        */
       checkPasswdField: function () {
-        var checkPasswdFieldAjax = this.$['check-passwd-input-able'];
+        var checkPasswdFieldAjax = this.$["check-passwd-input-able"];
         checkPasswdFieldAjax.params = {
-          name: 'user.register.password.field.enable'
+          name: "user.register.password.field.enable",
         };
         checkPasswdFieldAjax.generateRequest();
       },
@@ -519,7 +601,7 @@ ko-KR
        */
       _computeInputPasswdAble(inputPasswdAbleValue) {
         return JSON.parse(inputPasswdAbleValue.value);
-      }
+      },
     });
   </script>
 </dom-module>

@@ -1,20 +1,20 @@
 <!--
 @license
-Copyright © HatioLab Inc. All rights reserved.
+Copyright © 2015-2021 Shenzhen Weixun All rights reserved.
 -->
-<link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../iron-input/iron-input.html">
-<link rel="import" href="../iron-form/iron-form.html">
-<link rel="import" href="../paper-input/paper-input.html">
-<link rel="import" href="../paper-button/paper-button.html">
-<link rel="import" href="../paper-material/paper-material.html">
-<link rel="import" href="../gold-email-input/gold-email-input.html">
+<link rel="import" href="../polymer/polymer.html" />
+<link rel="import" href="../iron-input/iron-input.html" />
+<link rel="import" href="../iron-form/iron-form.html" />
+<link rel="import" href="../paper-input/paper-input.html" />
+<link rel="import" href="../paper-button/paper-button.html" />
+<link rel="import" href="../paper-material/paper-material.html" />
+<link rel="import" href="../gold-email-input/gold-email-input.html" />
 
-<link rel="import" href="../things-i18n-msg/things-i18n-msg.html">
-<link rel="import" href="../things-form/things-form-behavior.html">
-<link rel="import" href="../things-msg-box-behavior/things-msg-box-behavior.html">
-<link rel="import" href="../things-spinner/things-spinner-behavior.html">
-<link rel="import" href="../things-id/things-encrypt-behavior.html">
+<link rel="import" href="../things-i18n-msg/things-i18n-msg.html" />
+<link rel="import" href="../things-form/things-form-behavior.html" />
+<link rel="import" href="../things-msg-box-behavior/things-msg-box-behavior.html" />
+<link rel="import" href="../things-spinner/things-spinner-behavior.html" />
+<link rel="import" href="../things-id/things-encrypt-behavior.html" />
 <!--
 ## things-request-active
 ko-KR
@@ -27,17 +27,17 @@ ko-KR
   <template>
     <style>
       :host {
-        @apply(--things-loose-padding)
+        @apply (--things-loose-padding);
       }
 
       paper-button {
-        @apply(--things-button);
+        @apply (--things-button);
         float: right;
         margin-top: 15px;
       }
 
       .btn-submit {
-        @apply(--things-button-important)
+        @apply (--things-button-important);
       }
       #form {
         display: none;
@@ -45,40 +45,39 @@ ko-KR
     </style>
 
     <things-i18n-msg auto msgid="text.invalid_input" msg="{{tInvalidInput}}" hidden>Invalid Input.</things-i18n-msg>
-    <things-i18n-msg auto msgid="text.info_invalid" msg="{{tInfoInvalid}}" hidden>Typed information is not valid.</things-i18n-msg>
+    <things-i18n-msg auto msgid="text.info_invalid" msg="{{tInfoInvalid}}" hidden
+      >Typed information is not valid.</things-i18n-msg
+    >
 
-    <form is="iron-form"
-          id="form"
-          action=[[action]]
-          headers="[[headers]]"
-          content-type="application/json"
-          method="[[method]]"
-          with-credentials=true
-          last-response="{{lastResponse}}">
-
-          <input name="login" value="{{login}}" />
-          <input name="current_pass" value="{{encryptedPassword}}" />
+    <form
+      is="iron-form"
+      id="form"
+      action="[[action]]"
+      headers="[[headers]]"
+      content-type="application/json"
+      method="[[method]]"
+      with-credentials="true"
+      last-response="{{lastResponse}}"
+    >
+      <input name="login" value="{{login}}" />
+      <input name="current_pass" value="{{encryptedPassword}}" />
     </form>
 
     <form>
       <things-i18n-msg msgid="label.login" msg="{{lLogin}}" auto hidden>Login ID</things-i18n-msg>
       <things-i18n-msg msgid="label.password" msg="{{lPassword}}" auto hidden>Password</things-i18n-msg>
 
-      <paper-input required
-                   name="login"
-                   label="[[lLogin]]"
-                   value="{{login}}"
-                   required
-                   auto-validate>
-      </paper-input>
+      <paper-input required name="login" label="[[lLogin]]" value="{{login}}" required auto-validate> </paper-input>
 
-      <paper-input id="current-pw"
-                   auto-validate
-                   required
-                   name="current_pass"
-                   type="password"
-                   value="{{password}}"
-                   label="[[lPassword]]">
+      <paper-input
+        id="current-pw"
+        auto-validate
+        required
+        name="current_pass"
+        type="password"
+        value="{{password}}"
+        label="[[lPassword]]"
+      >
       </paper-input>
 
       <paper-button class="btn-submit" raised on-click="_submitMyForm">
@@ -93,7 +92,7 @@ ko-KR
 
   <script>
     Polymer({
-      is: 'things-request-active',
+      is: "things-request-active",
 
       properties: {
         /**
@@ -102,7 +101,7 @@ ko-KR
          * @type {String}
          */
         userName: {
-          type: String
+          type: String,
         },
         /**
          * 사용자 Email
@@ -110,24 +109,19 @@ ko-KR
          * @type {String}
          */
         userEmail: {
-          type: String
-        }
+          type: String,
+        },
       },
 
-      behaviors: [
-        Things.FormBehavior,
-        Things.SpinnerBehavior,
-        Things.MsgBoxBehavior,
-        Things.EncryptBehavior
-      ],
+      behaviors: [Things.FormBehavior, Things.SpinnerBehavior, Things.MsgBoxBehavior, Things.EncryptBehavior],
 
       listeners: {
-        'iron-form-response': '_successResponseHandler',
-        'iron-form-error': '_errorResponseHandler'
+        "iron-form-response": "_successResponseHandler",
+        "iron-form-error": "_errorResponseHandler",
       },
       /**
        * active요청 성공시
-         *****
+       *****
        * @event things-reqeust-active-success
        * @param {Object} serializedForm
        */
@@ -137,20 +131,20 @@ ko-KR
        * @param  {Object} event
        * @return {null}
        */
-      _successResponseHandler: function(event) {
+      _successResponseHandler: function (event) {
         this.stopSpinner();
         var me = this;
 
         var config = {
-          title: Things.DataGlobal.t('label.success'),
-          text: Things.DataGlobal.t('text.check_register_in_mail')
+          title: Things.DataGlobal.t("label.success"),
+          text: Things.DataGlobal.t("text.check_register_in_mail"),
         };
 
-        this.openConfirmMsg(config, function() {
-            me.fire("things-reqeust-active-success", me.serializeMyForm());
+        this.openConfirmMsg(config, function () {
+          me.fire("things-reqeust-active-success", me.serializeMyForm());
         });
 
-        this.fire('things-all-dialog-close');
+        this.fire("things-all-dialog-close");
       },
       /**
        * active요청 실폐시
@@ -164,9 +158,9 @@ ko-KR
        * @param  {Object} event
        * @return {null}
        */
-      _errorResponseHandler: function(event) {
+      _errorResponseHandler: function (event) {
         this.stopSpinner();
-        this.fire('things-request-active-failure', event.detail);
+        this.fire("things-request-active-failure", event.detail);
       },
       /**
        * 계정 활성화 요청
@@ -174,18 +168,18 @@ ko-KR
        * @param  {Object} event Submit button tap
        * @return {null}
        */
-      _submitMyForm: function(event) {
-        if(this.login && this.password) {
+      _submitMyForm: function (event) {
+        if (this.login && this.password) {
           this.encryptedPassword = this.sha256(this.password);
-          this.$['form'].submit();
-          this.fire('things-request-active-submited');
+          this.$["form"].submit();
+          this.fire("things-request-active-submited");
         } else {
-          var emptyValue = !this.login ? 'label.login' : 'label.password'; 
+          var emptyValue = !this.login ? "label.login" : "label.password";
 
           this.openInfoMsg({
-            type: 'error',
-            title: Things.DataGlobal.t('error.VALIDATION_ERROR'),
-            text: Things.DataGlobal.t('error.SHOULD_NOT_BE_EMPTY', {value: Things.DataGlobal.t(emptyValue)})
+            type: "error",
+            title: Things.DataGlobal.t("error.VALIDATION_ERROR"),
+            text: Things.DataGlobal.t("error.SHOULD_NOT_BE_EMPTY", { value: Things.DataGlobal.t(emptyValue) }),
           });
         }
       },
@@ -195,12 +189,12 @@ ko-KR
        * @param  {Object} event reset button tap
        * @return {null}
        */
-      _resetMyForm: function(event) {
-        var inputs = this.querySelectorAll('paper-input');
-        inputs.forEach(function(input) {
-          input.value = '';
+      _resetMyForm: function (event) {
+        var inputs = this.querySelectorAll("paper-input");
+        inputs.forEach(function (input) {
+          input.value = "";
         });
-      }
+      },
     });
   </script>
 </dom-module>

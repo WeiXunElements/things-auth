@@ -1,8 +1,8 @@
 {
   "name": "things-auth",
-  "version": "v2.2.23",
+  "version": "v2.2.24",
   "authors": [
-    "Hatio Lab.  <heartyoh@hatiolab.com>"
+    "Shenzhen Weixun"
   ],
   "description": "로그인, 로그아웃 페스워드 재설정, 활성화요청, 신규등록 요청을 위한 컴포넌트",
   "keywords": [
@@ -11,8 +11,6 @@
     "seed"
   ],
   "main": "elements.html",
-  "license": "http://license.hatiolab.com/EULA",
-  "homepage": "http://elements.hatiolab.com/",
   "ignore": [
     "/.*",
     "/test/"

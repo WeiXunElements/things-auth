@@ -1,11 +1,9 @@
 <!--
 @license
-Copyright © HatioLab Inc. All rights reserved.
+Copyright © 2015-2021 Shenzhen Weixun All rights reserved.
 -->
 
-<link rel="import" href="../things-msg-box-behavior/things-msg-box-behavior.html">
-
-
+<link rel="import" href="../things-msg-box-behavior/things-msg-box-behavior.html" />
 
 <script>
   window.Things = window.Things || {};
@@ -14,16 +12,15 @@ Copyright © HatioLab Inc. All rights reserved.
    * @polymerBehavior Things.PwdValidateBehavior
    */
   Things.PwdValidateBehaviorImpl = {
-
     /**
      * 전달 받은 password가 빈값인지 확인하고 빈값이라면
      * label을 통해 errorMsg를 만들어 return
      * @return {String} errorMsg
      */
-    checkEmpty: function(password, label) {
-      if(!password) {
-        var errorMsg = Things.DataGlobal.t('error.SHOULD_NOT_BE_EMPTY', {
-          value: Things.DataGlobal.t(label)
+    checkEmpty: function (password, label) {
+      if (!password) {
+        var errorMsg = Things.DataGlobal.t("error.SHOULD_NOT_BE_EMPTY", {
+          value: Things.DataGlobal.t(label),
         });
         throw errorMsg;
       }
@@ -34,9 +31,9 @@ Copyright © HatioLab Inc. All rights reserved.
      * 불일치시 label을 통해 errorMsg를 만들어 return
      * @return {String} errorMsg
      */
-    checkNotEqual: function(password, confirmPassword) {
-      if(password !== confirmPassword) {
-        var errorMsg = Things.DataGlobal.t('text.password_mismatch');
+    checkNotEqual: function (password, confirmPassword) {
+      if (password !== confirmPassword) {
+        var errorMsg = Things.DataGlobal.t("text.password_mismatch");
         throw errorMsg;
       }
     },
@@ -46,22 +43,22 @@ Copyright © HatioLab Inc. All rights reserved.
      * usePwdValidation == true, Things.customPwdValidation가 존재한다면
      * Things 객체 이하의 customPwdValidation의 로직을 수행한다.
      * customPwdValidation은 validation 실패시 error message를 throw 하도록 한다.
-     * 
-     * customPwdValidation을 사용하지 않는다면 기본 validationd을 수행한다. 
+     *
+     * customPwdValidation을 사용하지 않는다면 기본 validationd을 수행한다.
      * 비밀번호 validation의 기본 유형은,
-     * 
+     *
      * 1. 비밀번호 영문자, 숫자, 특수문자가 혼용된 8자리 이상인지 확인
      * 2. 반복 문자나 숫자가 사용되고 있는지 확인
      * 3. ID와 유사한 패스워드를 사용하고 있는지 확인
      * 의 절차로 진행된다.
-     * 
+     *
      * validation 실패시 erro message를 throw
      */
-    execPwdValidation: function(accountInfo) {
+    execPwdValidation: function (accountInfo) {
       var id = accountInfo.id;
       var password = accountInfo.password;
 
-      if(this.usePwdValidation && Things.customPwdValidation && typeof Things.customPwdValidation === 'function') {
+      if (this.usePwdValidation && Things.customPwdValidation && typeof Things.customPwdValidation === "function") {
         Things.customPwdValidation(id, password);
       } else if (this.usePwdValidation) {
         this.defaultPwdValidation(id, password);
@@ -71,7 +68,7 @@ Copyright © HatioLab Inc. All rights reserved.
     /**
      * 기본 validation 수행
      */
-    defaultPwdValidation: function(id, password) {
+    defaultPwdValidation: function (id, password) {
       // 1. 비밀번호가 영문자, 숫자, 특수문자가 혼용된 8자리 이상인지 확인
       this.patternValidate(password);
 
@@ -80,54 +77,50 @@ Copyright © HatioLab Inc. All rights reserved.
 
       // 3. ID와 유사한 패스워드 사용하고 있는지 확인
       this.similarValidate(id, password);
-
     },
 
     // 1. 비밀번호가 영문자, 숫자, 특수문자가 혼용된 8자리 이상인지 확인
-    patternValidate: function(password) {
+    patternValidate: function (password) {
       var reg = /^(?=.*[a-z])(?=.*\d)(?=.*\W).{8,}$/i;
-      if(!reg.test(password)) {
-        var errorMsg = Things.DataGlobal.t('text.password_pattern');
+      if (!reg.test(password)) {
+        var errorMsg = Things.DataGlobal.t("text.password_pattern");
         throw errorMsg;
       }
     },
 
     // 2. 반복 문자나 숫자가 사용하고 있는지 확인
-    repetitionValidate: function(password) {
+    repetitionValidate: function (password) {
       var reg = /([a-z0-9.*\W])\1{2,}/i;
-      if(reg.test(password)) {
-        var errorMsg = Things.DataGlobal.t('text.password_repetition')
+      if (reg.test(password)) {
+        var errorMsg = Things.DataGlobal.t("text.password_repetition");
         throw errorMsg;
       }
     },
 
-
     // 3. ID와 유사한 패스워드 사용하고 있는지 확인
-    similarValidate: function(id, password) {
-      if(!id) {
-        var errorMsg = Things.DataGlobal.t('error.SHOULD_NOT_BE_EMPTY', {value: Things.DataGlobal.t('label.login')});
+    similarValidate: function (id, password) {
+      if (!id) {
+        var errorMsg = Things.DataGlobal.t("error.SHOULD_NOT_BE_EMPTY", { value: Things.DataGlobal.t("label.login") });
         throw errorMsg;
       }
 
       var chunkedIdList = [];
 
-      for(var i = 0; i <= id.length - 4; i++) {
+      for (var i = 0; i <= id.length - 4; i++) {
         var chunk = id.slice(i, i + 4);
         chunkedIdList.push(chunk);
-      };
+      }
 
-      chunkedIdList.forEach(function(chukedId) {
-        if(password.indexOf(chukedId) >= 0) {
-          var errorMsg = Things.DataGlobal.t('text.password_similarity')
-          throw errorMsg;
-        }
-      }.bind(this));
-    }
+      chunkedIdList.forEach(
+        function (chukedId) {
+          if (password.indexOf(chukedId) >= 0) {
+            var errorMsg = Things.DataGlobal.t("text.password_similarity");
+            throw errorMsg;
+          }
+        }.bind(this)
+      );
+    },
   };
 
-  Things.PwdValidateBehavior = [
-    Things.PwdValidateBehaviorImpl,
-    Things.MsgBoxBehavior
-  ];
-
+  Things.PwdValidateBehavior = [Things.PwdValidateBehaviorImpl, Things.MsgBoxBehavior];
 </script>
