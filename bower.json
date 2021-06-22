@@ -1,6 +1,6 @@
 {
   "name": "things-auth",
-  "version": "v2.2.24",
+  "version": "v2.2.25",
   "authors": [
     "Shenzhen Weixun"
   ],
@@ -23,9 +23,9 @@
     "paper-button": "PolymerElements/paper-button#^1.0.11",
     "paper-material": "PolymerElements/paper-material#^1.0.6",
     "gold-email-input": "PolymerElements/gold-email-input#^1.0.7",
-    "things-form": "ThingsElements/things-form",
-    "things-i18n-msg": "ThingsElements/things-i18n-msg",
-    "things-id":"ThingsElements/things-id"
+    "things-form": "WeiXunElements/things-form",
+    "things-i18n-msg": "WeiXunElements/things-i18n-msg",
+    "things-id":"WeiXunElements/things-id"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
