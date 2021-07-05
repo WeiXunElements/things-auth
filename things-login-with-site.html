@@ -1,72 +1,4 @@
-<!--
-@license
-Copyright © 2015-2021 Shenzhen Weixun All rights reserved.
--->
-<link rel="import" href="../polymer/polymer.html" />
-
-<link rel="import" href="../iron-input/iron-input.html" />
-<link rel="import" href="../iron-form/iron-form.html" />
-<link rel="import" href="../paper-dropdown-menu/paper-dropdown-menu.html" />
-<link rel="import" href="../paper-listbox/paper-listbox.html" />
-<link rel="import" href="../paper-item/paper-item.html" />
-<link rel="import" href="../paper-input/paper-input.html" />
-<link rel="import" href="../paper-button/paper-button.html" />
-<link rel="import" href="../paper-material/paper-material.html" />
-<link rel="import" href="../gold-email-input/gold-email-input.html" />
-<link rel="import" href="../things-global-behavior/things-global-behavior.html" />
-<link rel="import" href="../things-msg-box-behavior/things-msg-box-behavior.html" />
-<link rel="import" href="../things-i18n-msg/things-i18n-msg.html" />
-<link rel="import" href="../things-id/things-encrypt-behavior.html" />
-
-<link rel="import" href="./things-signup.html" />
-<link rel="import" href="./things-password-init.html" />
-<link rel="import" href="./things-request-active.html" />
-
-<!--
-## things-login
-ko-KR
-### 로그인 화면
-
-Example:
-```html
-<things-login data-route="login"
-              route ="{{route}}"
-              title="Things Label Management"
-              login-path="login"
-              content-type="application/x-www-form-urlencoded"
-              success-route="list"
-              username-input-label="ID"
-              password-input-label="Password"
-              submit-label ="Submit"
-              Reset-label = "Reset">
-  <img avatar src="https://maps.gstatic.com/tactile/pane/default_geocode-1x.png"/>
-</things-login>
-```
-
-****
-
-en-US
-### A things login form asking for login and password.
-
-Example:
-```html
-<things-login data-route="login"
-              route ="{{route}}"
-              title="Things Label Management"
-              login-path="login"
-              content-type="application/x-www-form-urlencoded"
-              success-route="list"
-              username-input-label="ID"
-              password-input-label="Password"
-              submit-label ="Submit"
-              Reset-label = "Reset">
-  <img avatar src="https://maps.gstatic.com/tactile/pane/default_geocode-1x.png"/>
-</things-login>
-```
-
-@demo demo/index.html -->
-
-<dom-module id="things-login">
+<dom-module id="things-login-with-site">
   <template>
     <style is="custom-style">
       :host {
@@ -134,7 +66,12 @@ Example:
         @apply (--layout-flex);
       }
 
-      .name-locale-container paper-dropdown-menu {
+      #combo-site {
+        width: 25%;
+        padding-right: 15px;
+      }
+
+      #combo-locale {
         width: 25%;
         padding-left: 15px;
       }
@@ -227,6 +164,8 @@ Example:
       }
     </style>
 
+    <things-ajax id="ajax-login" resource-action="create" resource-url="login"> </things-ajax>
+
     <things-ajax
       id="extend-pwd-ajax"
       resource-url="users/change_pass_later/:id"
@@ -242,6 +181,9 @@ Example:
       resource-action="show_by_name"
       last-response="{{signupButtonShowValue}}"
     >
+    </things-ajax>
+
+    <things-ajax auto id="ajax-site" resource-url="sites" resource-action="index" last-response="{{sites}}">
     </things-ajax>
 
     <paper-dialog id="pwd-expired-dialog" modal>
@@ -280,6 +222,16 @@ Example:
         with-credentials
       >
         <div class="name-locale-container">
+          <paper-dropdown-menu id="combo-site" label="Site">
+            <paper-listbox id="site-list" class="dropdown-content">
+              <template is="dom-repeat" items="[[sites.items]]">
+                <paper-item>[[item.description]]</paper-item>
+              </template>
+            </paper-listbox>
+          </paper-dropdown-menu>
+
+          <input name="site_id" type="text" hidden value="{{globals.site.id}}" />
+
           <paper-input
             id="username"
             name="email"
@@ -298,7 +250,7 @@ Example:
             </div>
           </paper-input>
 
-          <paper-dropdown-menu id="locale-combo" label="Locale">
+          <paper-dropdown-menu id="combo-locale" label="Locale">
             <paper-listbox id="locale-list" class="dropdown-content">
               <template is="dom-repeat" items="[[locales]]">
                 <paper-item>[[item.description]]</paper-item>
@@ -325,6 +277,8 @@ Example:
 
         <input name="password" type="password" hidden value="{{encryptedPassword}}" />
 
+        <paper-input name="licenseSeq" value="{{licenseSeq}}" hidden></paper-input>
+
         <div>
           <paper-button id="submitButton" raised on-tap="_submitHandler" tabindex="3">
             <things-i18n-msg auto msgid="button.sign_in">Sign In</things-i18n-msg>
@@ -349,7 +303,7 @@ Example:
 
   <script>
     Polymer({
-      is: 'things-login',
+      is: 'things-login-with-site',
 
       properties: {
         /**
@@ -392,10 +346,6 @@ Example:
               {
                 key: 'en-US',
                 description: 'English',
-              },
-              {
-                key: 'ko-KR',
-                description: '한글',
               },
               {
                 key: 'zh-CN',
@@ -563,12 +513,13 @@ Example:
         /**
          * 로그인 성공시 fire
          *
-         * @event things-login-succeed
+         * @event things-login-with-site-succeed
          */
       },
       behaviors: [Things.GlobalBehavior, Things.MsgBoxBehavior, Things.EncryptBehavior],
 
       listeners: {
+        'site-list.selected-changed': '_siteValueChanged',
         'locale-list.selected-changed': '_localeValueChanged',
         'iron-form-submit': '_afterFormSubmit',
         'iron-form-response': '_successResponse',
@@ -587,6 +538,8 @@ Example:
         );
         this._setCurrentLocale();
         this._checkSignupButtonShow();
+
+        this.licenseSeq = window.Things.License.licenseInfo['License Sequence'] || 0;
       },
 
       attached: function () {
@@ -639,6 +592,15 @@ Example:
             }
           });
         }
+      },
+
+      /**
+       * 选择的工厂信息暂存到local storage
+       */
+      _siteValueChanged: function (event) {
+        let siteIdx = event.detail.value;
+        localStorage['setting.site'] = JSON.stringify(this.sites.items[siteIdx]);
+        this.set('globals.site', this.sites.items[siteIdx]);
       },
 
       /**
@@ -808,7 +770,16 @@ Example:
 
           this.$.submitButton.disabled = true;
           // password encrypte
-          this.encryptedPassword = this.sha256(this.password);
+          const srcs = CryptoJS.enc.Utf8.parse(this.password);
+          const key = CryptoJS.enc.Utf8.parse(_.padEnd(this.globals.site.id, 16, '0'));
+          const iv = CryptoJS.enc.Utf8.parse(_.padStart(this.globals.site.id, 16, '0'));
+          const encrypted = CryptoJS.AES.encrypt(srcs, key, {
+            iv: iv,
+            mode: CryptoJS.mode.CBC,
+            padding: CryptoJS.pad.Pkcs7,
+          });
+
+          this.encryptedPassword = encrypted.ciphertext.toString();
           this.$.loginForm.submit();
         }
       },
@@ -840,7 +811,7 @@ Example:
        *  1. response의 사용자 정보를 토대로 비밀번호 변경 필요시 로그아웃 수행 후 비밀번호 변경 화면 노출 변경 필요 없을시 2. 진행
        *  2. 사용자정보를 globals에 저장 및 local-storage에 저장
        *  3. 로그인 폼 리셋
-       *  4. fire things-login-succeed event
+       *  4. fire things-login-with-site-succeed event
        *  5. 화면이동
        *    만일 redirectCallback가 있으면 적용하고 반환값이 true이면 사용자정보의
        *    user.operator_flag과 useOiScreen 옵션을 이용하여 oi로 이동할 것인지 standard로 이동할 것인지 판단한다.
@@ -850,7 +821,7 @@ Example:
        *  1. If user have to change account password because of expired password, logout and expose password change view. If password is still valid continue to 2.
        *  2. save user information
        *  3. reset login form
-       *  4. fire things-login-succeed event
+       *  4. fire things-login-with-site-succeed event
        *  5. redirect
        *    if there's have redirectCallback apply redirectCallback and check return if it is true
        *    use data from user.operator_flag and useOiScreen option
@@ -873,7 +844,7 @@ Example:
         this.$.loginForm.reset();
         this.encryptedPassword = '';
         // 3. fire event
-        this.fire('things-login-succeed');
+        this.fire('things-login-with-site-succeed');
 
         if (!this.isUserStatusInvalid(user)) {
           // 4. redirect
@@ -1015,7 +986,21 @@ Example:
         var response = event.detail.request.xhr.response;
 
         if (response) {
-          this.openResponseError(response);
+          if (!response.msg) {
+            this.openResponseError(response);
+            return;
+          }
+          let htmlText = '<br/><span>' + response.msg + '</span><br/><br/>';
+          if (response.detail && response.detail != response.msg) {
+            htmlText += '<span>' + response.detail + '</span><br/><br/>';
+          }
+
+          this.openInfoMsg({
+            type: 'warning',
+            title: Things.DataGlobal.t('title.exception_info'),
+            html: true,
+            text: `<br/><h3><span>${htmlText}</span><h3>`,
+          });
         } else {
           response = event.detail.request;
           this.openUnkownError(response);
@@ -1039,8 +1024,7 @@ Example:
        * false => 회원가입 버튼 표시 안함
        */
       _computeSignupShow(signupButtonShowValue) {
-        console.log(signupButtonShowValue);
-        return JSON.parse(signupButtonShowValue.value);
+        if (signupButtonShowValue) JSON.parse(signupButtonShowValue.value);
       },
     });
   </script>
