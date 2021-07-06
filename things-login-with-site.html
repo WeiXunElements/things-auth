@@ -545,10 +545,16 @@
       attached: function () {
         const expirationDate = Things.License.licenseInfo['Expiration Date'];
         if (expirationDate !== 'UNLIMITED') {
-          const now = moment(new Date()).add(1, 'M').valueOf();
+          const now = moment(new Date()).valueOf();
           const expired = moment(expirationDate).valueOf();
           if (now >= expired) {
+            alert(`The ${Things.License.licenseInfo['License Type']} license does already expired.`);
+            return;
+          }
+          const afterCal = moment(new Date()).add(1, 'M').valueOf();
+          if (afterCal >= expired) {
             alert(`The ${Things.License.licenseInfo['License Type']} license will be expire at ${expirationDate}.`);
+            return;
           }
         }
       },
